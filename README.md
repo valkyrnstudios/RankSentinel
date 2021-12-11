@@ -6,10 +6,10 @@
 
 ## Commands
 
-/spellsnob <options>
-/snob <options>
+/spellsnob `<options>`
+/snob `<options>`
 
-#### Parameters:
+### Parameters
 
 * Whisper: Whisper others about their low spell rank usage.
 * Self: Only report low rank spell usage to self.
