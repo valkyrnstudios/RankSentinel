@@ -1,0 +1,11 @@
+## Interface: 20502
+## Title: SpellSnob|cFFFFFF00 (2021-11-22)|r
+## Author: <Epoch of Thought> - Whitemane
+## Notes: Calls out people who use low rank spells.
+## Version: 2021-12-08
+## RequiredDeps:
+## SavedVariables: SpellSnobVars
+## SavedVariablesPerCharacter: 
+
+DataTables.lua
+SpellSnob.lua
