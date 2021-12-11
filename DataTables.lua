@@ -392,7 +392,7 @@ SpellSnob.SpellIDs =
   [42245] = {Name = "Volley", Rank = 3 , MaxLevel = 66, LevelBase = "Self",},
   [27022] = {Name = "Volley", Rank = 4 , MaxLevel = 70, LevelBase = "Self",},
   [42234] = {Name = "Volley", Rank = 4 , MaxLevel = 70, LevelBase = "Self",},
-  [2974] = {Name = "Wing Clip", Rank = 1 , MaxLevel = 37, LevelBase = "Self",},
+  -- [2974] = {Name = "Wing Clip", Rank = 1 , MaxLevel = 37, LevelBase = "Self",}, -- Mana efficient
   [32908] = {Name = "Wing Clip", Rank = 1 , MaxLevel = 37, LevelBase = "Self",},
   [40652] = {Name = "Wing Clip", Rank = 1 , MaxLevel = 37, LevelBase = "Self",},
   [44286] = {Name = "Wing Clip", Rank = 1 , MaxLevel = 37, LevelBase = "Self",},
@@ -1144,7 +1144,7 @@ SpellSnob.SpellIDs =
   [32379] = {Name = "Shadow Word: Death", Rank = 1 , MaxLevel = 69, LevelBase = "Self",},
   [32409] = {Name = "Shadow Word: Death", Rank = 1 , MaxLevel = 69, LevelBase = "Self",},
   [32996] = {Name = "Shadow Word: Death", Rank = 2 , MaxLevel = 70, LevelBase = "Self",},
-  [589] = {Name = "Shadow Word: Pain", Rank = 1 , MaxLevel = 9, LevelBase = "Self",},
+  -- [589] = {Name = "Shadow Word: Pain", Rank = 1 , MaxLevel = 9, LevelBase = "Self",}, -- AoE pack debuffing
   [594] = {Name = "Shadow Word: Pain", Rank = 2 , MaxLevel = 17, LevelBase = "Self",},
   [970] = {Name = "Shadow Word: Pain", Rank = 3 , MaxLevel = 25, LevelBase = "Self",},
   [992] = {Name = "Shadow Word: Pain", Rank = 4 , MaxLevel = 33, LevelBase = "Self",},
