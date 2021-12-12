@@ -113,7 +113,7 @@ function SpellSnob.Events:CombatLogEventUnfiltered(...)
     local castLevel, castString = nil, nil
 
     if curSpell.LevelBase == "Self" then
-        castLevel = UnitLevel("Player")
+        castLevel = UnitLevel(sourceName)
         castString = Strings.SelfCast
     elseif curSpell.LevelBase == "Target" then -- Why does this exist? -SV
         castLevel = UnitLevel(destName)
