@@ -45,7 +45,8 @@ function SlashCmdList.SPELLSNOB(cmd, editbox)
     if msg == "" then
         local startStr = "|cFFFFFF00Spell Snob|r is currently %s."
         local modeStr = "in |cFF00FF00%s|r mode"
-        local endStr = "Use |cFFFFFF00/spellsnob <option>|r or |cFFFFFF00/snob <option>|r to change."
+        local endStr =
+            "Use |cFFFFFF00/spellsnob <option>|r or |cFFFFFF00/snob <option>|r to change."
 
         if SpellSnobVars.Enabled then
             if SpellSnobVars.Whisper then
@@ -57,7 +58,7 @@ function SlashCmdList.SPELLSNOB(cmd, editbox)
             out = string.format("%s %s", enabled, modeStr)
             out = string.format(startStr, out)
             out = string.format("%s %s", out, endStr)
-            print(out) 
+            print(out)
         else
             out = string.format(startStr, disabled)
             out = string.format("%s %s", out, endStr)
@@ -66,7 +67,8 @@ function SlashCmdList.SPELLSNOB(cmd, editbox)
 
         print("Options: /spellsnob <option>")
         print("  |cFFFFFF00Self|r: Only report low rank spell usage to self.")
-        print("  |cFFFFFF00Whisper|r: Whisper others about their low spell rank usage.")
+        print(
+            "  |cFFFFFF00Whisper|r: Whisper others about their low spell rank usage.")
         print("  |cFFFFFF00Off|r: Disable Spell Snob checks.")
     end
 end
@@ -90,31 +92,22 @@ function SpellSnob:OnEvent(self, event, ...)
 end
 
 function SpellSnob.Events:CombatLogEventUnfiltered(...)
-    if not SpellSnobVars.Enabled then
-        return
-    end
+    if not SpellSnobVars.Enabled then return end
 
-    local _, subevent, _, sourceGUID, sourceName, _, _, _, destName, _, _, spellID, spellName = CombatLogGetCurrentEventInfo()
+    local _, subevent, _, sourceGUID, sourceName, _, _, _, destName, _, _,
+          spellID, spellName = CombatLogGetCurrentEventInfo()
 
-    if subevent ~= "SPELL_CAST_SUCCESS" then
-        return
-    end
+    if subevent ~= "SPELL_CAST_SUCCESS" then return end
 
     local curSpell = SpellSnob.SpellIDs[spellID]
 
-    if curSpell == nil then
-        return
-    end
+    if curSpell == nil then return end
 
-    if curSpell.MaxLevel == 0 then
-        return
-    end
+    if curSpell.MaxLevel == 0 then return end
 
     local PlayerSpellIndex = string.format("%s-%s", sourceGUID, spellID)
 
-    if AnnouncedSpells[PlayerSpellIndex] ~= nil then
-        return
-    end
+    if AnnouncedSpells[PlayerSpellIndex] ~= nil then return end
 
     local Strings = SpellSnob.Strings
     local castLevel, castString = nil, nil
@@ -122,35 +115,38 @@ function SpellSnob.Events:CombatLogEventUnfiltered(...)
     if curSpell.LevelBase == "Self" then
         castLevel = UnitLevel("Player")
         castString = Strings.SelfCast
-    elseif curSpell.LevelBase == "Target" then
+    elseif curSpell.LevelBase == "Target" then -- Why does this exist? -SV
         castLevel = UnitLevel(destName)
         castString = Strings.TargetCast
     end
 
-    if curSpell.MaxLevel >= castLevel then
-        return
-    end
+    if curSpell.MaxLevel >= castLevel then return end
 
     local spellLink = GetSpellLink(spellID)
     local castStringMsg = nil
 
     if sourceGUID == UnitGUID("Player") then
-        castStringMsg = string.format(castString, "You", spellLink, spellID, castLevel)
-        castStringMsg = string.format("%s %s", Strings.PreMsgNonChat, castStringMsg)
+        castStringMsg = string.format(castString, "You", spellLink, spellID,
+                                      castLevel)
+        castStringMsg = string.format("%s %s", Strings.PreMsgNonChat,
+                                      castStringMsg)
         SpellSnob:Annoy(castStringMsg, "self")
         AnnouncedSpells[PlayerSpellIndex] = true
-    else        
-        if not SpellSnob:InGroupWith(sourceGUID) then
-            return
-        end
+    else
+        if not SpellSnob:InGroupWith(sourceGUID) then return end
 
         if SpellSnobVars.Whisper then
-            castStringMsg = string.format(castString, "You", spellLink, spellID, castLevel)
-            castStringMsg = string.format("%s %s %s %s", Strings.PreMsgChat, Strings.PreMsgStandard, castStringMsg, Strings.PostMessage)
+            castStringMsg = string.format(castString, "You", spellLink, spellID,
+                                          castLevel)
+            castStringMsg = string.format("%s %s %s %s", Strings.PreMsgChat,
+                                          Strings.PreMsgStandard, castStringMsg,
+                                          Strings.PostMessage)
             SpellSnob:Annoy(castStringMsg, sourceName)
         else
-            castStringMsg = string.format(castString, sourceName, spellLink, spellID, castLevel)
-            castStringMsg = string.format("%s %s", Strings.PreMsgNonChat, castStringMsg)
+            castStringMsg = string.format(castString, sourceName, spellLink,
+                                          spellID, castLevel)
+            castStringMsg = string.format("%s %s", Strings.PreMsgNonChat,
+                                          castStringMsg)
             SpellSnob:Annoy(castStringMsg, "self")
         end
 
@@ -167,17 +163,14 @@ function SpellSnob:Annoy(msg, target)
 end
 
 function SpellSnob:InGroupWith(guid)
-    for i = 1,  4 do if guid == UnitGUID("Party" .. i) then return true end end
-    for i = 1, 40 do if guid == UnitGUID( "Raid" .. i) then return true end end
+    for i = 1, 4 do if guid == UnitGUID("Party" .. i) then return true end end
+    for i = 1, 40 do if guid == UnitGUID("Raid" .. i) then return true end end
 end
 
 function SpellSnob.Events:VarsAndAddonLoaded()
-    print ("|cFFFFFF00Spell Snob|r Loaded")
+    print("|cFFFFFF00Spell Snob|r Loaded")
     if not SpellSnobVars then
-        SpellSnobVars = {
-            Enabled = true,
-            Whisper = true,
-        }
+        SpellSnobVars = {Enabled = true, Whisper = true}
     end
 end
 
