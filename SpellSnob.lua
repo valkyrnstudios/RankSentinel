@@ -16,7 +16,7 @@ function SlashCmdList.SPELLSNOB(cmd, editbox)
     local disabled = "|cFFFF0000Disabled|r"
     local out = nil
 
-    msg = string.lower(cmd)
+    local msg = string.lower(cmd)
 
     if msg == "self" then
         SpellSnobVars.Whisper = false
