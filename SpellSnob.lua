@@ -23,26 +23,17 @@ function SlashCmdList.SPELLSNOB(cmd, editbox)
         SpellSnobVars.Enabled = true
         out = string.format("%s %s: Only show to self.", ssnob, enabled)
         print(out)
-        return
-    end
-
-    if msg == "whisper" then
+    elseif msg == "whisper" then
         SpellSnobVars.Whisper = true
         SpellSnobVars.Enabled = true
         out = string.format("%s %s: Whisper to others.", ssnob, enabled)
         print(out)
-        return
-    end
-
-    if msg == "off" then
+    elseif msg == "off" then
         SpellSnobVars.Enabled = false
         SpellSnobVars.Whisper = false
         out = string.format("%s %s.", ssnob, disabled)
         print(out)
-        return
-    end
-
-    if msg == "" then
+    else
         local startStr = "|cFFFFFF00Spell Snob|r is currently %s."
         local modeStr = "in |cFF00FF00%s|r mode"
         local endStr =
