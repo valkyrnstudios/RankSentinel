@@ -1,17 +1,20 @@
-local addonName, SpellSnob = ...
+local addonName, SpellSentinel = ...
 
-SpellSnob.Strings =
+
+SpellSentinel.Strings =
 {
     -- SubStrings
     PreMsgNonChat      = "\124TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7.png:0\124t",
-    PreMsgChat         = "{rt7} SpellSnob :",
+    PreMsgChat         = "{rt7} SpellSentinel :",
     PreMsgStandard     = "Friendly Reminder!",
     SelfCast           = "%s just used a low rank of %s (%s).",
     TargetCast         = "%s just used a low rank of %s (%s) on a level %s target.",
     PostMessage        = "Please check your Action Bars or visit your Class Trainer to make sure you've got the right ability for your level.",
 }
 
-SpellSnob.SpellIDs =
+-- All SpellIDs table credit goes to <Epoch of Thought> - Whitemane from the briefly available SpellSnob addon.
+
+SpellSentinel.SpellIDs =
 {
   -- DRUID
 
