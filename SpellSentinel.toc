@@ -1,11 +1,11 @@
 ## Interface: 20502
-## Title: SpellSentinel|cFFFFFF00 (2021-11-22)|r
-## Author: <Epoch of Thought> - Whitemane
+## Title: SpellSentinel
+## Version: 1.0
+## Author: SabreValkyrn
 ## Notes: Calls out people who use low rank spells.
-## Version: 2021-12-08
-## RequiredDeps:
 ## SavedVariables: SpellSentinelVars
-## SavedVariablesPerCharacter: 
+## X-Credits: <Epoch of Thought> - Whiteman
+## X-Curse-Project-ID: 557732
 
 DataTables.lua
 SpellSentinel.lua
