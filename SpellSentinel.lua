@@ -48,7 +48,7 @@ end
 function SpellSentinel:OnEnable()
     self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED");
 
-    print("|cFFFFFF00Spell Sentinel|r Loaded")
+    self:PrintMessage("Loaded")
 end
 
 function SpellSentinel:getProfileOption(info) return
@@ -60,7 +60,6 @@ function SpellSentinel:setProfileOption(info, value)
 end
 
 function SpellSentinel:ChatCommand(cmd)
-    local ssentinel = "|cFFFFFF00Spell Sentinel|r"
     local enabled = "|cFF00FF00Enabled|r"
     local disabled = "|cFFFF0000Disabled|r"
     local out = nil
@@ -70,18 +69,18 @@ function SpellSentinel:ChatCommand(cmd)
     if msg == "self" then
         self.db.profile.whisper = false
         self.db.profile.enable = true
-        out = string.format("%s %s: Only show to self.", ssentinel, enabled)
-        print(out)
+        out = string.format("%s: Only show to self.", enabled)
+        self:PrintMessage(out)
     elseif msg == "whisper" then
         self.db.profile.whisper = true
         self.db.profile.enable = true
-        out = string.format("%s %s: Whisper to others.", ssentinel, enabled)
-        print(out)
+        out = string.format("%s: Whisper to others.", enabled)
+        self:PrintMessage(out)
     elseif msg == "off" then
         self.db.profile.enable = false
         self.db.profile.whisper = false
-        out = string.format("%s %s.", ssentinel, disabled)
-        print(out)
+        out = string.format("%s.", disabled)
+        self:PrintMessage(out)
     else
         local startStr = "|cFFFFFF00Spell Sentinel|r is currently %s."
         local modeStr = "in |cFF00FF00%s|r mode"
@@ -98,18 +97,19 @@ function SpellSentinel:ChatCommand(cmd)
             out = string.format("%s %s", enabled, modeStr)
             out = string.format(startStr, out)
             out = string.format("%s %s", out, endStr)
-            print(out)
+            self:PrintMessage(out)
         else
             out = string.format(startStr, disabled)
             out = string.format("%s %s", out, endStr)
-            print(out)
+            self:PrintMessage(out)
         end
 
-        print("Options: /spellsentinel option")
-        print("  |cFFFFFF00Self|r: Only report low rank spell usage to self.")
-        print(
+        self:PrintMessage("Options: /spellsentinel option")
+        self:PrintMessage(
+            "  |cFFFFFF00Self|r: Only report low rank spell usage to self.")
+        self:PrintMessage(
             "  |cFFFFFF00Whisper|r: Whisper others about their low spell rank usage.")
-        print("  |cFFFFFF00Off|r: Disable Spell Sentinel checks.")
+        self:PrintMessage("  |cFFFFFF00Off|r: Disable Spell Sentinel checks.")
     end
 end
 
@@ -177,7 +177,7 @@ end
 
 function SpellSentinel:Annoy(msg, target)
     if target == "self" then
-        print(msg)
+        self:PrintMessage(msg)
     else
         SendChatMessage(msg, "WHISPER", nil, target)
     end
@@ -186,4 +186,11 @@ end
 function SpellSentinel:InGroupWith(guid)
     for i = 1, 4 do if guid == UnitGUID("Party" .. i) then return true end end
     for i = 1, 40 do if guid == UnitGUID("Raid" .. i) then return true end end
+end
+
+function SpellSentinel:PrintMessage(msg)
+    if (DEFAULT_CHAT_FRAME) then
+        DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00" .. L["SpellSentinel"] ..
+                                          "|r: " .. msg, 0.0, 1.0, 0.0, 1.0);
+    end
 end
