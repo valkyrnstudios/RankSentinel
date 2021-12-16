@@ -184,8 +184,17 @@ function SpellSentinel:Annoy(msg, target)
 end
 
 function SpellSentinel:InGroupWith(guid)
-    for i = 1, 4 do if guid == UnitGUID("Party" .. i) then return true end end
-    for i = 1, 40 do if guid == UnitGUID("Raid" .. i) then return true end end
+    if IsInRaid() then
+        for i = 1, GetNumGroupMembers() do
+            if guid == UnitGUID("Raid" .. i) then return true end
+        end
+    elseif IsInGroup() then
+        for i = 1, GetNumGroupMembers() do
+            if guid == UnitGUID("Party" .. i) then return true end
+        end
+    else
+        self:PrintMessage("InGroupWith logic failure")
+    end
 end
 
 function SpellSentinel:PrintMessage(msg)
