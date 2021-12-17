@@ -60,8 +60,8 @@ function SpellSentinel:setProfileOption(info, value)
 end
 
 function SpellSentinel:ChatCommand(cmd)
-    local enabled = "|cFF00FF00Enabled|r"
-    local disabled = "|cFFFF0000Disabled|r"
+    local enabled = "|cFF00FF00" .. L["Enable"] .. "r"
+    local disabled = "|cFFFF0000" .. L["Disable"] .. "r"
     local out = nil
 
     local msg = string.lower(cmd)
@@ -82,7 +82,7 @@ function SpellSentinel:ChatCommand(cmd)
         out = string.format("%s.", disabled)
         self:PrintMessage(out)
     else
-        local startStr = "|cFFFFFF00Spell Sentinel|r is currently %s."
+        local startStr = "Currently %s."
         local modeStr = "in |cFF00FF00%s|r mode"
         local endStr =
             "Use |cFFFFFF00/SpellSentinel option|r or |cFFFFFF00/sentinel option|r to change."

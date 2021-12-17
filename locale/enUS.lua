@@ -2,6 +2,7 @@
 
 L["SpellSentinel"] = "Spell Sentinel"
 L["Enable"] = "Enable";
+L["Disable"] = "Disable";
 L["Whisper"] = "Whisper";
 
 L["PreMsgNonChat"] =
