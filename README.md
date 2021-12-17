@@ -6,17 +6,8 @@ SpellSnob was briefly available on [CurseForge](https://www.curseforge.com/wow/a
 * Many Legitimate Low-rank Abilities have already been excluded, like All Heals, Rank 1 Frost Bolt, Rank 1 Earth Shock, Rank 1 Blizzard, etc.
 * If whisper is enabled, will only send one message per ability per time you are grouped up, spam should be minimal.
 
-## Commands
-
-/SpellSentinel `<options>`
-
-### Parameters
-
-* Whisper: Whisper others about their low spell rank usage.
-* Self: Only report low rank spell usage to self.
-* Off: Disable Spell Snob checks.
-
 ## Changes from SpellSnob
 
 * Fix level calculation, no longer uses player's character for level comparison
 * Convert to Ace3 libraries
+* Replace CLI menu with AceGUI

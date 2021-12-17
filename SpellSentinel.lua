@@ -25,11 +25,44 @@ local options = {
             end
         },
         enable = {type = "toggle", name = L["Enable"], order = 1},
-        whisper = {type = "toggle", name = L["Whisper"], order = 2}
+        whisper = {type = "toggle", name = L["Whisper"], order = 2},
+        preMessageString = {
+            type = 'input',
+            name = L["PreMessageString"]["Title"],
+            width = "full",
+            order = 3
+        },
+        castString = {
+            type = 'input',
+            name = L["CastString"]["Title"],
+            width = "full",
+            order = 4
+        },
+        targetCastString = {
+            type = 'input',
+            name = L["TargetCastString"]["Title"],
+            width = "full",
+            order = 5
+        },
+        postMessageString = {
+            type = 'input',
+            name = L["PostMessageString"]["Title"],
+            width = "full",
+            order = 6
+        }
     }
 }
 
-local defaults = {profile = {enable = true, whisper = true}}
+local defaults = {
+    profile = {
+        enable = true,
+        whisper = true,
+        preMessageString = L["PreMessageString"]["Default"],
+        castString = L["CastString"]["Default"],
+        targetCastString = L["TargetCastString"]["Default"],
+        postMessageString = L["PostMessageString"]["Default"]
+    }
+}
 
 function SpellSentinel:OnInitialize()
     self.db = LibStub("AceDB-3.0"):New("SpellSentinelDB", defaults, true)
@@ -39,7 +72,7 @@ function SpellSentinel:OnInitialize()
     LibStub("AceConfig-3.0"):RegisterOptionsTable("SpellSentinel", options)
 
     self:RegisterChatCommand("spellsentinel", "ChatCommand")
-    self:RegisterChatCommand("ss", "ChatCommand")
+    self:RegisterChatCommand("sentinel", "ChatCommand")
 
     self.optionsFrame = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(
                             "SpellSentinel", "SpellSentinel")
@@ -60,56 +93,14 @@ function SpellSentinel:setProfileOption(info, value)
 end
 
 function SpellSentinel:ChatCommand(cmd)
-    local enabled = "|cFF00FF00" .. L["Enable"] .. "r"
-    local disabled = "|cFFFF0000" .. L["Disable"] .. "r"
-    local out = nil
-
     local msg = string.lower(cmd)
 
-    if msg == "self" then
-        self.db.profile.whisper = false
-        self.db.profile.enable = true
-        out = string.format("%s: Only show to self.", enabled)
-        self:PrintMessage(out)
-    elseif msg == "whisper" then
-        self.db.profile.whisper = true
-        self.db.profile.enable = true
-        out = string.format("%s: Whisper to others.", enabled)
-        self:PrintMessage(out)
-    elseif msg == "off" then
-        self.db.profile.enable = false
-        self.db.profile.whisper = false
-        out = string.format("%s.", disabled)
-        self:PrintMessage(out)
+    if msg == "reset" then
+        self.db:ResetProfile()
+        self:PrintMessage(string.format("Settings reset"))
     else
-        local startStr = "Currently %s."
-        local modeStr = "in |cFF00FF00%s|r mode"
-        local endStr =
-            "Use |cFFFFFF00/SpellSentinel option|r or |cFFFFFF00/sentinel option|r to change."
-
-        if self.db.profile.enable then
-            if self.db.profile.whisper then
-                modeStr = string.format(modeStr, "Whisper")
-            else
-                modeStr = string.format(modeStr, "Self-only")
-            end
-
-            out = string.format("%s %s", enabled, modeStr)
-            out = string.format(startStr, out)
-            out = string.format("%s %s", out, endStr)
-            self:PrintMessage(out)
-        else
-            out = string.format(startStr, disabled)
-            out = string.format("%s %s", out, endStr)
-            self:PrintMessage(out)
-        end
-
-        self:PrintMessage("Options: /spellsentinel option")
-        self:PrintMessage(
-            "  |cFFFFFF00Self|r: Only report low rank spell usage to self.")
-        self:PrintMessage(
-            "  |cFFFFFF00Whisper|r: Whisper others about their low spell rank usage.")
-        self:PrintMessage("  |cFFFFFF00Off|r: Disable Spell Sentinel checks.")
+        InterfaceOptionsFrame_Show()
+        InterfaceOptionsFrame_OpenToCategory("SpellSentinel")
     end
 end
 
@@ -135,10 +126,10 @@ function SpellSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
 
     if curSpell.LevelBase == "Self" then
         castLevel = UnitLevel(sourceName)
-        castString = L["SelfCast"]
+        castString = self.db.profile.castString
     elseif curSpell.LevelBase == "Target" then -- Why does this exist? -SV
         castLevel = UnitLevel(destName)
-        castString = L["TargetCast"]
+        castString = self.db.profile.targetCastString
     end
 
     if curSpell.MaxLevel >= castLevel then return end
@@ -160,8 +151,9 @@ function SpellSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
             castStringMsg = string.format(castString, "You", spellLink, spellID,
                                           castLevel)
             castStringMsg = string.format("%s %s %s %s", L["PreMsgChat"],
-                                          L["PreMsgStandard"], castStringMsg,
-                                          L["PostMessage"])
+                                          self.db.profile.preMessageString,
+                                          castStringMsg,
+                                          self.db.profile.postMessageString)
             SpellSentinel:Annoy(castStringMsg, sourceName)
         else
             castStringMsg = string.format(castString, sourceName, spellLink,
