@@ -128,8 +128,7 @@ function SpellSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
     local castStringMsg = nil
 
     if sourceGUID == UnitGUID("Player") then
-        castStringMsg = string.format(castString, "You", spellLink, spellID,
-                                      castLevel)
+        castStringMsg = string.format(castString, "You", spellLink, castLevel)
         castStringMsg =
             string.format("%s %s", L["PreMsgNonChat"], castStringMsg)
         SpellSentinel:Annoy(castStringMsg, "self")
@@ -138,7 +137,7 @@ function SpellSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
         if not SpellSentinel:InGroupWith(sourceGUID) then return end
 
         if self.db.profile.whisper then
-            castStringMsg = string.format(castString, "You", spellLink, spellID,
+            castStringMsg = string.format(castString, "You", spellLink,
                                           castLevel)
             castStringMsg = string.format("%s %s %s %s", L["PreMsgChat"],
                                           self.db.profile.preMessageString,
@@ -147,7 +146,7 @@ function SpellSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
             SpellSentinel:Annoy(castStringMsg, sourceName)
         else
             castStringMsg = string.format(castString, sourceName, spellLink,
-                                          spellID, castLevel)
+                                          castLevel)
             castStringMsg = string.format("%s %s", L["PreMsgNonChat"],
                                           castStringMsg)
             SpellSentinel:Annoy(castStringMsg, "self")
