@@ -14,16 +14,6 @@ local options = {
     get = "getProfileOption",
     set = "setProfileOption",
     args = {
-        gui = {
-            type = "execute",
-            name = L["SpellSentinel"],
-            guiHidden = true,
-            func = function()
-                InterfaceOptionsFrame_OpenToCategory("SpellSentinel")
-                -- need to call it a second time as there is a bug where the first time it won't switch !BlizzBugsSuck has a fix
-                InterfaceOptionsFrame_OpenToCategory("SpellSentinel")
-            end
-        },
         enable = {type = "toggle", name = L["Enable"], order = 1},
         whisper = {type = "toggle", name = L["Whisper"], order = 2},
         preMessageString = {
