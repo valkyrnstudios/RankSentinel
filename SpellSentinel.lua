@@ -2,7 +2,9 @@ SpellSentinel = LibStub("AceAddon-3.0"):NewAddon("SpellSentinel",
                                                  "AceConsole-3.0",
                                                  "AceEvent-3.0")
 
-local AnnouncedSpells = {}
+SpellSentinel.Version = GetAddOnMetadata("SpellSentinel", "Version");
+
+local SpellSentinel = SpellSentinel
 
 local L = LibStub("AceLocale-3.0"):GetLocale("SpellSentinel")
 
@@ -39,6 +41,14 @@ local options = {
             name = L["PostMessageString"]["Title"],
             width = "full",
             order = 6
+        },
+        announcedSpells = {
+            type = 'input',
+            name = L["PostMessageString"]["Title"],
+            width = "full",
+            multiline = true,
+            order = 7,
+            hidden = true
         }
     }
 }
@@ -50,7 +60,8 @@ local defaults = {
         preMessageString = L["PreMessageString"]["Default"],
         castString = L["CastString"]["Default"],
         targetCastString = L["TargetCastString"]["Default"],
-        postMessageString = L["PostMessageString"]["Default"]
+        postMessageString = L["PostMessageString"]["Default"],
+        announcedSpells = {}
     }
 }
 
@@ -88,6 +99,14 @@ function SpellSentinel:ChatCommand(cmd)
     if msg == "reset" then
         self.db:ResetProfile()
         self:PrintMessage(string.format("Settings reset"))
+    elseif msg == "count" then
+        local count = 0
+        for _ in pairs(self.db.profile.announcedSpells) do
+            count = count + 1
+        end
+        self:PrintMessage(string.format("Spells caught: %d", count))
+    elseif msg == "clear" then
+        self:ClearCache()
     else
         InterfaceOptionsFrame_Show()
         InterfaceOptionsFrame_OpenToCategory("SpellSentinel")
@@ -110,7 +129,7 @@ function SpellSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
 
     local PlayerSpellIndex = string.format("%s-%s", sourceGUID, spellID)
 
-    if AnnouncedSpells[PlayerSpellIndex] ~= nil then return end
+    if self.db.profile.announcedSpells[PlayerSpellIndex] ~= nil then return end
 
     local castLevel, castString = nil, nil
 
@@ -132,7 +151,7 @@ function SpellSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
         castStringMsg =
             string.format("%s %s", L["PreMsgNonChat"], castStringMsg)
         SpellSentinel:Annoy(castStringMsg, "self")
-        AnnouncedSpells[PlayerSpellIndex] = true
+        self.db.profile.announcedSpells[PlayerSpellIndex] = true
     else
         if not SpellSentinel:InGroupWith(sourceGUID) then return end
 
@@ -152,7 +171,7 @@ function SpellSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
             SpellSentinel:Annoy(castStringMsg, "self")
         end
 
-        AnnouncedSpells[PlayerSpellIndex] = true -- TODO allow spam
+        self.db.profile.announcedSpells[PlayerSpellIndex] = true -- TODO allow spam
     end
 end
 
@@ -183,4 +202,12 @@ function SpellSentinel:PrintMessage(msg)
         DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00" .. L["SpellSentinel"] ..
                                           "|r: " .. msg, 0.0, 1.0, 0.0, 1.0);
     end
+end
+
+function SpellSentinel:ClearCache()
+    local count = 0
+    for _ in pairs(self.db.profile.announcedSpells) do count = count + 1 end
+
+    self.db.profile.announcedSpells = {}
+    self:PrintMessage(string.format("Cache reset: %d entries purged", count));
 end
