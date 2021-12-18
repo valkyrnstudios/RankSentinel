@@ -8,8 +8,11 @@
 ## X-Curse-Project-ID: 557732
 ## X-Embeds: Ace3
 
-embeds.xml
-locale\locales.xml
+libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
+libs\AceAddon-3.0\AceAddon-3.0.xml
+libs\AceEvent-3.0\AceEvent-3.0.xml
+
+locale\enUS.lua
 
 SpellSentinel.lua
 DataTables.lua
