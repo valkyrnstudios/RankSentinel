@@ -57,7 +57,7 @@ function SpellSentinel:ClusterElect()
         end
     end
 
-    if leadName ~= nil then
+    if leadName == nil then
         for name, _ in pairs(self.cluster.members) do
             if IsInRaid() and UnitIsGroupAssistant(name) then
                 leadName = name
@@ -69,7 +69,7 @@ function SpellSentinel:ClusterElect()
         end
     end
 
-    if leadName ~= nil then leadName = PlayerName end
+    if leadName == nil then leadName = PlayerName end
 
     ClusterLead = leadName
     self:ClusterBroadcast("LEAD", leadName)
