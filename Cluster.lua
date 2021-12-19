@@ -75,11 +75,15 @@ function SpellSentinel:ClusterElect()
         end
     end
 
-    -- Fall back to current or newest player as lead
-    if leadName == nil then leadName = PlayerName end
+    -- Handle if elected lead is not in members, race/stale condition
+    if leadName ~= nil and self.cluster.members[leadName] == true then
+        ClusterLead = leadName;
 
-    ClusterLead = leadName;
-    self:ClusterBroadcast("LEAD", leadName);
+        self:ClusterBroadcast("LEAD", leadName);
+    else
+        -- Fall back to current or newest player as lead
+        leadName = PlayerName
+    end
 end
 
 function SpellSentinel:PrintCluster()
