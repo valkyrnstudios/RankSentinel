@@ -4,7 +4,8 @@ SpellSentinel = LibStub("AceAddon-3.0"):NewAddon("SpellSentinel",
 
 SpellSentinel.Version = GetAddOnMetadata("SpellSentinel", "Version");
 
-local PlayerGUID = UnitGUID("Player");
+PlayerGUID = UnitGUID("Player");
+PlayerName = UnitName("Player");
 
 local SpellSentinel = SpellSentinel
 
@@ -69,6 +70,8 @@ function SpellSentinel:OnInitialize()
         self.db.profile.ignoredPlayers = {}
     end
 
+    self.cluster = {members = {PlayerName}, lead = PlayerName}
+
     LibStub("AceConfig-3.0"):RegisterOptionsTable("SpellSentinel", options)
 
     self:RegisterChatCommand("spellsentinel", "ChatCommand")
@@ -80,6 +83,7 @@ end
 
 function SpellSentinel:OnEnable()
     self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED");
+    self:RegisterEvent("PLAYER_ENTERING_WORLD");
 
     self:RegisterComm(CommPrefix);
 
@@ -106,7 +110,9 @@ function SpellSentinel:ChatCommand(cmd)
         self:PrintMessage(string.format("Ignored players: %d", self:CountCache(
                                             self.db.profile.ignoredPlayers)))
     elseif msg == "clear" then
-        self:ClearCache()
+        self:ClearCache();
+    elseif msg == "cluster" then
+        self:PrintCluster();
     elseif string.sub(msg, 1, #"ignore") then
         local _, name = strsplit(' ', msg)
         if name then
@@ -184,6 +190,8 @@ function SpellSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
         self.db.profile.announcedSpells[PlayerSpellIndex] = true -- TODO allow spam
     end
 end
+
+function SpellSentinel:PLAYER_ENTERING_WORLD(...) self:JoinCluster(PlayerName); end
 
 function SpellSentinel:Annoy(msg, target)
     -- if assist, send
