@@ -5,23 +5,18 @@ function SpellSentinel:OnCommReceived(prefix, message, distribution, sender)
     if sender == PlayerName then return end
 
     local command, data = strsplit("|", message)
+    if not command then return end
 
     self:PrintMessage(string.format("OnCommReceived: %s; Sender: %s; Data: %s",
                                     command, sender, data));
 
-    if not command then return end
-
-    -- if distribution == "WHISPER" then
-    -- elseif distribution == "RAID" or distribution == "PARTY" or distribution ==
-    --    "INSTANCE_CHAT" then
-    -- end
-
     if command == 'JOINED' then
-        self:JoinCluster(PlayerName);
-    elseif command == 'DETECTED' then
-        self:SendCommMessage(CommPrefix, "DETECTED", "WHISPER", sender)
+        self:JoinCluster(sender);
     elseif command == 'ANNOY' then
-        self:SendCommMessage(CommPrefix, "ANNOY", "WHISPER", sender)
+        self:RecordAnnoy(data);
+    elseif command == 'LEAD' then
+        self.cluster.lead = data;
+        self:PrintMessage("Elected to cluster lead: " .. data);
     else
         self:PrintMessage(string.format("Unrecognized comm command: (%s)",
                                         command));
@@ -33,23 +28,51 @@ function SpellSentinel:JoinCluster(playerName)
         self.cluster.members[playerName] = true;
     end
 
+    self:ClusterBroadcast("JOINED", playerName);
+end
+
+function SpellSentinel:RecordAnnoy(playerSpellIndex)
+    if self.db.profile.announcedSpells[playerSpellIndex] ~= true then
+        self.db.profile.announcedSpells[playerSpellIndex] = true
+    end
+
+    self:ClusterBroadcast("ANNOY", playerSpellIndex);
+end
+
+function SpellSentinel:ClusterBroadcast(command, data)
+    local commandString = string.format("%s|%s", command, data);
     if IsInRaid() then
-        self:SendCommMessage(CommPrefix, "JOINED|" .. playerName, "RAID")
+        self:SendCommMessage(CommPrefix, commandString, "RAID")
     elseif IsInGroup() then
-        self:SendCommMessage(CommPrefix, "JOINED|" .. playerName, "PARTY")
+        self:SendCommMessage(CommPrefix, commandString, "PARTY")
     end
 end
 
-function SpellSentinel:ConfigureCluster()
-    -- Join all
-    -- Elect
+function SpellSentinel:ClusterElect()
+    local leadName = nil;
+
     for name, _ in pairs(self.cluster.members) do
         if name == "Kahira" or name == "Kynura" or name == "Kaytla" then
-            ClusterLead = name
-            return
+            leadName = name
         end
     end
 
+    if leadName ~= nil then
+        for name, _ in pairs(self.cluster.members) do
+            if IsInRaid() and UnitIsGroupAssistant(name) then
+                leadName = name
+                break
+            elseif UnitIsGroupLeader(name) then
+                leadName = name
+                break
+            end
+        end
+    end
+
+    if leadName ~= nil then leadName = PlayerName end
+
+    ClusterLead = leadName
+    self:ClusterBroadcast("LEAD", leadName)
 end
 
 function SpellSentinel:PrintCluster()
@@ -57,6 +80,6 @@ function SpellSentinel:PrintCluster()
     self:PrintMessage("Cluster members:")
 
     for i = 1, #self.cluster.members do
-        self:PrintMessage("-" .. self.cluster.members[i]);
+        self:PrintMessage(" - " .. self.cluster.members[i]);
     end
 end

@@ -167,10 +167,11 @@ function SpellSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
         castStringMsg =
             string.format("%s %s", L["PreMsgNonChat"], castStringMsg)
         SpellSentinel:Annoy(castStringMsg, "self")
-        self.db.profile.announcedSpells[PlayerSpellIndex] = true
-    else
-        if not SpellSentinel:InGroupWith(sourceGUID) then return end
 
+        self:RecordAnnoy(PlayerSpellIndex)
+    elseif not SpellSentinel:InGroupWith(sourceGUID) then
+        return
+    else
         if self.db.profile.whisper then
             castStringMsg = string.format(castString, "You", spellLink,
                                           castLevel)
@@ -187,19 +188,25 @@ function SpellSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
             SpellSentinel:Annoy(castStringMsg, "self")
         end
 
-        self.db.profile.announcedSpells[PlayerSpellIndex] = true -- TODO allow spam
+        self:RecordAnnoy(PlayerSpellIndex)
     end
 end
 
-function SpellSentinel:PLAYER_ENTERING_WORLD(...) self:JoinCluster(PlayerName); end
+function SpellSentinel:PLAYER_ENTERING_WORLD(...)
+    self:JoinCluster(PlayerName);
+
+    self:ClusterElect();
+end
 
 function SpellSentinel:Annoy(msg, target)
-    -- if assist, send
-    -- else, wait a little
-    if target == "self" then
-        self:PrintMessage(msg)
+    if PlayerName == self.cluster.lead then
+        if target == "self" then
+            self:PrintMessage(msg)
+        else
+            SendChatMessage(msg, "WHISPER", nil, target)
+        end
     else
-        SendChatMessage(msg, "WHISPER", nil, target)
+        self:PrintMessage(msg)
     end
 end
 
