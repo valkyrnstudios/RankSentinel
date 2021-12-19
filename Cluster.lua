@@ -49,30 +49,37 @@ function SpellSentinel:ClusterBroadcast(command, data)
 end
 
 function SpellSentinel:ClusterElect()
-    local leadName = nil;
+    local leadName, name = nil, nil;
 
-    for name, _ in pairs(self.cluster.members) do
+    -- Default lead to author
+    for i = 1, #self.cluster.members do
+        name = self.cluster.members[i];
+
         if name == "Kahira" or name == "Kynura" or name == "Kaytla" then
-            leadName = name
+            leadName = name;
         end
     end
 
+    -- Set lead to lead or first assist found
     if leadName == nil then
-        for name, _ in pairs(self.cluster.members) do
-            if IsInRaid() and UnitIsGroupAssistant(name) then
-                leadName = name
+        for i = 1, #self.cluster.members do
+            name = self.cluster.members[i];
+
+            if UnitIsGroupLeader(name) then
+                leadName = name;
                 break
-            elseif UnitIsGroupLeader(name) then
-                leadName = name
+            elseif IsInRaid() and UnitIsGroupAssistant(name) then
+                leadName = name;
                 break
             end
         end
     end
 
+    -- Fall back to current or newest player as lead
     if leadName == nil then leadName = PlayerName end
 
-    ClusterLead = leadName
-    self:ClusterBroadcast("LEAD", leadName)
+    ClusterLead = leadName;
+    self:ClusterBroadcast("LEAD", leadName);
 end
 
 function SpellSentinel:PrintCluster()
