@@ -1,8 +1,10 @@
 SpellSentinel = LibStub("AceAddon-3.0"):NewAddon("SpellSentinel",
                                                  "AceConsole-3.0",
-                                                 "AceEvent-3.0")
+                                                 "AceEvent-3.0", "AceComm-3.0")
 
 SpellSentinel.Version = GetAddOnMetadata("SpellSentinel", "Version");
+
+local PlayerGUID = UnitGUID("Player");
 
 local SpellSentinel = SpellSentinel
 
@@ -41,14 +43,6 @@ local options = {
             name = L["PostMessageString"]["Title"],
             width = "full",
             order = 6
-        },
-        announcedSpells = {
-            type = 'input',
-            name = L["PostMessageString"]["Title"],
-            width = "full",
-            multiline = true,
-            order = 7,
-            hidden = true
         }
     }
 }
@@ -61,7 +55,8 @@ local defaults = {
         castString = L["CastString"]["Default"],
         targetCastString = L["TargetCastString"]["Default"],
         postMessageString = L["PostMessageString"]["Default"],
-        announcedSpells = {}
+        announcedSpells = {},
+        ignoredPlayers = {}
     }
 }
 
@@ -69,6 +64,10 @@ function SpellSentinel:OnInitialize()
     self.db = LibStub("AceDB-3.0"):New("SpellSentinelDB", defaults, true)
 
     if not self.db.profile then self.db.profile.ResetProfile() end
+
+    if not self.db.profile.ignoredPlayers then
+        self.db.profile.ignoredPlayers = {}
+    end
 
     LibStub("AceConfig-3.0"):RegisterOptionsTable("SpellSentinel", options)
 
@@ -82,7 +81,9 @@ end
 function SpellSentinel:OnEnable()
     self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED");
 
-    self:PrintMessage("Loaded")
+    self:RegisterComm(CommPrefix);
+
+    self:PrintMessage("Loaded");
 end
 
 function SpellSentinel:getProfileOption(info) return
@@ -100,13 +101,20 @@ function SpellSentinel:ChatCommand(cmd)
         self.db:ResetProfile()
         self:PrintMessage(string.format("Settings reset"))
     elseif msg == "count" then
-        local count = 0
-        for _ in pairs(self.db.profile.announcedSpells) do
-            count = count + 1
-        end
-        self:PrintMessage(string.format("Spells caught: %d", count))
+        self:PrintMessage(string.format("Spells caught: %d", self:CountCache(
+                                            self.db.profile.announcedSpells)))
+        self:PrintMessage(string.format("Ignored players: %d", self:CountCache(
+                                            self.db.profile.ignoredPlayers)))
     elseif msg == "clear" then
         self:ClearCache()
+    elseif string.sub(msg, 1, #"ignore") then
+        local _, name = strsplit(' ', msg)
+        if name then
+            self:IgnorePlayer(name);
+            self:PrintMessage("Ignored " .. name)
+        else
+            self:PrintMessage("Invalid parameter")
+        end
     else
         InterfaceOptionsFrame_Show()
         InterfaceOptionsFrame_OpenToCategory("SpellSentinel")
@@ -120,6 +128,8 @@ function SpellSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
           spellID, _ = CombatLogGetCurrentEventInfo()
 
     if subevent ~= "SPELL_CAST_SUCCESS" then return end
+
+    if self.db.profile.ignoredPlayers[sourceGUID] ~= nil then return end
 
     local curSpell = SpellSentinel.SpellIDs[spellID]
 
@@ -146,7 +156,7 @@ function SpellSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
     local spellLink = GetSpellLink(spellID)
     local castStringMsg = nil
 
-    if sourceGUID == UnitGUID("Player") then
+    if sourceGUID == PlayerGUID then
         castStringMsg = string.format(castString, "You", spellLink, castLevel)
         castStringMsg =
             string.format("%s %s", L["PreMsgNonChat"], castStringMsg)
@@ -176,6 +186,8 @@ function SpellSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
 end
 
 function SpellSentinel:Annoy(msg, target)
+    -- if assist, send
+    -- else, wait a little
     if target == "self" then
         self:PrintMessage(msg)
     else
@@ -204,10 +216,3 @@ function SpellSentinel:PrintMessage(msg)
     end
 end
 
-function SpellSentinel:ClearCache()
-    local count = 0
-    for _ in pairs(self.db.profile.announcedSpells) do count = count + 1 end
-
-    self.db.profile.announcedSpells = {}
-    self:PrintMessage(string.format("Cache reset: %d entries purged", count));
-end

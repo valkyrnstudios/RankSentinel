@@ -16,3 +16,4 @@ locale\enUS.lua
 
 SpellSentinel.lua
 DataTables.lua
+Cache.lua
