@@ -40,12 +40,8 @@ function SpellSentinel:RecordAnnoy(playerSpellIndex)
 end
 
 function SpellSentinel:ClusterBroadcast(command, data)
-    local commandString = string.format("%s|%s", command, data);
-    if IsInRaid() then
-        self:SendCommMessage(CommPrefix, commandString, "RAID")
-    elseif IsInGroup() then
-        self:SendCommMessage(CommPrefix, commandString, "PARTY")
-    end
+    self:SendCommMessage(CommPrefix, string.format("%s|%s", command, data),
+                         "PARTY")
 end
 
 function SpellSentinel:ClusterElect()
