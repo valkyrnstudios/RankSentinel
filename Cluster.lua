@@ -6,8 +6,11 @@ function SpellSentinel:OnCommReceived(prefix, message, distribution, sender)
     local command, data = strsplit("|", message)
     if not command then return end
 
-    self:PrintMessage(string.format("OnCommReceived: %s; Sender: %s; Data: %s",
-                                    command, sender, data));
+    if self.db.profile.debug then
+        self:PrintMessage(string.format(
+                              "OnCommReceived: %s; Sender: %s; Data: %s",
+                              command, sender, data));
+    end
 
     if command == 'JOINED' then
         self:JoinCluster(sender, data);
@@ -15,7 +18,10 @@ function SpellSentinel:OnCommReceived(prefix, message, distribution, sender)
         self:RecordAnnoy(data);
     elseif command == 'LEAD' then
         self.cluster.lead = data;
-        self:PrintMessage("Elected to cluster lead: " .. data);
+
+        if self.db.profile.debug then
+            self:PrintMessage("Elected to cluster lead: " .. data)
+        end
     else
         self:PrintMessage(string.format("Unrecognized comm command: (%s)",
                                         command));
@@ -46,8 +52,11 @@ end
 function SpellSentinel:ClusterElect()
     local leadName = nil;
 
-    for name, version in pairs(self.cluster.members) do
-        self:PrintMessage(string.format(" - %s (%s)", name, version));
+    if self.db.profile.debug then
+        self:PrintMessage("Electing lead from: ")
+        for name, version in pairs(self.cluster.members) do
+            self:PrintMessage(string.format(" - %s (%s)", name, version));
+        end
     end
 
     -- Default lead to devs

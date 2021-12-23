@@ -3,6 +3,7 @@
 L["SpellSentinel"] = "Spell Sentinel"
 L["Enable"] = "Enable";
 L["Whisper"] = "Whisper";
+L["Debug"] = "Debug";
 
 L["PreMsgNonChat"] =
     "\124TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7.png:0\124t";

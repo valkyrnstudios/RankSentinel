@@ -25,25 +25,29 @@ local options = {
             type = 'input',
             name = L["PreMessageString"]["Title"],
             width = "full",
-            order = 3
+            order = 3,
+            guiHidden = true
         },
         castString = {
             type = 'input',
             name = L["CastString"]["Title"],
             width = "full",
-            order = 4
+            order = 4,
+            guiHidden = true
         },
         targetCastString = {
             type = 'input',
             name = L["TargetCastString"]["Title"],
             width = "full",
-            order = 5
+            order = 5,
+            guiHidden = true
         },
         postMessageString = {
             type = 'input',
             name = L["PostMessageString"]["Title"],
             width = "full",
-            order = 6
+            order = 6,
+            guiHidden = true
         }
     }
 }
@@ -52,6 +56,7 @@ local defaults = {
     profile = {
         enable = true,
         whisper = true,
+        debug = false,
         preMessageString = L["PreMessageString"]["Default"],
         castString = L["CastString"]["Default"],
         targetCastString = L["TargetCastString"]["Default"],
@@ -65,10 +70,6 @@ function SpellSentinel:OnInitialize()
     self.db = LibStub("AceDB-3.0"):New("SpellSentinelDB", defaults, true)
 
     if not self.db.profile then self.db.profile.ResetProfile() end
-
-    if not self.db.profile.ignoredPlayers then
-        self.db.profile.ignoredPlayers = {}
-    end
 
     self:ClusterReset();
 
@@ -87,7 +88,7 @@ function SpellSentinel:OnEnable()
 
     self:RegisterComm(CommPrefix);
 
-    self:PrintMessage("Loaded");
+    self:PrintMessage("Loaded " .. self.Version);
 end
 
 function SpellSentinel:getProfileOption(info) return
@@ -111,6 +112,9 @@ function SpellSentinel:ChatCommand(cmd)
                                             self.db.profile.ignoredPlayers)))
     elseif msg == "clear" then
         self:ClearCache();
+    elseif msg == "debug" then
+        self.db.profile.debug = not self.db.profile.debug
+        self:PrintMessage("debug = " .. tostring(self.db.profile.debug));
     elseif "cluster" == string.sub(msg, 1, #"cluster") then
         local _, sub = strsplit(' ', msg)
 
