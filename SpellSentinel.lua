@@ -1,8 +1,11 @@
 SpellSentinel = LibStub("AceAddon-3.0"):NewAddon("SpellSentinel",
                                                  "AceConsole-3.0",
-                                                 "AceEvent-3.0")
+                                                 "AceEvent-3.0", "AceComm-3.0")
 
 SpellSentinel.Version = GetAddOnMetadata("SpellSentinel", "Version");
+
+PlayerGUID = UnitGUID("Player");
+PlayerName = UnitName("Player");
 
 local SpellSentinel = SpellSentinel
 
@@ -41,14 +44,6 @@ local options = {
             name = L["PostMessageString"]["Title"],
             width = "full",
             order = 6
-        },
-        announcedSpells = {
-            type = 'input',
-            name = L["PostMessageString"]["Title"],
-            width = "full",
-            multiline = true,
-            order = 7,
-            hidden = true
         }
     }
 }
@@ -61,7 +56,8 @@ local defaults = {
         castString = L["CastString"]["Default"],
         targetCastString = L["TargetCastString"]["Default"],
         postMessageString = L["PostMessageString"]["Default"],
-        announcedSpells = {}
+        announcedSpells = {},
+        ignoredPlayers = {}
     }
 }
 
@@ -69,6 +65,12 @@ function SpellSentinel:OnInitialize()
     self.db = LibStub("AceDB-3.0"):New("SpellSentinelDB", defaults, true)
 
     if not self.db.profile then self.db.profile.ResetProfile() end
+
+    if not self.db.profile.ignoredPlayers then
+        self.db.profile.ignoredPlayers = {}
+    end
+
+    self:ClusterReset();
 
     LibStub("AceConfig-3.0"):RegisterOptionsTable("SpellSentinel", options)
 
@@ -81,8 +83,11 @@ end
 
 function SpellSentinel:OnEnable()
     self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED");
+    self:RegisterEvent("PLAYER_ENTERING_WORLD");
 
-    self:PrintMessage("Loaded")
+    self:RegisterComm(CommPrefix);
+
+    self:PrintMessage("Loaded");
 end
 
 function SpellSentinel:getProfileOption(info) return
@@ -100,13 +105,22 @@ function SpellSentinel:ChatCommand(cmd)
         self.db:ResetProfile()
         self:PrintMessage(string.format("Settings reset"))
     elseif msg == "count" then
-        local count = 0
-        for _ in pairs(self.db.profile.announcedSpells) do
-            count = count + 1
-        end
-        self:PrintMessage(string.format("Spells caught: %d", count))
+        self:PrintMessage(string.format("Spells caught: %d", self:CountCache(
+                                            self.db.profile.announcedSpells)))
+        self:PrintMessage(string.format("Ignored players: %d", self:CountCache(
+                                            self.db.profile.ignoredPlayers)))
     elseif msg == "clear" then
-        self:ClearCache()
+        self:ClearCache();
+    elseif msg == "cluster" then
+        self:PrintCluster();
+    elseif "ignore" == string.sub(msg, 1, #"ignore") then
+        local _, name = strsplit(' ', msg)
+        if name then
+            self:IgnorePlayer(name);
+            self:PrintMessage("Ignored " .. name)
+        else
+            self:PrintMessage("Invalid parameter")
+        end
     else
         InterfaceOptionsFrame_Show()
         InterfaceOptionsFrame_OpenToCategory("SpellSentinel")
@@ -120,6 +134,8 @@ function SpellSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
           spellID, _ = CombatLogGetCurrentEventInfo()
 
     if subevent ~= "SPELL_CAST_SUCCESS" then return end
+
+    if self.db.profile.ignoredPlayers[sourceGUID] ~= nil then return end
 
     local curSpell = SpellSentinel.SpellIDs[spellID]
 
@@ -146,15 +162,16 @@ function SpellSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
     local spellLink = GetSpellLink(spellID)
     local castStringMsg = nil
 
-    if sourceGUID == UnitGUID("Player") then
+    if sourceGUID == PlayerGUID then
         castStringMsg = string.format(castString, "You", spellLink, castLevel)
         castStringMsg =
             string.format("%s %s", L["PreMsgNonChat"], castStringMsg)
         SpellSentinel:Annoy(castStringMsg, "self")
-        self.db.profile.announcedSpells[PlayerSpellIndex] = true
-    else
-        if not SpellSentinel:InGroupWith(sourceGUID) then return end
 
+        self:RecordAnnoy(PlayerSpellIndex)
+    elseif not SpellSentinel:InGroupWith(sourceGUID) then
+        return
+    else
         if self.db.profile.whisper then
             castStringMsg = string.format(castString, "You", spellLink,
                                           castLevel)
@@ -171,15 +188,25 @@ function SpellSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
             SpellSentinel:Annoy(castStringMsg, "self")
         end
 
-        self.db.profile.announcedSpells[PlayerSpellIndex] = true -- TODO allow spam
+        self:RecordAnnoy(PlayerSpellIndex)
     end
 end
 
+function SpellSentinel:PLAYER_ENTERING_WORLD(...)
+    self:JoinCluster(PlayerName);
+
+    self:ClusterElect();
+end
+
 function SpellSentinel:Annoy(msg, target)
-    if target == "self" then
-        self:PrintMessage(msg)
+    if PlayerName == self.cluster.lead then
+        if target == "self" then
+            self:PrintMessage(msg)
+        else
+            SendChatMessage(msg, "WHISPER", nil, target)
+        end
     else
-        SendChatMessage(msg, "WHISPER", nil, target)
+        self:PrintMessage(msg)
     end
 end
 
@@ -192,8 +219,6 @@ function SpellSentinel:InGroupWith(guid)
         for i = 1, GetNumGroupMembers() do
             if guid == UnitGUID("Party" .. i) then return true end
         end
-    else
-        self:PrintMessage("InGroupWith logic failure")
     end
 end
 
@@ -204,10 +229,3 @@ function SpellSentinel:PrintMessage(msg)
     end
 end
 
-function SpellSentinel:ClearCache()
-    local count = 0
-    for _ in pairs(self.db.profile.announcedSpells) do count = count + 1 end
-
-    self.db.profile.announcedSpells = {}
-    self:PrintMessage(string.format("Cache reset: %d entries purged", count));
-end
