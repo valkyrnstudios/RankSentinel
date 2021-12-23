@@ -4,7 +4,7 @@
 ## Author: SabreValkyrn
 ## Notes: Detect players using lower ranked abilities and notifies them.
 ## SavedVariables: SpellSentinelDB
-## X-Credits: Gogo1951, Tex
+## X-Credits: Gogo1951, Tex, Fathomcodes, Aero
 ## X-Embeds: Ace3
 
 libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
