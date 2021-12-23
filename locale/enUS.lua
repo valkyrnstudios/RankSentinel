@@ -7,7 +7,7 @@ L["Debug"] = "Debug";
 
 L["PreMsgNonChat"] =
     "\124TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7.png:0\124t";
-L["PreMsgChat"] = "{rt7}";
+L["PreMsgChat"] = "{rt7} RankSentinel";
 
 L["PreMessageString"] = {
     ["Title"] = "Pre message",
