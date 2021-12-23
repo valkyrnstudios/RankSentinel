@@ -2,10 +2,9 @@
 ## Title: SpellSentinel
 ## Version: 1.0.0
 ## Author: SabreValkyrn
-## Notes: Calls out people who use low rank spells.
+## Notes: Detect players using lower ranked abilities and notifies them.
 ## SavedVariables: SpellSentinelDB
-## X-Credits: <Epoch of Thought> - Whitemane
-## X-Curse-Project-ID: 557732
+## X-Credits: Gogo1951, Tex, Fathomcodes, Aero
 ## X-Embeds: Ace3
 
 libs\CallbackHandler-1.0\CallbackHandler-1.0.xml

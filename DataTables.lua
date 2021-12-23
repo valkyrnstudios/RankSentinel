@@ -1,4 +1,4 @@
--- All SpellIDs table credit goes to Epoch of Thought - Whitemane from the briefly available SpellSnob addon.
+-- All SpellIDs table credit goes to Gogo, Fathomcodes, Aero, and Tex. https://github.com/Gogo1951/GogoWatch/issues/4
 
 SpellSentinel.SpellIDs =
 {
