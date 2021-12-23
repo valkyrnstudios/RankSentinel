@@ -70,7 +70,7 @@ function SpellSentinel:OnInitialize()
         self.db.profile.ignoredPlayers = {}
     end
 
-    self.cluster = {members = {PlayerName}, lead = PlayerName}
+    self:ClusterReset();
 
     LibStub("AceConfig-3.0"):RegisterOptionsTable("SpellSentinel", options)
 
@@ -113,7 +113,7 @@ function SpellSentinel:ChatCommand(cmd)
         self:ClearCache();
     elseif msg == "cluster" then
         self:PrintCluster();
-    elseif string.sub(msg, 1, #"ignore") then
+    elseif "ignore" == string.sub(msg, 1, #"ignore") then
         local _, name = strsplit(' ', msg)
         if name then
             self:IgnorePlayer(name);
@@ -219,8 +219,6 @@ function SpellSentinel:InGroupWith(guid)
         for i = 1, GetNumGroupMembers() do
             if guid == UnitGUID("Party" .. i) then return true end
         end
-    else
-        self:PrintMessage("InGroupWith logic failure")
     end
 end
 
