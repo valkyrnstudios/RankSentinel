@@ -139,23 +139,14 @@ function SpellSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
 
     local curSpell = SpellSentinel.SpellIDs[spellID]
 
-    if curSpell == nil then return end
-
-    if curSpell.MaxLevel == 0 then return end
+    if curSpell == nil or curSpell.MaxLevel == 0 then return end
 
     local PlayerSpellIndex = string.format("%s-%s", sourceGUID, spellID)
 
     if self.db.profile.announcedSpells[PlayerSpellIndex] ~= nil then return end
 
-    local castLevel, castString = nil, nil
-
-    if curSpell.LevelBase == "Self" then
-        castLevel = UnitLevel(sourceName)
-        castString = self.db.profile.castString
-    elseif curSpell.LevelBase == "Target" then -- Why does this exist? -SV
-        castLevel = UnitLevel(destName)
-        castString = self.db.profile.targetCastString
-    end
+    local castLevel = UnitLevel(sourceName)
+    local castString = self.db.profile.castString
 
     if curSpell.MaxLevel >= castLevel then return end
 
