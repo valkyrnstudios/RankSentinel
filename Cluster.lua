@@ -1,8 +1,7 @@
 CommPrefix = "spellsentinel"
 
 function SpellSentinel:OnCommReceived(prefix, message, distribution, sender)
-    if prefix ~= CommPrefix then return end
-    if sender == PlayerName then return end
+    if prefix ~= CommPrefix or sender == PlayerName then return end
 
     local command, data = strsplit("|", message)
     if not command then return end
@@ -64,7 +63,7 @@ function SpellSentinel:ClusterElect()
             if UnitIsGroupLeader(name) then
                 leadName = name;
                 break
-            elseif IsInRaid() and UnitIsGroupAssistant(name) then
+            elseif IsInRaid() and UnitIsGroupAssistant(UnitGUID(name)) then
                 leadName = name;
                 break
             end
@@ -87,4 +86,8 @@ function SpellSentinel:PrintCluster()
     for i = 1, #self.cluster.members do
         self:PrintMessage(" - " .. self.cluster.members[i]);
     end
+end
+
+function SpellSentinel:ClusterReset()
+    self.cluster = {members = {PlayerName}, lead = PlayerName}
 end
