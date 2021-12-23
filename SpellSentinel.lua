@@ -128,7 +128,9 @@ function SpellSentinel:ChatCommand(cmd)
 end
 
 function SpellSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
-    if not self.db.profile.enable then return end
+    if not self.db.profile.enable or UnitInBattleground("player") ~= nil then
+        return
+    end
 
     local _, subevent, _, sourceGUID, sourceName, _, _, _, destName, _, _,
           spellID, _ = CombatLogGetCurrentEventInfo()
