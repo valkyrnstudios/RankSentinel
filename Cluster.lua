@@ -10,7 +10,7 @@ function SpellSentinel:OnCommReceived(prefix, message, distribution, sender)
                                     command, sender, data));
 
     if command == 'JOINED' then
-        self:JoinCluster(sender);
+        self:JoinCluster(sender, data);
     elseif command == 'ANNOY' then
         self:RecordAnnoy(data);
     elseif command == 'LEAD' then
@@ -22,12 +22,12 @@ function SpellSentinel:OnCommReceived(prefix, message, distribution, sender)
     end
 end
 
-function SpellSentinel:JoinCluster(playerName)
-    if self.cluster.members[playerName] ~= true then
-        self.cluster.members[playerName] = true;
+function SpellSentinel:JoinCluster(playerName, version)
+    if self.cluster.members[playerName] == nil then
+        self.cluster.members[playerName] = version;
     end
 
-    self:ClusterBroadcast("JOINED", playerName);
+    self:ClusterBroadcast("JOINED", string.format("%s,%s", playerName, version));
 end
 
 function SpellSentinel:RecordAnnoy(playerSpellIndex)
@@ -44,22 +44,25 @@ function SpellSentinel:ClusterBroadcast(command, data)
 end
 
 function SpellSentinel:ClusterElect()
-    local leadName, name = nil, nil;
+    local leadName = nil;
 
-    -- Default lead to author
-    for i = 1, #self.cluster.members do
-        name = self.cluster.members[i];
+    for name, version in pairs(self.cluster.members) do
+        self:PrintMessage(string.format(" - %s (%s)", name, version));
+    end
 
+    -- Default lead to devs
+    for name, _ in pairs(self.cluster.members) do
         if name == "Kahira" or name == "Kynura" or name == "Kaytla" then
             leadName = name;
+            break
         end
     end
 
+    -- TODO Set lead to lead to latest version
+
     -- Set lead to lead or first assist found
     if leadName == nil then
-        for i = 1, #self.cluster.members do
-            name = self.cluster.members[i];
-
+        for name, _ in pairs(self.cluster.members) do
             if UnitIsGroupLeader(name) then
                 leadName = name;
                 break
@@ -71,7 +74,7 @@ function SpellSentinel:ClusterElect()
     end
 
     -- Handle if elected lead is not in members, race/stale condition
-    if leadName == nil or self.cluster.members[leadName] ~= true then
+    if leadName == nil or self.cluster.members[leadName] == nil then
         -- Fall back to current or newest player as lead
         leadName = PlayerName
     end
@@ -83,11 +86,11 @@ function SpellSentinel:PrintCluster()
     self:PrintMessage("Cluster Lead: " .. self.cluster.lead);
     self:PrintMessage("Cluster members:")
 
-    for i = 1, #self.cluster.members do
-        self:PrintMessage(" - " .. self.cluster.members[i]);
+    for name, version in pairs(self.cluster.members) do
+        self:PrintMessage(string.format(" - %s (%s)", name, version));
     end
 end
 
 function SpellSentinel:ClusterReset()
-    self.cluster = {members = {PlayerName}, lead = PlayerName}
+    self.cluster = {members = {[PlayerName] = self.Version}, lead = PlayerName}
 end

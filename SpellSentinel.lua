@@ -111,8 +111,16 @@ function SpellSentinel:ChatCommand(cmd)
                                             self.db.profile.ignoredPlayers)))
     elseif msg == "clear" then
         self:ClearCache();
-    elseif msg == "cluster" then
-        self:PrintCluster();
+    elseif "cluster" == string.sub(msg, 1, #"cluster") then
+        local _, sub = strsplit(' ', msg)
+
+        if sub == "reset" then
+            self:ClusterReset();
+        elseif sub == "elect" then
+            self:ClusterElect();
+        else
+            self:PrintCluster();
+        end
     elseif "ignore" == string.sub(msg, 1, #"ignore") then
         local _, name = strsplit(' ', msg)
         if name then
@@ -186,7 +194,7 @@ function SpellSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
 end
 
 function SpellSentinel:PLAYER_ENTERING_WORLD(...)
-    self:JoinCluster(PlayerName);
+    self:JoinCluster(PlayerName, self.Version);
 
     self:ClusterElect();
 end
