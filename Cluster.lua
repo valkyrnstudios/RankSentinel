@@ -40,7 +40,7 @@ end
 
 function SpellSentinel:ClusterBroadcast(command, data)
     self:SendCommMessage(CommPrefix, string.format("%s|%s", command, data),
-                         "PARTY")
+                         "RAID")
 end
 
 function SpellSentinel:ClusterElect()
