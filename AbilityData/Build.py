@@ -12,6 +12,7 @@ if not os.path.isdir('./AbilityData'):
 
 header = []
 ability_list = []
+reverse_lookup = {}
 
 with open('./AbilityData/bcc.csv', 'r', newline='') as csvfile:
   csvreader = csv.DictReader(csvfile)
@@ -27,15 +28,24 @@ with open('./AbilityData/bcc.csv', 'r', newline='') as csvfile:
     rank_qualifier = ' (Rank {0})'.format(parsed_rank) if ability['Rank'] else ''
 
     if ability['Include'] != 'No':
+      ability_group = '{0} - {1}'.format(ability['Class'], ability['Ability'])
       ability_list.append(
-        "  [{0}] = {{ Name = \"{1}{2}\", Rank = {3}, Level = {4}, AbilityGroup = \"{5} - {6}\" }},\n"
-          .format(ability['Ability ID'], ability['Ability'], rank_qualifier, parsed_rank, ability['Level'], ability['Class'], ability['Ability'])
+        "  [{0}] = {{ Name = \"{1}{2}\", Rank = {3}, Level = {4}, AbilityGroup = \"{5}\" }},\n"
+          .format(ability['Ability ID'], ability['Ability'], rank_qualifier, parsed_rank, ability['Level'], ability_group)
         )
+
+      if not ability_group in reverse_lookup:
+        reverse_lookup[ability_group] = {}
+
+      reverse_lookup[ability_group][ability['Ability ID']] = parsed_rank
+
     else:
       print('Excluding {0}{1} - {2}'.format(ability['Ability'], rank_qualifier, ability['Note']))
       excluded_count += 1
 
   print('{0} Loaded / {1} Excluded abilities'.format(len(ability_list), excluded_count))
+
+
 
 with open('./AbilityData.lua', 'w') as abilityData:
   abilityData.write('-- Built on {0}\n\n'.format(date.today()))
@@ -45,6 +55,10 @@ with open('./AbilityData.lua', 'w') as abilityData:
   for ability in ability_list:
     abilityData.write(ability);
 
-  abilityData.write('}\n')
+  abilityData.write('}\n\n')
 
-#TODO add rank field to spell, create abilityGroup reverse lookup table with highest rank int
+  abilityData.write('SpellSentinel.BCC.AbilityGroups = {\n')
+  for key, abilityGroup in reverse_lookup.items():
+    abilityData.write('  [\"{0}\"] = {{ {1} }},\n'.format(key, ', '.join(abilityGroup) ));
+
+  abilityData.write('}\n')
