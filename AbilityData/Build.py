@@ -25,13 +25,11 @@ with open('./AbilityData/bcc.csv', 'r', newline='') as csvfile:
   for ability in csvreader:
     parsed_rank = ability['Rank'] if ability['Rank'] else 1
 
-    rank_qualifier = ' (Rank {0})'.format(parsed_rank) if ability['Rank'] else ''
-
     if ability['Include'] != 'No':
       ability_group = '{0} - {1}'.format(ability['Class'], ability['Ability'])
       ability_list.append(
-        "  [{0}] = {{ Name = \"{1}{2}\", Rank = {3}, Level = {4}, AbilityGroup = \"{5}\" }},\n"
-          .format(ability['Ability ID'], ability['Ability'], rank_qualifier, parsed_rank, ability['Level'], ability_group)
+        "  [{0}] = {{ Name = \"{1}\", Rank = {2}, Level = {3}, AbilityGroup = \"{4}\" }},\n"
+          .format(ability['Ability ID'], ability['Ability'], parsed_rank, ability['Level'], ability_group)
         )
 
       if not ability_group in reverse_lookup:
@@ -40,14 +38,14 @@ with open('./AbilityData/bcc.csv', 'r', newline='') as csvfile:
       reverse_lookup[ability_group][ability['Ability ID']] = parsed_rank
 
     else:
-      print('Excluding {0}{1} - {2}'.format(ability['Ability'], rank_qualifier, ability['Note']))
+      print('Excluding {0}{1} - {2}'.format(ability['Ability'], parsed_rank, ability['Note']))
       excluded_count += 1
 
   print('{0} Loaded / {1} Excluded abilities'.format(len(ability_list), excluded_count))
 
 
 
-with open('./AbilityData.lua', 'w') as abilityData:
+with open('./AbilityData.lua', 'w', newline='') as abilityData:
   abilityData.write('-- Built on {0}\n\n'.format(date.today()))
   abilityData.write('SpellSentinel.BCC = { }\n\n')
   abilityData.write('SpellSentinel.BCC.AbilityData = {\n')
