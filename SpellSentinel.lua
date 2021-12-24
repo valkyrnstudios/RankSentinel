@@ -62,7 +62,8 @@ local defaults = {
         targetCastString = L["TargetCastString"]["Default"],
         postMessageString = L["PostMessageString"]["Default"],
         announcedSpells = {},
-        ignoredPlayers = {}
+        ignoredPlayers = {},
+        isMaxRank = {}
     }
 }
 
@@ -70,6 +71,8 @@ function SpellSentinel:OnInitialize()
     self.db = LibStub("AceDB-3.0"):New("SpellSentinelDB", defaults, true)
 
     if not self.db.profile then self.db.profile.ResetProfile() end
+
+    self:UpgradeProfile();
 
     self:ClusterReset();
 
@@ -80,6 +83,10 @@ function SpellSentinel:OnInitialize()
 
     self.optionsFrame = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(
                             "SpellSentinel", "SpellSentinel")
+end
+
+function SpellSentinel:UpgradeProfile()
+    if not self.db.profile.isMaxRank then self.db.profile.isMaxRank = {} end
 end
 
 function SpellSentinel:OnEnable()
@@ -147,30 +154,28 @@ function SpellSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
     local _, subevent, _, sourceGUID, sourceName, _, _, _, destName, _, _,
           spellID, _ = CombatLogGetCurrentEventInfo()
 
-    if subevent ~= "SPELL_CAST_SUCCESS" then return end
-
-    if self.db.profile.ignoredPlayers[sourceGUID] ~= nil then return end
-
-    local curSpell = SpellSentinel.SpellIDs[spellID]
-
-    if curSpell == nil or curSpell.MaxLevel == 0 then return end
+    if subevent ~= "SPELL_CAST_SUCCESS" or
+        self.db.profile.ignoredPlayers[sourceGUID] ~= nil or
+        SpellSentinel.BCC.AbilityData[spellID] == nil then return end
 
     local PlayerSpellIndex = string.format("%s-%s", sourceGUID, spellID)
 
     if self.db.profile.announcedSpells[PlayerSpellIndex] ~= nil then return end
 
     local castLevel = UnitLevel(sourceName)
-    local castString = self.db.profile.castString
 
-    if curSpell.MaxLevel >= castLevel then return end
+    if self:IsMaxRank(spellID, castLevel) then return end
 
     local spellLink = GetSpellLink(spellID)
     local castStringMsg = nil
+
+    local castString = self.db.profile.castString
 
     if sourceGUID == PlayerGUID then
         castStringMsg = string.format(castString, "You", spellLink, castLevel)
         castStringMsg =
             string.format("%s %s", L["PreMsgNonChat"], castStringMsg)
+
         SpellSentinel:Annoy(castStringMsg, "self")
 
         self:RecordAnnoy(PlayerSpellIndex)
@@ -184,12 +189,14 @@ function SpellSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
                                           self.db.profile.preMessageString,
                                           castStringMsg,
                                           self.db.profile.postMessageString)
+
             SpellSentinel:Annoy(castStringMsg, sourceName)
         else
             castStringMsg = string.format(castString, sourceName, spellLink,
                                           castLevel)
             castStringMsg = string.format("%s %s", L["PreMsgNonChat"],
                                           castStringMsg)
+
             SpellSentinel:Annoy(castStringMsg, "self")
         end
 
@@ -225,6 +232,51 @@ function SpellSentinel:InGroupWith(guid)
             if guid == UnitGUID("Party" .. i) then return true end
         end
     end
+end
+
+function SpellSentinel:IsMaxRank(spellID, casterLevel)
+    local lookup_key = string.format('%s-%s', spellID, casterLevel);
+
+    if self.db.profile.isMaxRank[lookup_key] ~= nil then
+        if self.db.profile.debug then
+            self:PrintMessage("Using cached result for " .. lookup_key)
+        end
+
+        return self.db.profile.isMaxRank[lookup_key];
+    end
+
+    local abilityData = SpellSentinel.BCC.AbilityData[spellID];
+
+    local abilityGroupData =
+        SpellSentinel.BCC.AbilityGroups[abilityData["AbilityGroup"]]
+
+    -- Vast majority of checks will be on lvl 70, check if highest available rank first
+    if spellID == abilityGroupData[#abilityGroupData] then
+        if self.db.profile.debug then
+            self:PrintMessage("Caching max rank " .. lookup_key);
+        end
+
+        self.db.profile.isMaxRank[lookup_key] = true;
+
+        return true
+    end
+
+    -- Above block guarantees there's another rank
+    local nextRankID = abilityGroupData[abilityData["Rank"] + 1];
+
+    if self.db.profile.debug then
+        self:PrintMessage(string.format(
+                              "Casted %d, next rank (%d) available at %d",
+                              spellID, nextRankID,
+                              SpellSentinel.BCC.AbilityData[nextRankID]['Level']));
+    end
+
+    local isMax = SpellSentinel.BCC.AbilityData[nextRankID]['Level'] >
+                      casterLevel;
+
+    self.db.profile.isMaxRank[lookup_key] = isMax;
+
+    return isMax
 end
 
 function SpellSentinel:PrintMessage(msg)
