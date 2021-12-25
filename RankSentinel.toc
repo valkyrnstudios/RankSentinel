@@ -15,7 +15,6 @@ libs\AceLocale-3.0\AceLocale-3.0.xml
 libs\AceEvent-3.0\AceEvent-3.0.xml
 libs\AceDB-3.0\AceDB-3.0.xml
 libs\AceComm-3.0\AceComm-3.0.xml
-libs\AceConsole-3.0\AceConsole-3.0.xml
 
 locale\enUS.lua
 

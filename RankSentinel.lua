@@ -1,6 +1,5 @@
-RankSentinel = LibStub("AceAddon-3.0"):NewAddon("RankSentinel",
-                                                "AceConsole-3.0",
-                                                "AceEvent-3.0", "AceComm-3.0")
+RankSentinel = LibStub("AceAddon-3.0"):NewAddon("RankSentinel", "AceEvent-3.0",
+                                                "AceComm-3.0")
 
 RankSentinel.Version = GetAddOnMetadata("RankSentinel", "Version");
 
@@ -35,8 +34,12 @@ function RankSentinel:OnInitialize()
 
     self:ClusterReset();
 
-    self:RegisterChatCommand("ranksentinel", "ChatCommand")
-    self:RegisterChatCommand("sentinel", "ChatCommand")
+    SLASH_RankSentinel1 = "/ranksentinel";
+    SLASH_RankSentinel2 = "/sentinel";
+
+    SlashCmdList["RankSentinel"] = function(message, _)
+        RankSentinel:ChatCommand(message)
+    end;
 end
 
 function RankSentinel:UpgradeProfile()
@@ -75,6 +78,12 @@ function RankSentinel:ChatCommand(cmd)
     elseif msg == "debug" then
         self.db.profile.debug = not self.db.profile.debug
         self:PrintMessage("debug = " .. tostring(self.db.profile.debug));
+    elseif msg == "whisper" then
+        self.db.profile.whisper = not self.db.profile.whisper
+        self:PrintMessage("whisper = " .. tostring(self.db.profile.whisper));
+    elseif msg == "enable" then
+        self.db.profile.enable = not self.db.profile.enable
+        self:PrintMessage("enable = " .. tostring(self.db.profile.enable));
     elseif "cluster" == string.sub(msg, 1, #"cluster") then
         local _, sub = strsplit(' ', msg)
 
@@ -101,6 +110,8 @@ end
 function RankSentinel:PrintHelp()
     self:PrintMessage(string.format("Command-line options (%s)", self.Version))
 
+    self:PrintMessage('- enable: toggles combat log parsing')
+    self:PrintMessage('- whisper: toggles whispers to players')
     self:PrintMessage('- reset: resets profile to defaults')
     self:PrintMessage('- count: prints current statistics')
     self:PrintMessage('- debug: toggles debug output for testing')
