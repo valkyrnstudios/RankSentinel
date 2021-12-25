@@ -1,7 +1,7 @@
 CommPrefix = "ranksentinel"
 
 function RankSentinel:OnCommReceived(prefix, message, distribution, sender)
-    if prefix ~= CommPrefix or sender == PlayerName then return end
+    if prefix ~= CommPrefix or sender == self.playerName then return end
 
     local command, data = strsplit("|", message)
     if not command then return end
@@ -28,12 +28,12 @@ function RankSentinel:OnCommReceived(prefix, message, distribution, sender)
     end
 end
 
-function RankSentinel:JoinCluster(playerName, version)
-    if self.cluster.members[playerName] == nil then
-        self.cluster.members[playerName] = version;
+function RankSentinel:JoinCluster(name, version)
+    if self.cluster.members[name] == nil then
+        self.cluster.members[name] = version;
     end
 
-    self:ClusterBroadcast("JOINED", string.format("%s,%s", playerName, version));
+    self:ClusterBroadcast("JOINED", string.format("%s,%s", name, version));
 end
 
 function RankSentinel:RecordAnnoy(playerSpellIndex)
@@ -85,7 +85,7 @@ function RankSentinel:ClusterElect()
     -- Handle if elected lead is not in members, race/stale condition
     if leadName == nil or self.cluster.members[leadName] == nil then
         -- Fall back to current or newest player as lead
-        leadName = PlayerName
+        leadName = self.playerName
     end
 
     self:ClusterBroadcast("LEAD", leadName);
@@ -101,5 +101,8 @@ function RankSentinel:PrintCluster()
 end
 
 function RankSentinel:ClusterReset()
-    self.cluster = {members = {[PlayerName] = self.Version}, lead = PlayerName}
+    self.cluster = {
+        members = {[self.playerName] = self.Version},
+        lead = self.playerName
+    }
 end

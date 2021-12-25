@@ -3,9 +3,6 @@ RankSentinel = LibStub("AceAddon-3.0"):NewAddon("RankSentinel", "AceEvent-3.0",
 
 RankSentinel.Version = GetAddOnMetadata("RankSentinel", "Version");
 
-PlayerGUID = UnitGUID("Player");
-PlayerName = UnitName("Player");
-
 local RankSentinel = RankSentinel
 
 local L = LibStub("AceLocale-3.0"):GetLocale("RankSentinel")
@@ -29,6 +26,9 @@ function RankSentinel:OnInitialize()
     self.db = LibStub("AceDB-3.0"):New("RankSentinelDB", defaults, true)
 
     if not self.db.profile then self.db.profile.ResetProfile() end
+
+    self.playerGUID = UnitGUID("Player");
+    self.playerName = UnitName("Player");
 
     self:UpgradeProfile();
 
@@ -141,7 +141,7 @@ function RankSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
 
     local castString = self.db.profile.castString
 
-    if sourceGUID == PlayerGUID then
+    if sourceGUID == self.playerGUID then
         castStringMsg = string.format(castString, "You", spellLink, castLevel)
         castStringMsg =
             string.format("%s %s", L["PreMsgNonChat"], castStringMsg)
@@ -175,13 +175,13 @@ function RankSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
 end
 
 function RankSentinel:PLAYER_ENTERING_WORLD(...)
-    self:JoinCluster(PlayerName, self.Version);
+    self:JoinCluster(self.playerName, self.Version);
 
     self:ClusterElect();
 end
 
 function RankSentinel:Annoy(msg, target)
-    if PlayerName == self.cluster.lead then
+    if self.playerName == self.cluster.lead then
         if target == "self" then
             self:PrintMessage(msg)
         else

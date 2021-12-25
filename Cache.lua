@@ -1,6 +1,6 @@
 function RankSentinel:IgnorePlayer(name)
-    local playerGUID = UnitGUID(name)
-    self.db.profile.ignoredPlayers[playerGUID] = true;
+    local guid = UnitGUID(name)
+    self.db.profile.ignoredPlayers[guid] = true;
 end
 
 function RankSentinel:CountCache(cache)
