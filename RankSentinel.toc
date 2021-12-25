@@ -1,6 +1,6 @@
 ## Interface: 20502
 ## Title: RankSentinel
-## Version: v9.9.9
+## Version: @project-version@
 ## Author: SabreValkyrn
 ## Notes: Detect players using lower ranked abilities and notifies them.
 ## SavedVariables: RankSentinelDB
