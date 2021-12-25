@@ -14,3 +14,17 @@ L["CastString"] = "%s just used a low rank of %s.";
 
 L["PostMessageString"] =
     "You might be missing training or using an outdated ability shortcut.";
+
+L["Help"] = {
+    ["title"] = 'Command-line options',
+    ["enable"] = 'toggles combat log parsing',
+    ["whisper"] = 'toggles whispers to players',
+    ["reset"] = 'resets profile to defaults',
+    ["count"] = 'prints current statistics',
+    ["debug"] = 'toggles debug output for testing',
+    ["clear"] = 'clears local ability caches',
+    ["cluster"] = 'prints cluster members',
+    ["cluster reset"] = 'resets cluster to defaults',
+    ["cluster elect"] = 'triggers lead election logic',
+    ["ignore playerName"] = 'ignores all abilities cast by playerName'
+}

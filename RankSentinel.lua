@@ -103,19 +103,28 @@ function RankSentinel:ChatCommand(cmd)
 end
 
 function RankSentinel:PrintHelp()
-    self:PrintMessage(string.format("Command-line options (%s)", self.Version))
+    self:PrintMessage(string.format("%s (%s)", L['Help']['title'], self.Version))
 
-    self:PrintMessage('- enable: toggles combat log parsing')
-    self:PrintMessage('- whisper: toggles whispers to players')
-    self:PrintMessage('- reset: resets profile to defaults')
-    self:PrintMessage('- count: prints current statistics')
-    self:PrintMessage('- debug: toggles debug output for testing')
-    self:PrintMessage('- clear: clears local ability caches')
-    self:PrintMessage('- cluster: prints cluster members')
-    self:PrintMessage('- cluster reset: resets cluster to defaults')
-    self:PrintMessage('- cluster elect: triggers lead election logic')
-    self:PrintMessage(
-        '- ignore playerName: ignores all abilities cast by playerName')
+    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'enable',
+                                    L['Help']['enable']));
+    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'whisper',
+                                    L['Help']['whisper']));
+    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'reset',
+                                    L['Help']['reset']));
+    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'count',
+                                    L['Help']['count']));
+    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'debug',
+                                    L['Help']['debug']));
+    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'clear',
+                                    L['Help']['clear']));
+    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'cluster',
+                                    L['Help']['cluster']));
+    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'cluster reset',
+                                    L['Help']['cluster reset']));
+    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'cluster elect',
+                                    L['Help']['cluster elect']));
+    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'ignore playerName',
+                                    L['Help']['ignore playerName']));
 end
 
 function RankSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
