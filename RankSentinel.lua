@@ -1,6 +1,5 @@
-RankSentinel = LibStub("AceAddon-3.0"):NewAddon("RankSentinel",
-                                                "AceConsole-3.0",
-                                                "AceEvent-3.0", "AceComm-3.0")
+RankSentinel = LibStub("AceAddon-3.0"):NewAddon("RankSentinel", "AceEvent-3.0",
+                                                "AceComm-3.0")
 
 RankSentinel.Version = GetAddOnMetadata("RankSentinel", "Version");
 
@@ -11,56 +10,15 @@ local RankSentinel = RankSentinel
 
 local L = LibStub("AceLocale-3.0"):GetLocale("RankSentinel")
 
-local options = {
-    name = L["RankSentinel"],
-    handler = RankSentinel,
-    type = "group",
-    childGroups = "tree",
-    get = "getProfileOption",
-    set = "setProfileOption",
-    args = {
-        enable = {type = "toggle", name = L["Enable"], order = 1},
-        whisper = {type = "toggle", name = L["Whisper"], order = 2},
-        preMessageString = {
-            type = 'input',
-            name = L["PreMessageString"]["Title"],
-            width = "full",
-            order = 3,
-            guiHidden = true
-        },
-        castString = {
-            type = 'input',
-            name = L["CastString"]["Title"],
-            width = "full",
-            order = 4,
-            guiHidden = true
-        },
-        targetCastString = {
-            type = 'input',
-            name = L["TargetCastString"]["Title"],
-            width = "full",
-            order = 5,
-            guiHidden = true
-        },
-        postMessageString = {
-            type = 'input',
-            name = L["PostMessageString"]["Title"],
-            width = "full",
-            order = 6,
-            guiHidden = true
-        }
-    }
-}
-
 local defaults = {
     profile = {
         enable = true,
         whisper = true,
         debug = false,
-        preMessageString = L["PreMessageString"]["Default"],
-        castString = L["CastString"]["Default"],
-        targetCastString = L["TargetCastString"]["Default"],
-        postMessageString = L["PostMessageString"]["Default"],
+        preMessageString = L["PreMessageString"],
+        castString = L["CastString"],
+        targetCastString = L["TargetCastString"],
+        postMessageString = L["PostMessageString"],
         announcedSpells = {},
         ignoredPlayers = {},
         isMaxRank = {}
@@ -76,13 +34,12 @@ function RankSentinel:OnInitialize()
 
     self:ClusterReset();
 
-    LibStub("AceConfig-3.0"):RegisterOptionsTable("RankSentinel", options)
+    SLASH_RankSentinel1 = "/ranksentinel";
+    SLASH_RankSentinel2 = "/sentinel";
 
-    self:RegisterChatCommand("ranksentinel", "ChatCommand")
-    self:RegisterChatCommand("sentinel", "ChatCommand")
-
-    self.optionsFrame = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(
-                            "RankSentinel", "RankSentinel")
+    SlashCmdList["RankSentinel"] = function(message, _)
+        RankSentinel:ChatCommand(message)
+    end;
 end
 
 function RankSentinel:UpgradeProfile()
@@ -96,13 +53,6 @@ function RankSentinel:OnEnable()
     self:RegisterComm(CommPrefix);
 
     self:PrintMessage("Loaded " .. self.Version);
-end
-
-function RankSentinel:getProfileOption(info) return self.db.profile[info[#info]] end
-
-function RankSentinel:setProfileOption(info, value)
-    local key = info[#info]
-    self.db.profile[key] = value
 end
 
 function RankSentinel:ChatCommand(cmd)
@@ -121,6 +71,12 @@ function RankSentinel:ChatCommand(cmd)
     elseif msg == "debug" then
         self.db.profile.debug = not self.db.profile.debug
         self:PrintMessage("debug = " .. tostring(self.db.profile.debug));
+    elseif msg == "whisper" then
+        self.db.profile.whisper = not self.db.profile.whisper
+        self:PrintMessage("whisper = " .. tostring(self.db.profile.whisper));
+    elseif msg == "enable" then
+        self.db.profile.enable = not self.db.profile.enable
+        self:PrintMessage("enable = " .. tostring(self.db.profile.enable));
     elseif "cluster" == string.sub(msg, 1, #"cluster") then
         local _, sub = strsplit(' ', msg)
 
@@ -140,9 +96,24 @@ function RankSentinel:ChatCommand(cmd)
             self:PrintMessage("Invalid parameter")
         end
     else
-        InterfaceOptionsFrame_Show()
-        InterfaceOptionsFrame_OpenToCategory("RankSentinel")
+        RankSentinel:PrintHelp()
     end
+end
+
+function RankSentinel:PrintHelp()
+    self:PrintMessage(string.format("Command-line options (%s)", self.Version))
+
+    self:PrintMessage('- enable: toggles combat log parsing')
+    self:PrintMessage('- whisper: toggles whispers to players')
+    self:PrintMessage('- reset: resets profile to defaults')
+    self:PrintMessage('- count: prints current statistics')
+    self:PrintMessage('- debug: toggles debug output for testing')
+    self:PrintMessage('- clear: clears local ability caches')
+    self:PrintMessage('- cluster: prints cluster members')
+    self:PrintMessage('- cluster reset: resets cluster to defaults')
+    self:PrintMessage('- cluster elect: triggers lead election logic')
+    self:PrintMessage(
+        '- ignore playerName: ignores all abilities cast by playerName')
 end
 
 function RankSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
