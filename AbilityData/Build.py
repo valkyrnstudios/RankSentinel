@@ -28,8 +28,8 @@ with open('./AbilityData/bcc.csv', 'r', newline='') as csvfile:
     if ability['Include'] != 'No':
       ability_group = '{0} - {1}'.format(ability['Class'], ability['Ability'])
       ability_list.append(
-        "  [{0}] = {{ Name = \"{1}\", Rank = {2}, Level = {3}, AbilityGroup = \"{4}\" }},\n"
-          .format(ability['Ability ID'], ability['Ability'], parsed_rank, ability['Level'], ability_group)
+        "  [{0}] = {{ Rank = {1}, Level = {2}, AbilityGroup = \"{3}\" }},\n"
+          .format(ability['Ability ID'], parsed_rank, ability['Level'], ability_group)
         )
 
       if not ability_group in reverse_lookup:
