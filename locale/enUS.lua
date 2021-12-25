@@ -1,6 +1,6 @@
-﻿local L = LibStub("AceLocale-3.0"):NewLocale("SpellSentinel", "enUS", true)
+﻿local L = LibStub("AceLocale-3.0"):NewLocale("RankSentinel", "enUS", true)
 
-L["SpellSentinel"] = "Spell Sentinel"
+L["RankSentinel"] = "Rank Sentinel"
 L["Enable"] = "Enable";
 L["Whisper"] = "Whisper";
 L["Debug"] = "Debug";

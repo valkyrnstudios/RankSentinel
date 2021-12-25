@@ -1,10 +1,11 @@
 ## Interface: 20502
-## Title: SpellSentinel
-## Version: 1.0.0
+## Title: RankSentinel
+## Version: 9.9.9
 ## Author: SabreValkyrn
 ## Notes: Detect players using lower ranked abilities and notifies them.
-## SavedVariables: SpellSentinelDB
+## SavedVariables: RankSentinelDB
 ## X-Credits: Gogo
+## X-Curse-Project-ID: 560210
 ## X-Embeds: Ace3
 
 libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
@@ -13,7 +14,7 @@ libs\AceEvent-3.0\AceEvent-3.0.xml
 
 locale\enUS.lua
 
-SpellSentinel.lua
+RankSentinel.lua
 AbilityData.lua
 Cluster.lua
 Cache.lua
