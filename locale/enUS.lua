@@ -5,11 +5,10 @@ L["Enable"] = "Enable";
 L["Whisper"] = "Whisper";
 L["Debug"] = "Debug";
 
-L["PreMsgNonChat"] =
-    "\124TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7.png:0\124t";
-L["PreMsgChat"] = "{rt7} RankSentinel";
-
-L["PreMessageString"] = "Friendly Reminder!";
+L["AnnouncePrefix"] = {
+    ["Self"] = "\124TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7.png:0\124t",
+    ["Whisper"] = "{rt7} RankSentinel detected"
+}
 
 L["CastString"] = "%s just used a low rank of %s.";
 

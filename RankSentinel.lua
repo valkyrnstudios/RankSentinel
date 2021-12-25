@@ -16,7 +16,6 @@ local defaults = {
         enable = true,
         whisper = true,
         debug = false,
-        preMessageString = L["PreMessageString"],
         castString = L["CastString"],
         postMessageString = L["PostMessageString"],
         announcedSpells = {},
@@ -146,8 +145,8 @@ function RankSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
 
     if sourceGUID == self.playerGUID then
         castStringMsg = string.format(castString, "You", spellLink, castLevel)
-        castStringMsg =
-            string.format("%s %s", L["PreMsgNonChat"], castStringMsg)
+        castStringMsg = string.format("%s %s", L["AnnouncePrefix"]["Self"],
+                                      castStringMsg)
 
         RankSentinel:Annoy(castStringMsg, "self")
 
@@ -156,10 +155,10 @@ function RankSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
         return
     else
         if self.db.profile.whisper then
-            castStringMsg = string.format(castString, "You", spellLink,
+            castStringMsg = string.format(castString, "you", spellLink,
                                           castLevel)
-            castStringMsg = string.format("%s %s %s %s", L["PreMsgChat"],
-                                          self.db.profile.preMessageString,
+            castStringMsg = string.format("%s %s %s",
+                                          L["AnnouncePrefix"]["Whisper"],
                                           castStringMsg,
                                           self.db.profile.postMessageString)
 
@@ -167,7 +166,7 @@ function RankSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
         else
             castStringMsg = string.format(castString, sourceName, spellLink,
                                           castLevel)
-            castStringMsg = string.format("%s %s", L["PreMsgNonChat"],
+            castStringMsg = string.format("%s %s", L["AnnouncePrefix"]["Self"],
                                           castStringMsg)
 
             RankSentinel:Annoy(castStringMsg, "self")
