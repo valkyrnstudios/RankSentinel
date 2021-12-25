@@ -56,15 +56,15 @@ with open('./AbilityData/bcc.csv', 'r', newline='') as csvfile:
 
 with open('./AbilityData.lua', 'w', newline='') as abilityData:
   abilityData.write('-- Built on {0}\n\n'.format(date.today()))
-  abilityData.write('SpellSentinel.BCC = { }\n\n')
-  abilityData.write('SpellSentinel.BCC.AbilityData = {\n')
+  abilityData.write('RankSentinel.BCC = { }\n\n')
+  abilityData.write('RankSentinel.BCC.AbilityData = {\n')
 
   for ability in ability_list:
     abilityData.write(ability);
 
   abilityData.write('}\n\n')
 
-  abilityData.write('SpellSentinel.BCC.AbilityGroups = {\n')
+  abilityData.write('RankSentinel.BCC.AbilityGroups = {\n')
   for key, abilityGroup in reverse_lookup.items():
     abilityData.write('  {{ {1} }},\n'.format(key, ', '.join(abilityGroup) ));
 

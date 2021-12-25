@@ -1,6 +1,6 @@
-CommPrefix = "spellsentinel"
+CommPrefix = "ranksentinel"
 
-function SpellSentinel:OnCommReceived(prefix, message, distribution, sender)
+function RankSentinel:OnCommReceived(prefix, message, distribution, sender)
     if prefix ~= CommPrefix or sender == PlayerName then return end
 
     local command, data = strsplit("|", message)
@@ -28,7 +28,7 @@ function SpellSentinel:OnCommReceived(prefix, message, distribution, sender)
     end
 end
 
-function SpellSentinel:JoinCluster(playerName, version)
+function RankSentinel:JoinCluster(playerName, version)
     if self.cluster.members[playerName] == nil then
         self.cluster.members[playerName] = version;
     end
@@ -36,7 +36,7 @@ function SpellSentinel:JoinCluster(playerName, version)
     self:ClusterBroadcast("JOINED", string.format("%s,%s", playerName, version));
 end
 
-function SpellSentinel:RecordAnnoy(playerSpellIndex)
+function RankSentinel:RecordAnnoy(playerSpellIndex)
     if self.db.profile.announcedSpells[playerSpellIndex] ~= true then
         self.db.profile.announcedSpells[playerSpellIndex] = true
     end
@@ -44,12 +44,12 @@ function SpellSentinel:RecordAnnoy(playerSpellIndex)
     self:ClusterBroadcast("ANNOY", playerSpellIndex);
 end
 
-function SpellSentinel:ClusterBroadcast(command, data)
+function RankSentinel:ClusterBroadcast(command, data)
     self:SendCommMessage(CommPrefix, string.format("%s|%s", command, data),
                          "RAID")
 end
 
-function SpellSentinel:ClusterElect()
+function RankSentinel:ClusterElect()
     local leadName = nil;
 
     if self.db.profile.debug then
@@ -91,7 +91,7 @@ function SpellSentinel:ClusterElect()
     self:ClusterBroadcast("LEAD", leadName);
 end
 
-function SpellSentinel:PrintCluster()
+function RankSentinel:PrintCluster()
     self:PrintMessage("Cluster Lead: " .. self.cluster.lead);
     self:PrintMessage("Cluster members:")
 
@@ -100,6 +100,6 @@ function SpellSentinel:PrintCluster()
     end
 end
 
-function SpellSentinel:ClusterReset()
+function RankSentinel:ClusterReset()
     self.cluster = {members = {[PlayerName] = self.Version}, lead = PlayerName}
 end

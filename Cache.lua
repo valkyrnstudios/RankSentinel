@@ -1,16 +1,16 @@
-function SpellSentinel:IgnorePlayer(name)
+function RankSentinel:IgnorePlayer(name)
     local playerGUID = UnitGUID(name)
     self.db.profile.ignoredPlayers[playerGUID] = true;
 end
 
-function SpellSentinel:CountCache(cache)
+function RankSentinel:CountCache(cache)
     local count = 0;
     for _ in pairs(cache) do count = count + 1 end
 
     return count;
 end
 
-function SpellSentinel:ClearCache()
+function RankSentinel:ClearCache()
     local count = self:CountCache(self.db.profile.announcedSpells);
     local playerCount = self:CountCache(self.db.profile.ignoredPlayers);
     local isMaxRankCount = self:CountCache(self.db.profile.isMaxRank);

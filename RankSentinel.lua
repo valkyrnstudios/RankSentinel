@@ -1,19 +1,19 @@
-SpellSentinel = LibStub("AceAddon-3.0"):NewAddon("SpellSentinel",
-                                                 "AceConsole-3.0",
-                                                 "AceEvent-3.0", "AceComm-3.0")
+RankSentinel = LibStub("AceAddon-3.0"):NewAddon("RankSentinel",
+                                                "AceConsole-3.0",
+                                                "AceEvent-3.0", "AceComm-3.0")
 
-SpellSentinel.Version = GetAddOnMetadata("SpellSentinel", "Version");
+RankSentinel.Version = GetAddOnMetadata("RankSentinel", "Version");
 
 PlayerGUID = UnitGUID("Player");
 PlayerName = UnitName("Player");
 
-local SpellSentinel = SpellSentinel
+local RankSentinel = RankSentinel
 
-local L = LibStub("AceLocale-3.0"):GetLocale("SpellSentinel")
+local L = LibStub("AceLocale-3.0"):GetLocale("RankSentinel")
 
 local options = {
-    name = L["SpellSentinel"],
-    handler = SpellSentinel,
+    name = L["RankSentinel"],
+    handler = RankSentinel,
     type = "group",
     childGroups = "tree",
     get = "getProfileOption",
@@ -67,8 +67,8 @@ local defaults = {
     }
 }
 
-function SpellSentinel:OnInitialize()
-    self.db = LibStub("AceDB-3.0"):New("SpellSentinelDB", defaults, true)
+function RankSentinel:OnInitialize()
+    self.db = LibStub("AceDB-3.0"):New("RankSentinelDB", defaults, true)
 
     if not self.db.profile then self.db.profile.ResetProfile() end
 
@@ -76,20 +76,20 @@ function SpellSentinel:OnInitialize()
 
     self:ClusterReset();
 
-    LibStub("AceConfig-3.0"):RegisterOptionsTable("SpellSentinel", options)
+    LibStub("AceConfig-3.0"):RegisterOptionsTable("RankSentinel", options)
 
-    self:RegisterChatCommand("spellsentinel", "ChatCommand")
+    self:RegisterChatCommand("ranksentinel", "ChatCommand")
     self:RegisterChatCommand("sentinel", "ChatCommand")
 
     self.optionsFrame = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(
-                            "SpellSentinel", "SpellSentinel")
+                            "RankSentinel", "RankSentinel")
 end
 
-function SpellSentinel:UpgradeProfile()
+function RankSentinel:UpgradeProfile()
     if not self.db.profile.isMaxRank then self.db.profile.isMaxRank = {} end
 end
 
-function SpellSentinel:OnEnable()
+function RankSentinel:OnEnable()
     self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED");
     self:RegisterEvent("PLAYER_ENTERING_WORLD");
 
@@ -98,15 +98,14 @@ function SpellSentinel:OnEnable()
     self:PrintMessage("Loaded " .. self.Version);
 end
 
-function SpellSentinel:getProfileOption(info) return
-    self.db.profile[info[#info]] end
+function RankSentinel:getProfileOption(info) return self.db.profile[info[#info]] end
 
-function SpellSentinel:setProfileOption(info, value)
+function RankSentinel:setProfileOption(info, value)
     local key = info[#info]
     self.db.profile[key] = value
 end
 
-function SpellSentinel:ChatCommand(cmd)
+function RankSentinel:ChatCommand(cmd)
     local msg = string.lower(cmd)
 
     if msg == "reset" then
@@ -142,11 +141,11 @@ function SpellSentinel:ChatCommand(cmd)
         end
     else
         InterfaceOptionsFrame_Show()
-        InterfaceOptionsFrame_OpenToCategory("SpellSentinel")
+        InterfaceOptionsFrame_OpenToCategory("RankSentinel")
     end
 end
 
-function SpellSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
+function RankSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
     if not self.db.profile.enable or UnitInBattleground("player") ~= nil then
         return
     end
@@ -156,7 +155,7 @@ function SpellSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
 
     if subevent ~= "SPELL_CAST_SUCCESS" or
         self.db.profile.ignoredPlayers[sourceGUID] ~= nil or
-        SpellSentinel.BCC.AbilityData[spellID] == nil then return end
+        RankSentinel.BCC.AbilityData[spellID] == nil then return end
 
     local PlayerSpellIndex = string.format("%s-%s", sourceGUID, spellID)
 
@@ -176,10 +175,10 @@ function SpellSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
         castStringMsg =
             string.format("%s %s", L["PreMsgNonChat"], castStringMsg)
 
-        SpellSentinel:Annoy(castStringMsg, "self")
+        RankSentinel:Annoy(castStringMsg, "self")
 
         self:RecordAnnoy(PlayerSpellIndex)
-    elseif not SpellSentinel:InGroupWith(sourceGUID) then
+    elseif not RankSentinel:InGroupWith(sourceGUID) then
         return
     else
         if self.db.profile.whisper then
@@ -190,27 +189,27 @@ function SpellSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
                                           castStringMsg,
                                           self.db.profile.postMessageString)
 
-            SpellSentinel:Annoy(castStringMsg, sourceName)
+            RankSentinel:Annoy(castStringMsg, sourceName)
         else
             castStringMsg = string.format(castString, sourceName, spellLink,
                                           castLevel)
             castStringMsg = string.format("%s %s", L["PreMsgNonChat"],
                                           castStringMsg)
 
-            SpellSentinel:Annoy(castStringMsg, "self")
+            RankSentinel:Annoy(castStringMsg, "self")
         end
 
         self:RecordAnnoy(PlayerSpellIndex)
     end
 end
 
-function SpellSentinel:PLAYER_ENTERING_WORLD(...)
+function RankSentinel:PLAYER_ENTERING_WORLD(...)
     self:JoinCluster(PlayerName, self.Version);
 
     self:ClusterElect();
 end
 
-function SpellSentinel:Annoy(msg, target)
+function RankSentinel:Annoy(msg, target)
     if PlayerName == self.cluster.lead then
         if target == "self" then
             self:PrintMessage(msg)
@@ -222,7 +221,7 @@ function SpellSentinel:Annoy(msg, target)
     end
 end
 
-function SpellSentinel:InGroupWith(guid)
+function RankSentinel:InGroupWith(guid)
     if IsInRaid() then
         for i = 1, GetNumGroupMembers() do
             if guid == UnitGUID("Raid" .. i) then return true end
@@ -234,7 +233,7 @@ function SpellSentinel:InGroupWith(guid)
     end
 end
 
-function SpellSentinel:IsMaxRank(spellID, casterLevel)
+function RankSentinel:IsMaxRank(spellID, casterLevel)
     local lookup_key = string.format('%s-%s', spellID, casterLevel);
 
     if self.db.profile.isMaxRank[lookup_key] ~= nil then
@@ -245,10 +244,10 @@ function SpellSentinel:IsMaxRank(spellID, casterLevel)
         return self.db.profile.isMaxRank[lookup_key];
     end
 
-    local abilityData = SpellSentinel.BCC.AbilityData[spellID];
+    local abilityData = RankSentinel.BCC.AbilityData[spellID];
 
     local abilityGroupData =
-        SpellSentinel.BCC.AbilityGroups[abilityData["AbilityGroup"]]
+        RankSentinel.BCC.AbilityGroups[abilityData["AbilityGroup"]]
 
     -- Vast majority of checks will be on lvl 70, check if highest available rank first
     if spellID == abilityGroupData[#abilityGroupData] then
@@ -268,10 +267,10 @@ function SpellSentinel:IsMaxRank(spellID, casterLevel)
         self:PrintMessage(string.format(
                               "Casted %d, next rank (%d) available at %d",
                               spellID, nextRankID,
-                              SpellSentinel.BCC.AbilityData[nextRankID].Level));
+                              RankSentinel.BCC.AbilityData[nextRankID].Level));
     end
 
-    local isMax = SpellSentinel.BCC.AbilityData[nextRankID]['Level'] >
+    local isMax = RankSentinel.BCC.AbilityData[nextRankID]['Level'] >
                       casterLevel;
 
     self.db.profile.isMaxRank[lookup_key] = isMax;
@@ -279,9 +278,9 @@ function SpellSentinel:IsMaxRank(spellID, casterLevel)
     return isMax
 end
 
-function SpellSentinel:PrintMessage(msg)
+function RankSentinel:PrintMessage(msg)
     if (DEFAULT_CHAT_FRAME) then
-        DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00" .. L["SpellSentinel"] ..
+        DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00" .. L["RankSentinel"] ..
                                           "|r: " .. msg, 0.0, 1.0, 0.0, 1.0);
     end
 end
