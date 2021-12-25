@@ -59,13 +59,8 @@ function RankSentinel:ClusterElect()
         end
     end
 
-    -- Default lead to devs
-    for name, _ in pairs(self.cluster.members) do
-        if name == "Kahira" or name == "Kynura" or name == "Kaytla" then
-            leadName = name;
-            break
-        end
-    end
+    -- Elect local dev clone
+    if self.Version == 'v9.9.9' then leadName = self.playerName; end
 
     -- TODO Set lead to lead to latest version
 
