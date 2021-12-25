@@ -268,7 +268,7 @@ function SpellSentinel:IsMaxRank(spellID, casterLevel)
         self:PrintMessage(string.format(
                               "Casted %d, next rank (%d) available at %d",
                               spellID, nextRankID,
-                              SpellSentinel.BCC.AbilityData[nextRankID]['Level']));
+                              SpellSentinel.BCC.AbilityData[nextRankID].Level));
     end
 
     local isMax = SpellSentinel.BCC.AbilityData[nextRankID]['Level'] >

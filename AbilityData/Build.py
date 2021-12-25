@@ -21,21 +21,30 @@ with open('./AbilityData/bcc.csv', 'r', newline='') as csvfile:
   print('Parsing file with: ' + ', '.join(headers))
 
   excluded_count = 0
+  ability_group_lookup = {}
 
   for ability in csvreader:
     parsed_rank = ability['Rank'] if ability['Rank'] else 1
 
     if ability['Include'] != 'No':
-      ability_group = '{0} - {1}'.format(ability['Class'], ability['Ability'])
+      ability_group_name = '{0} - {1}'.format(ability['Class'], ability['Ability'])
+
+      if not ability_group_name in ability_group_lookup:
+        ability_group_lookup[ability_group_name] = {}
+
+      ability_group_id = len(ability_group_lookup)
+
+      ability_group_lookup[ability_group_name] = ability_group_id
+
       ability_list.append(
-        "  [{0}] = {{ Rank = {1}, Level = {2}, AbilityGroup = \"{3}\" }},\n"
-          .format(ability['Ability ID'], parsed_rank, ability['Level'], ability_group)
+        "  [{0}] = {{ Rank = {1}, Level = {2}, AbilityGroup = {3} }},\n"
+          .format(ability['Ability ID'], parsed_rank, ability['Level'], ability_group_id)
         )
 
-      if not ability_group in reverse_lookup:
-        reverse_lookup[ability_group] = {}
+      if not ability_group_id in reverse_lookup:
+        reverse_lookup[ability_group_id] = {}
 
-      reverse_lookup[ability_group][ability['Ability ID']] = parsed_rank
+      reverse_lookup[ability_group_id][ability['Ability ID']] = parsed_rank
 
     else:
       print('Excluding {0}{1} - {2}'.format(ability['Ability'], parsed_rank, ability['Note']))
@@ -57,6 +66,6 @@ with open('./AbilityData.lua', 'w', newline='') as abilityData:
 
   abilityData.write('SpellSentinel.BCC.AbilityGroups = {\n')
   for key, abilityGroup in reverse_lookup.items():
-    abilityData.write('  [\"{0}\"] = {{ {1} }},\n'.format(key, ', '.join(abilityGroup) ));
+    abilityData.write('  {{ {1} }},\n'.format(key, ', '.join(abilityGroup) ));
 
   abilityData.write('}\n')
