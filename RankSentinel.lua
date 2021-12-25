@@ -55,13 +55,6 @@ function RankSentinel:OnEnable()
     self:PrintMessage("Loaded " .. self.Version);
 end
 
-function RankSentinel:getProfileOption(info) return self.db.profile[info[#info]] end
-
-function RankSentinel:setProfileOption(info, value)
-    local key = info[#info]
-    self.db.profile[key] = value
-end
-
 function RankSentinel:ChatCommand(cmd)
     local msg = string.lower(cmd)
 
