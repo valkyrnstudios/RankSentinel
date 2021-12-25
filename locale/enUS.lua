@@ -13,7 +13,5 @@ L["PreMessageString"] = "Friendly Reminder!";
 
 L["CastString"] = "%s just used a low rank of %s.";
 
-L["TargetCastString"] = "%s just used a low rank of %s on a level %s target.";
-
 L["PostMessageString"] =
     "You might be missing training or using an outdated ability shortcut.";

@@ -18,7 +18,6 @@ local defaults = {
         debug = false,
         preMessageString = L["PreMessageString"],
         castString = L["CastString"],
-        targetCastString = L["TargetCastString"],
         postMessageString = L["PostMessageString"],
         announcedSpells = {},
         ignoredPlayers = {},
