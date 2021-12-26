@@ -1,3 +1,4 @@
+local addonName, RankSentinel = ...
 function RankSentinel:IgnorePlayer(name)
     local guid = UnitGUID(name)
     self.db.profile.ignoredPlayers[guid] = true;

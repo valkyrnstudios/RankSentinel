@@ -1,4 +1,5 @@
-﻿local L = LibStub("AceLocale-3.0"):NewLocale("RankSentinel", "enUS", true)
+﻿local addonName, RankSentinel = ...
+local L = LibStub("AceLocale-3.0"):NewLocale(addonName, "enUS", true)
 
 L["RankSentinel"] = "Rank Sentinel"
 L["Enable"] = "Enable";

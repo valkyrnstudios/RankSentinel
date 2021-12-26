@@ -1,8 +1,9 @@
+local addonName, addon = ...
 -- Built on 2021-12-25
 
-RankSentinel.BCC = { }
+addon.BCC = { }
 
-RankSentinel.BCC.AbilityData = {
+addon.BCC.AbilityData = {
   [5211] = { Rank = 1, Level = 14, AbilityGroup = 1 },
   [6798] = { Rank = 2, Level = 30, AbilityGroup = 1 },
   [8983] = { Rank = 3, Level = 46, AbilityGroup = 1 },
@@ -1566,7 +1567,7 @@ RankSentinel.BCC.AbilityData = {
   [25264] = { Rank = 7, Level = 67, AbilityGroup = 278 },
 }
 
-RankSentinel.BCC.AbilityGroups = {
+addon.BCC.AbilityGroups = {
   { 5211, 6798, 8983 },
   { 1082, 3029, 5201, 9849, 9850, 27000 },
   { 8998, 9000, 9892, 31709, 27004 },
