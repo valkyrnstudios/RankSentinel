@@ -1,17 +1,19 @@
-RankSentinel = LibStub("AceAddon-3.0"):NewAddon("RankSentinel", "AceEvent-3.0",
-                                                "AceComm-3.0")
+-- addon name and a table scoped to our addon files is passed in by the wow client when the addon loads
+-- we can use that to avoid polluting the global namespace shared by all addons.
+local addonName, RankSentinel = ...
 
-RankSentinel.Version = GetAddOnMetadata("RankSentinel", "Version");
+local addon = LibStub("AceAddon-3.0"):NewAddon(RankSentinel, addonName,
+                                               "AceEvent-3.0", "AceComm-3.0")
 
-if string.match(RankSentinel.Version, 'project') then
-    RankSentinel.Version = 'v9.9.9'
-end
+addon.Version = GetAddOnMetadata(addonName, "Version");
 
-local RankSentinel = RankSentinel
+if string.match(addon.Version, 'project') then addon.Version = 'v9.9.9' end
 
-local L = LibStub("AceLocale-3.0"):GetLocale("RankSentinel")
+addon._commPrefix = string.upper(addonName)
 
-function RankSentinel:OnInitialize()
+local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
+
+function addon:OnInitialize()
     local defaults = {
         profile = {
             enable = true,
@@ -36,23 +38,22 @@ function RankSentinel:OnInitialize()
 
     self:ClusterReset();
 
-    SLASH_RankSentinel1 = "/ranksentinel";
+    SLASH_RankSentinel1 = "/" .. string.lower(addonName);
     SLASH_RankSentinel2 = "/sentinel";
 
-    SlashCmdList["RankSentinel"] = function(message, _)
-        RankSentinel:ChatCommand(message)
-    end;
+    SlashCmdList[addonName] =
+        function(message, _) addon:ChatCommand(message) end;
 end
 
-function RankSentinel:UpgradeProfile()
+function addon:UpgradeProfile()
     if not self.db.profile.isMaxRank then self.db.profile.isMaxRank = {} end
 end
 
-function RankSentinel:OnEnable()
+function addon:OnEnable()
     self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED");
     self:RegisterEvent("PLAYER_ENTERING_WORLD");
 
-    self:RegisterComm(CommPrefix);
+    self:RegisterComm(self._commPrefix);
 
     self:PrintMessage("Loaded " .. self.Version);
 
@@ -62,7 +63,7 @@ function RankSentinel:OnEnable()
     end
 end
 
-function RankSentinel:ChatCommand(cmd)
+function addon:ChatCommand(cmd)
     local msg = string.lower(cmd)
 
     if msg == "reset" then
@@ -103,11 +104,11 @@ function RankSentinel:ChatCommand(cmd)
             self:PrintMessage("Invalid parameter")
         end
     else
-        RankSentinel:PrintHelp()
+        addon:PrintHelp()
     end
 end
 
-function RankSentinel:PrintHelp()
+function addon:PrintHelp()
     self:PrintMessage(string.format("%s (%s)", L['Help']['title'], self.Version))
 
     self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'enable',
@@ -132,7 +133,7 @@ function RankSentinel:PrintHelp()
                                     L['Help']['ignore playerName']));
 end
 
-function RankSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
+function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
     if not self.db.profile.enable or UnitInBattleground("player") ~= nil then
         return
     end
@@ -142,7 +143,7 @@ function RankSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
 
     if subevent ~= "SPELL_CAST_SUCCESS" or
         self.db.profile.ignoredPlayers[sourceGUID] ~= nil or
-        RankSentinel.AbilityData[spellID] == nil then return end
+        addon.AbilityData[spellID] == nil then return end
 
     local PlayerSpellIndex = string.format("%s-%s", sourceGUID, spellID)
 
@@ -162,10 +163,10 @@ function RankSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
         castStringMsg = string.format("%s %s", L["AnnouncePrefix"]["Self"],
                                       castStringMsg)
 
-        RankSentinel:Annoy(castStringMsg, "self")
+        addon:Annoy(castStringMsg, "self")
 
         self:RecordAnnoy(PlayerSpellIndex)
-    elseif not RankSentinel:InGroupWith(sourceGUID) then
+    elseif not addon:InGroupWith(sourceGUID) then
         return
     else
         if self.db.profile.whisper then
@@ -176,27 +177,27 @@ function RankSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
                                           castStringMsg,
                                           self.db.profile.postMessageString)
 
-            RankSentinel:Annoy(castStringMsg, sourceName)
+            addon:Annoy(castStringMsg, sourceName)
         else
             castStringMsg = string.format(self.db.profile.castString,
                                           sourceName, spellLink, castLevel)
             castStringMsg = string.format("%s %s", L["AnnouncePrefix"]["Self"],
                                           castStringMsg)
 
-            RankSentinel:Annoy(castStringMsg, "self")
+            addon:Annoy(castStringMsg, "self")
         end
 
         self:RecordAnnoy(PlayerSpellIndex)
     end
 end
 
-function RankSentinel:PLAYER_ENTERING_WORLD(...)
+function addon:PLAYER_ENTERING_WORLD(...)
     self:JoinCluster(self.playerName, self.Version);
 
     self:ClusterElect();
 end
 
-function RankSentinel:Annoy(msg, target)
+function addon:Annoy(msg, target)
     if self.playerName == self.cluster.lead then
         if target == "self" then
             self:PrintMessage(msg)
@@ -208,7 +209,7 @@ function RankSentinel:Annoy(msg, target)
     end
 end
 
-function RankSentinel:InGroupWith(guid)
+function addon:InGroupWith(guid)
     if IsInRaid() then
         for i = 1, GetNumGroupMembers() do
             if guid == UnitGUID("Raid" .. i) then return true end
@@ -220,7 +221,7 @@ function RankSentinel:InGroupWith(guid)
     end
 end
 
-function RankSentinel:IsMaxRank(spellID, casterLevel)
+function addon:IsMaxRank(spellID, casterLevel)
     local lookup_key = string.format('%s-%s', spellID, casterLevel);
 
     if self.db.profile.isMaxRank[lookup_key] ~= nil and
@@ -229,10 +230,9 @@ function RankSentinel:IsMaxRank(spellID, casterLevel)
         return self.db.profile.isMaxRank[lookup_key];
     end
 
-    local abilityData = RankSentinel.AbilityData[spellID];
+    local abilityData = addon.AbilityData[spellID];
 
-    local abilityGroupData =
-        RankSentinel.AbilityGroups[abilityData["AbilityGroup"]]
+    local abilityGroupData = addon.AbilityGroups[abilityData["AbilityGroup"]]
 
     -- Vast majority of checks will be on lvl 70, check if highest available rank first
     if spellID == abilityGroupData[#abilityGroupData] then
@@ -248,7 +248,7 @@ function RankSentinel:IsMaxRank(spellID, casterLevel)
     -- Above block guarantees there's another rank
     local nextRankID = abilityGroupData[abilityData["Rank"] + 1];
 
-    local nextRankData = RankSentinel.AbilityData[nextRankID];
+    local nextRankData = addon.AbilityData[nextRankID];
 
     -- Above logic assumes no ranks are excluded, breaks for Arcane Explosion at least
     -- If rank not the index, find proper rank
@@ -261,7 +261,7 @@ function RankSentinel:IsMaxRank(spellID, casterLevel)
 
         for _, checkedSpellID in pairs(abilityGroupData) do
             nextRankID = checkedSpellID;
-            nextRankData = RankSentinel.AbilityData[checkedSpellID];
+            nextRankData = addon.AbilityData[checkedSpellID];
 
             if abilityData.Rank + 1 == nextRankData.Rank then
                 if self.db.profile.debug then
@@ -288,10 +288,9 @@ function RankSentinel:IsMaxRank(spellID, casterLevel)
     return isMax
 end
 
-function RankSentinel:PrintMessage(msg)
+function addon:PrintMessage(msg)
     if (DEFAULT_CHAT_FRAME) then
-        DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00" .. L["RankSentinel"] ..
-                                          "|r: " .. msg, 0.0, 1.0, 0.0, 1.0);
+        DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00" .. L[addonName] .. "|r: " ..
+                                          msg, 0.0, 1.0, 0.0, 1.0);
     end
 end
-
