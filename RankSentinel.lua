@@ -274,7 +274,7 @@ function RankSentinel:IsMaxRank(spellID, casterLevel)
         end
     end
 
-    local isMax = nextRankData.Level >= casterLevel;
+    local isMax = nextRankData.Level > casterLevel;
 
     if self.db.profile.debug then
         self:PrintMessage(string.format(
