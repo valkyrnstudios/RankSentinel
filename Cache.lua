@@ -1,16 +1,18 @@
-function RankSentinel:IgnorePlayer(name)
+local _, addon = ...
+
+function addon:IgnorePlayer(name)
     local guid = UnitGUID(name)
     self.db.profile.ignoredPlayers[guid] = true;
 end
 
-function RankSentinel:CountCache(cache)
+function addon:CountCache(cache)
     local count = 0;
     for _ in pairs(cache) do count = count + 1 end
 
     return count;
 end
 
-function RankSentinel:ClearCache()
+function addon:ClearCache()
     local count = self:CountCache(self.db.profile.announcedSpells);
     local playerCount = self:CountCache(self.db.profile.ignoredPlayers);
     local isMaxRankCount = self:CountCache(self.db.profile.isMaxRank);

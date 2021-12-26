@@ -1,7 +1,9 @@
-CommPrefix = "ranksentinel"
+local _, RankSentinel = ...
 
 function RankSentinel:OnCommReceived(prefix, message, distribution, sender)
-    if prefix ~= CommPrefix or sender == self.playerName then return end
+    if prefix ~= RankSentinel._commPrefix or sender == self.playerName then
+        return
+    end
 
     local command, data = strsplit("|", message)
     if not command then return end
@@ -45,8 +47,8 @@ function RankSentinel:RecordAnnoy(playerSpellIndex)
 end
 
 function RankSentinel:ClusterBroadcast(command, data)
-    self:SendCommMessage(CommPrefix, string.format("%s|%s", command, data),
-                         "RAID")
+    self:SendCommMessage(RankSentinel._commPrefix,
+                         string.format("%s|%s", command, data), "RAID")
 end
 
 function RankSentinel:ClusterElect()

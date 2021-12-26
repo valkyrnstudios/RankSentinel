@@ -1,4 +1,6 @@
 -- Built on 2021-12-26
-RankSentinel.AbilityData = {}
+local _, addon = ...
 
-RankSentinel.AbilityGroups = {}
+addon.AbilityData = {}
+
+addon.AbilityGroups = {}
