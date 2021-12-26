@@ -150,10 +150,9 @@ function RankSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
     local spellLink = GetSpellLink(spellID)
     local castStringMsg = nil
 
-    local castString = self.db.profile.castString
-
     if sourceGUID == self.playerGUID then
-        castStringMsg = string.format(castString, "You", spellLink, castLevel)
+        castStringMsg = string.format(self.db.profile.castString, "You",
+                                      spellLink, castLevel)
         castStringMsg = string.format("%s %s", L["AnnouncePrefix"]["Self"],
                                       castStringMsg)
 
@@ -164,8 +163,8 @@ function RankSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
         return
     else
         if self.db.profile.whisper then
-            castStringMsg = string.format(castString, "you", spellLink,
-                                          castLevel)
+            castStringMsg = string.format(self.db.profile.castString, "you",
+                                          spellLink, castLevel)
             castStringMsg = string.format("%s %s %s",
                                           L["AnnouncePrefix"]["Whisper"],
                                           castStringMsg,
@@ -173,8 +172,8 @@ function RankSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
 
             RankSentinel:Annoy(castStringMsg, sourceName)
         else
-            castStringMsg = string.format(castString, sourceName, spellLink,
-                                          castLevel)
+            castStringMsg = string.format(self.db.profile.castString,
+                                          sourceName, spellLink, castLevel)
             castStringMsg = string.format("%s %s", L["AnnouncePrefix"]["Self"],
                                           castStringMsg)
 
