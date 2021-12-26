@@ -55,6 +55,11 @@ function RankSentinel:OnEnable()
     self:RegisterComm(CommPrefix);
 
     self:PrintMessage("Loaded " .. self.Version);
+
+    if self.db.profile.debug then
+        self:PrintMessage("Debug enabled, clearing cache on reload");
+        self:ClearCache();
+    end
 end
 
 function RankSentinel:ChatCommand(cmd)
