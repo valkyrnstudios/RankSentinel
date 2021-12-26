@@ -11,20 +11,20 @@ local RankSentinel = RankSentinel
 
 local L = LibStub("AceLocale-3.0"):GetLocale("RankSentinel")
 
-local defaults = {
-    profile = {
-        enable = true,
-        whisper = true,
-        debug = false,
-        castString = L["CastString"],
-        postMessageString = L["PostMessageString"],
-        announcedSpells = {},
-        ignoredPlayers = {},
-        isMaxRank = {}
-    }
-}
-
 function RankSentinel:OnInitialize()
+    local defaults = {
+        profile = {
+            enable = true,
+            whisper = true,
+            debug = false,
+            castString = L["CastString"],
+            postMessageString = L["PostMessageString"],
+            announcedSpells = {},
+            ignoredPlayers = {},
+            isMaxRank = {}
+        }
+    }
+
     self.db = LibStub("AceDB-3.0"):New("RankSentinelDB", defaults, true)
 
     if not self.db.profile then self.db.profile.ResetProfile() end
