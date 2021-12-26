@@ -251,8 +251,7 @@ function RankSentinel:IsMaxRank(spellID, casterLevel)
                               RankSentinel.BCC.AbilityData[nextRankID].Level));
     end
 
-    local isMax = RankSentinel.BCC.AbilityData[nextRankID]['Level'] >
-                      casterLevel;
+    local isMax = RankSentinel.BCC.AbilityData[nextRankID].Level >= casterLevel;
 
     self.db.profile.isMaxRank[lookup_key] = isMax;
 
