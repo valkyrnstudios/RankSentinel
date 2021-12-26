@@ -74,6 +74,8 @@ function addon:ChatCommand(cmd)
                                             self.db.profile.announcedSpells)))
         self:PrintMessage(string.format("Ignored players: %d", self:CountCache(
                                             self.db.profile.ignoredPlayers)))
+        self:PrintMessage(string.format("Ranks cached: %d", self:CountCache(
+                                            self.db.profile.isMaxRank)))
     elseif msg == "clear" then
         self:ClearCache();
     elseif msg == "debug" then
