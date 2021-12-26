@@ -3,7 +3,7 @@ RankSentinel = LibStub("AceAddon-3.0"):NewAddon("RankSentinel", "AceEvent-3.0",
 
 RankSentinel.Version = GetAddOnMetadata("RankSentinel", "Version");
 
-if RankSentinel.Version == '@project-version@' then
+if string.match(RankSentinel.Version, 'project') then
     RankSentinel.Version = 'v9.9.9'
 end
 
