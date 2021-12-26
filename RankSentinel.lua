@@ -146,7 +146,8 @@ function RankSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
 
     local PlayerSpellIndex = string.format("%s-%s", sourceGUID, spellID)
 
-    if self.db.profile.announcedSpells[PlayerSpellIndex] ~= nil then return end
+    if self.db.profile.announcedSpells[PlayerSpellIndex] ~= nil and
+        not self.db.profile.debug then return end
 
     local castLevel = UnitLevel(sourceName)
 
@@ -222,10 +223,8 @@ end
 function RankSentinel:IsMaxRank(spellID, casterLevel)
     local lookup_key = string.format('%s-%s', spellID, casterLevel);
 
-    if self.db.profile.isMaxRank[lookup_key] ~= nil then
-        if self.db.profile.debug then
-            self:PrintMessage("Using cached result for " .. lookup_key)
-        end
+    if self.db.profile.isMaxRank[lookup_key] ~= nil and
+        not self.db.profile.debug then
 
         return self.db.profile.isMaxRank[lookup_key];
     end
@@ -279,7 +278,7 @@ function RankSentinel:IsMaxRank(spellID, casterLevel)
 
     if self.db.profile.debug then
         self:PrintMessage(string.format(
-                              "Casted %d, next rank (%d) available at %d, ixMax %s",
+                              "Casted %d, next rank (%d) available at %d, isMax %s",
                               spellID, nextRankID, nextRankData.Level,
                               tostring(isMax)));
     end
