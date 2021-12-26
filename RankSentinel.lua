@@ -244,14 +244,40 @@ function RankSentinel:IsMaxRank(spellID, casterLevel)
     -- Above block guarantees there's another rank
     local nextRankID = abilityGroupData[abilityData["Rank"] + 1];
 
-    if self.db.profile.debug then
-        self:PrintMessage(string.format(
-                              "Casted %d, next rank (%d) available at %d",
-                              spellID, nextRankID,
-                              RankSentinel.BCC.AbilityData[nextRankID].Level));
+    local nextRankData = RankSentinel.BCC.AbilityData[nextRankID];
+
+    -- Above logic assumes no ranks are excluded, breaks for Arcane Explosion at least
+    -- If rank not the index, find proper rank
+    if nextRankData == nil or nextRankData.Rank ~= abilityData.Rank + 1 then
+        if self.db.profile.debug then
+            self:PrintMessage(string.format(
+                                  "Mismatching indices next rank (%d), performing search",
+                                  abilityData["Rank"] + 1));
+        end
+
+        for _, checkedSpellID in pairs(abilityGroupData) do
+            nextRankID = checkedSpellID;
+            nextRankData = RankSentinel.BCC.AbilityData[checkedSpellID];
+
+            if abilityData.Rank + 1 == nextRankData.Rank then
+                if self.db.profile.debug then
+                    self:PrintMessage(string.format(
+                                          "Found proper next rank (%d) for %s",
+                                          nextRankData.Rank, nextRankID));
+                end
+                break
+            end
+        end
     end
 
-    local isMax = RankSentinel.BCC.AbilityData[nextRankID].Level >= casterLevel;
+    local isMax = nextRankData.Level >= casterLevel;
+
+    if self.db.profile.debug then
+        self:PrintMessage(string.format(
+                              "Casted %d, next rank (%d) available at %d, ixMax %s",
+                              spellID, nextRankID, nextRankData.Level,
+                              tostring(isMax)));
+    end
 
     self.db.profile.isMaxRank[lookup_key] = isMax;
 
