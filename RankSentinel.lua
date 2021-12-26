@@ -142,7 +142,7 @@ function RankSentinel:COMBAT_LOG_EVENT_UNFILTERED(...)
 
     if subevent ~= "SPELL_CAST_SUCCESS" or
         self.db.profile.ignoredPlayers[sourceGUID] ~= nil or
-        RankSentinel.BCC.AbilityData[spellID] == nil then return end
+        RankSentinel.AbilityData[spellID] == nil then return end
 
     local PlayerSpellIndex = string.format("%s-%s", sourceGUID, spellID)
 
@@ -229,10 +229,10 @@ function RankSentinel:IsMaxRank(spellID, casterLevel)
         return self.db.profile.isMaxRank[lookup_key];
     end
 
-    local abilityData = RankSentinel.BCC.AbilityData[spellID];
+    local abilityData = RankSentinel.AbilityData[spellID];
 
     local abilityGroupData =
-        RankSentinel.BCC.AbilityGroups[abilityData["AbilityGroup"]]
+        RankSentinel.AbilityGroups[abilityData["AbilityGroup"]]
 
     -- Vast majority of checks will be on lvl 70, check if highest available rank first
     if spellID == abilityGroupData[#abilityGroupData] then
@@ -248,7 +248,7 @@ function RankSentinel:IsMaxRank(spellID, casterLevel)
     -- Above block guarantees there's another rank
     local nextRankID = abilityGroupData[abilityData["Rank"] + 1];
 
-    local nextRankData = RankSentinel.BCC.AbilityData[nextRankID];
+    local nextRankData = RankSentinel.AbilityData[nextRankID];
 
     -- Above logic assumes no ranks are excluded, breaks for Arcane Explosion at least
     -- If rank not the index, find proper rank
@@ -261,7 +261,7 @@ function RankSentinel:IsMaxRank(spellID, casterLevel)
 
         for _, checkedSpellID in pairs(abilityGroupData) do
             nextRankID = checkedSpellID;
-            nextRankData = RankSentinel.BCC.AbilityData[checkedSpellID];
+            nextRankData = RankSentinel.AbilityData[checkedSpellID];
 
             if abilityData.Rank + 1 == nextRankData.Rank then
                 if self.db.profile.debug then

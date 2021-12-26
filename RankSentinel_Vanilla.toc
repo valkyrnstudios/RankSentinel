@@ -1,4 +1,4 @@
-## Interface: 20502
+## Interface: 11401
 ## Title: RankSentinel
 ## Version: @project-version@
 ## Author: SabreValkyrn
@@ -19,6 +19,6 @@ libs\AceComm-3.0\AceComm-3.0.xml
 locale\enUS.lua
 
 RankSentinel.lua
-AbilityData.lua
+AbilityData\Classic.lua
 Cluster.lua
 Cache.lua
