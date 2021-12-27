@@ -16,6 +16,8 @@ L["CastString"] = "%s just used a low rank of %s, next rank available at %d.";
 L["PostMessageString"] =
     "You might be missing training or using an outdated ability shortcut.";
 
+L["Queue"] = {["Processing"] = "Processing %d queued notifications"}
+
 L["Help"] = {
     ["title"] = 'Command-line options',
     ["enable"] = 'toggles combat log parsing',
