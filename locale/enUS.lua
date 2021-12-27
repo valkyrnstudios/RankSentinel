@@ -11,7 +11,7 @@ L["AnnouncePrefix"] = {
     ["Whisper"] = "{rt7} RankSentinel detected"
 }
 
-L["CastString"] = "%s just used a low rank of %s.";
+L["CastString"] = "%s just used a low rank of %s, next rank available at %d.";
 
 L["PostMessageString"] =
     "You might be missing training or using an outdated ability shortcut.";

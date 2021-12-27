@@ -153,15 +153,16 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
         not self.db.profile.debug then return end
 
     local castLevel = UnitLevel(sourceName)
+    local isMax, nextRankLevel = self:IsMaxRank(spellID, castLevel);
 
-    if self:IsMaxRank(spellID, castLevel) then return end
+    if isMax then return end
 
     local spellLink = GetSpellLink(spellID)
     local castStringMsg = nil
 
     if sourceGUID == self.playerGUID then
         castStringMsg = string.format(self.db.profile.castString, "You",
-                                      spellLink, castLevel)
+                                      spellLink, nextRankLevel)
         castStringMsg = string.format("%s %s", L["AnnouncePrefix"]["Self"],
                                       castStringMsg)
 
@@ -173,7 +174,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
     else
         if self.db.profile.whisper then
             castStringMsg = string.format(self.db.profile.castString, "you",
-                                          spellLink, castLevel)
+                                          spellLink, nextRankLevel)
             castStringMsg = string.format("%s %s %s",
                                           L["AnnouncePrefix"]["Whisper"],
                                           castStringMsg,
@@ -182,7 +183,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
             addon:Annoy(castStringMsg, sourceName)
         else
             castStringMsg = string.format(self.db.profile.castString,
-                                          sourceName, spellLink, castLevel)
+                                          sourceName, spellLink, nextRankLevel)
             castStringMsg = string.format("%s %s", L["AnnouncePrefix"]["Self"],
                                           castStringMsg)
 
@@ -287,7 +288,7 @@ function addon:IsMaxRank(spellID, casterLevel)
 
     self.db.profile.isMaxRank[lookup_key] = isMax;
 
-    return isMax
+    return isMax, nextRankData.Level
 end
 
 function addon:PrintMessage(msg)
