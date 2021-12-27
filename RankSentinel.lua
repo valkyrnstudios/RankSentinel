@@ -317,7 +317,7 @@ function addon:IsMaxRank(spellID, casterLevel)
 end
 
 function addon:QueueNotification(notification, target)
-    if InCombatLockdown() and self.db.profile.combat then
+    if InCombatLockdown() and not self.db.profile.combat then
         self:PrintMessage(string.format("Queued - %s, %s", target, notification));
 
         self.notificationsQueue[#self.notificationsQueue + 1] = string.format(
