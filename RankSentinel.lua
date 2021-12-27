@@ -216,9 +216,18 @@ function addon:PLAYER_ENTERING_WORLD(...)
 end
 
 function addon:PLAYER_REGEN_ENABLED(...)
+    -- If player dead, combat for rest of the raid could be ongoing
+    if UnitIsDeadOrGhost("Player") then return end
+
+    -- TODO trigger notification processing again without waiting for a combat cycle
+    -- PLAYER_UNGHOST, PLAYER_ALIVE
+    self:ProcessQueuedNotifications();
+end
+
+function addon:ProcessQueuedNotifications()
     if #self.notificationsQueue == 0 then return end
 
-    self:PrintMessage(string.format("Processing %d queued messages",
+    self:PrintMessage(string.format(L["Queue"]["Processing"],
                                     #self.notificationsQueue));
 
     local notification, target = nil, nil;
