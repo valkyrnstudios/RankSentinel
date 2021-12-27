@@ -19,6 +19,6 @@ libs\AceComm-3.0\AceComm-3.0.xml
 locale\enUS.lua
 
 RankSentinel.lua
-AbilityData\BCC.lua
+AbilityData\TBC.lua
 Cluster.lua
 Cache.lua

@@ -21,10 +21,10 @@ locale\enUS.lua
 
 RankSentinel.lua
 #@version-bcc@
-AbilityData\BCC.lua
+AbilityData\TBC.lua
 #@end-version-bcc@
 #@version-classic@
-AbilityData\Classic.lua
+AbilityData\Vanilla.lua
 #@end-version-classic@
 Cluster.lua
 Cache.lua
