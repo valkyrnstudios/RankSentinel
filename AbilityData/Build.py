@@ -1,6 +1,7 @@
 # 1. Open https://docs.google.com/spreadsheets/d/1jtx1WyfChzACzh0WBWANtrqkRtS3D-zPWqs3eOnyVvY/edit#gid=0
-# 2. Download as CSV to ".\AbilityData\bcc.csv"
-# 2. Execute this script from root, "python .\AbilityData\Build.py"
+# 2. Download "TBC Abilities" as CSV to ".\AbilityData\tbc.csv"
+# 3. Download "Vanilla Abilities" as CSV to ".\AbilityData\vanilla.csv"
+# 4. Execute this script from root, "python .\AbilityData\Build.py"
 
 from datetime import date
 
@@ -14,7 +15,7 @@ header = []
 ability_list = []
 reverse_lookup = {}
 
-with open('./AbilityData/bcc.csv', 'r', newline='') as csvfile:
+with open('./AbilityData/tbc.csv', 'r', newline='') as csvfile:
   csvreader = csv.DictReader(csvfile)
   
   headers = next(csvreader)
@@ -54,7 +55,7 @@ with open('./AbilityData/bcc.csv', 'r', newline='') as csvfile:
 
 
 
-with open('./AbilityData/BCC.lua', 'w', newline='') as abilityData:
+with open('./AbilityData/TBC.lua', 'w', newline='') as abilityData:
   abilityData.write('-- Built on {0}\n\n'.format(date.today()))
   abilityData.write('local _, addon = ...\n\n')
   abilityData.write('addon.AbilityData = {\n')
