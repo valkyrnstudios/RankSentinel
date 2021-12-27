@@ -19,6 +19,7 @@ function addon:OnInitialize()
             enable = true,
             whisper = true,
             debug = false,
+            combat = false,
             castString = L["CastString"],
             postMessageString = L["PostMessageString"],
             announcedSpells = {},
@@ -33,6 +34,8 @@ function addon:OnInitialize()
 
     self.playerGUID = UnitGUID("Player");
     self.playerName = UnitName("Player");
+
+    self.notificationsQueue = {};
 
     self:UpgradeProfile();
 
@@ -52,6 +55,7 @@ end
 function addon:OnEnable()
     self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED");
     self:RegisterEvent("PLAYER_ENTERING_WORLD");
+    self:RegisterEvent("PLAYER_REGEN_ENABLED");
 
     self:RegisterComm(self._commPrefix);
 
@@ -87,6 +91,9 @@ function addon:ChatCommand(cmd)
     elseif msg == "enable" then
         self.db.profile.enable = not self.db.profile.enable
         self:PrintMessage("enable = " .. tostring(self.db.profile.enable));
+    elseif msg == "combat" then
+        self.db.profile.combat = not self.db.profile.combat
+        self:PrintMessage("combat = " .. tostring(self.db.profile.combat));
     elseif "cluster" == string.sub(msg, 1, #"cluster") then
         local _, sub = strsplit(' ', msg)
 
@@ -117,6 +124,8 @@ function addon:PrintHelp()
                                     L['Help']['enable']));
     self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'whisper',
                                     L['Help']['whisper']));
+    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'combat',
+                                    L['Help']['combat']));
     self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'reset',
                                     L['Help']['reset']));
     self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'count',
@@ -200,15 +209,31 @@ function addon:PLAYER_ENTERING_WORLD(...)
     self:ClusterElect();
 end
 
+function addon:PLAYER_REGEN_ENABLED(...)
+    if #self.notificationsQueue == 0 then return end
+
+    self:PrintMessage(string.format("Processing %d queued messages",
+                                    #self.notificationsQueue));
+
+    local notification, target = nil, nil;
+
+    for i = 1, #self.notificationsQueue do
+        notification, target = strsplit("|", self.notificationsQueue[i]);
+        self:PrintMessage(target .. ": " .. notification);
+    end
+
+    self.notificationsQueue = {};
+end
+
 function addon:Annoy(msg, target)
     if self.playerName == self.cluster.lead then
         if target == "self" then
-            self:PrintMessage(msg)
+            self:PrintMessage(msg);
         else
-            SendChatMessage(msg, "WHISPER", nil, target)
+            self:QueueNotification(msg, target);
         end
     else
-        self:PrintMessage(msg)
+        self:PrintMessage(msg);
     end
 end
 
@@ -289,6 +314,19 @@ function addon:IsMaxRank(spellID, casterLevel)
     self.db.profile.isMaxRank[lookup_key] = isMax;
 
     return isMax, nextRankData.Level
+end
+
+function addon:QueueNotification(notification, target)
+    if InCombatLockdown() and self.db.profile.combat then
+        self:PrintMessage(string.format("Queued - %s, %s", target, notification));
+
+        self.notificationsQueue[#self.notificationsQueue + 1] = string.format(
+                                                                    "%s|%s",
+                                                                    notification,
+                                                                    target);
+    else
+        SendChatMessage(notification, "WHISPER", nil, target)
+    end
 end
 
 function addon:PrintMessage(msg)

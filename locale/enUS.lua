@@ -20,6 +20,7 @@ L["Help"] = {
     ["title"] = 'Command-line options',
     ["enable"] = 'toggles combat log parsing',
     ["whisper"] = 'toggles whispers to players',
+    ["combat"] = 'toggles whispers to players during combat',
     ["reset"] = 'resets profile to defaults',
     ["count"] = 'prints current statistics',
     ["debug"] = 'toggles debug output for testing',
