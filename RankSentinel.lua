@@ -24,22 +24,15 @@ function addon:OnInitialize()
             postMessageString = L["PostMessageString"],
             announcedSpells = {},
             ignoredPlayers = {},
-            isMaxRank = {}
+            isMaxRank = {},
+            dbVersion = 'v0.0.0'
         }
     }
 
     self.db = LibStub("AceDB-3.0"):New("RankSentinelDB", defaults, true)
 
-    if not self.db.profile then self.db.profile.ResetProfile() end
-
     self.playerGUID = UnitGUID("Player");
     self.playerName = UnitName("Player");
-
-    self.notificationsQueue = {};
-
-    self:UpgradeProfile();
-
-    self:ClusterReset();
 
     SLASH_RankSentinel1 = "/" .. string.lower(addonName);
     SLASH_RankSentinel2 = "/sentinel";
@@ -50,6 +43,11 @@ end
 
 function addon:UpgradeProfile()
     if not self.db.profile.isMaxRank then self.db.profile.isMaxRank = {} end
+
+    if self.db.profile.dbVersion ~= addon.Version then
+        self:PrintMessage("Addon version change, resetting cache");
+        self:ClearCache();
+    end
 end
 
 function addon:OnEnable()
@@ -60,6 +58,14 @@ function addon:OnEnable()
     self:RegisterComm(self._commPrefix);
 
     self:PrintMessage("Loaded " .. self.Version);
+
+    self:UpgradeProfile();
+
+    self.db.profile.dbVersion = self.Version;
+
+    self:ClusterReset();
+
+    self.notificationsQueue = {};
 
     if self.db.profile.debug then
         self:PrintMessage("Debug enabled, clearing cache on reload");
