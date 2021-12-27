@@ -5,7 +5,7 @@
 ## Author: SabreValkyrn
 ## Notes: Detect players using lower ranked abilities and notifies them.
 ## SavedVariables: RankSentinelDB
-## X-Credits: Gogo
+## X-Credits: Gogo, Splendiferus, Aevala, Fathom
 ## X-Curse-Project-ID: 560210
 ## X-Embeds: Ace3
 
