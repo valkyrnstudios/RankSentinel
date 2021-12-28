@@ -44,7 +44,6 @@ function addon:OnInitialize()
 
     self.playerGUID = UnitGUID("Player");
     self.playerName = UnitName("Player");
-    self.playerLevel = UnitLevel("Player");
 
     SLASH_RankSentinel1 = "/" .. string.lower(addonName);
     SLASH_RankSentinel2 = "/sentinel";
@@ -77,6 +76,8 @@ function addon:OnEnable()
         -- Self casted UNIT_SPELLCAST_SUCCEEDED contains spellID
         self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED");
         self:RegisterEvent("PLAYER_LEVEL_UP");
+
+        self.playerLevel = UnitLevel("Player");
     end
 
     self:PrintMessage("Loaded " .. self.Version);
