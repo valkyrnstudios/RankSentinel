@@ -155,18 +155,22 @@ end
 function addon:PrintHelp()
     self:PrintMessage(string.format("%s (%s)", L['Help']['title'], self.Version))
 
-    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'enable',
+    self:PrintMessage(string.format('- %s (%s)|cffffffff: %s|r', 'enable',
+                                    tostring(self.db.profile.enable),
                                     L['Help']['enable']));
-    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'whisper',
+    self:PrintMessage(string.format('- %s (%s)|cffffffff: %s|r', 'whisper',
+                                    tostring(self.db.profile.whisper),
                                     L['Help']['whisper']));
-    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'combat',
+    self:PrintMessage(string.format('- %s (%s)|cffffffff: %s|r', 'combat',
+                                    tostring(self.db.profile.combat),
                                     L['Help']['combat']));
+    self:PrintMessage(string.format('- %s (%s)|cffffffff: %s|r', 'debug',
+                                    tostring(self.db.profile.debug),
+                                    L['Help']['debug']));
     self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'reset',
                                     L['Help']['reset']));
     self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'count',
                                     L['Help']['count']));
-    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'debug',
-                                    L['Help']['debug']));
     self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'clear',
                                     L['Help']['clear']));
     self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'cluster',
