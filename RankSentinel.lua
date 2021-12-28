@@ -19,7 +19,7 @@ function addon:OnInitialize()
             enable = true,
             whisper = true,
             debug = false,
-            combat = false,
+            combat = true,
             castString = L["CastString"],
             postMessageString = L["PostMessageString"],
             announcedSpells = {},
