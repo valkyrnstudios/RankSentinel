@@ -233,7 +233,7 @@ function addon:ProcessQueuedNotifications()
     local notification, target = nil, nil;
 
     for i = 1, #self.notificationsQueue do
-        notification, target = strsplit("|", self.notificationsQueue[i]);
+        notification, target = strsplit("::", self.notificationsQueue[i]);
         SendChatMessage(notification, "WHISPER", nil, target)
     end
 
@@ -336,7 +336,7 @@ function addon:QueueNotification(notification, target)
         self:PrintMessage(string.format("Queued - %s, %s", target, notification));
 
         self.notificationsQueue[#self.notificationsQueue + 1] = string.format(
-                                                                    "%s|%s",
+                                                                    "%s::%s",
                                                                     notification,
                                                                     target);
     else
