@@ -20,5 +20,5 @@ locale\enUS.lua
 
 RankSentinel.lua
 AbilityData\Vanilla.lua
-Cluster.lua
+Vanilla.lua
 Cache.lua

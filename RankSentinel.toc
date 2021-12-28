@@ -22,9 +22,10 @@ locale\enUS.lua
 RankSentinel.lua
 #@version-bcc@
 AbilityData\TBC.lua
+Cluster.lua
 #@end-version-bcc@
 #@version-classic@
 AbilityData\Vanilla.lua
+Vanilla.lua
 #@end-version-classic@
-Cluster.lua
 Cache.lua

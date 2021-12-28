@@ -2,8 +2,19 @@
 -- we can use that to avoid polluting the global namespace shared by all addons.
 local addonName, RankSentinel = ...
 
-local addon = LibStub("AceAddon-3.0"):NewAddon(RankSentinel, addonName,
-                                               "AceEvent-3.0", "AceComm-3.0")
+local addon = nil;
+
+local isTBC = _G.WOW_PROJECT_ID == _G.WOW_PROJECT_BURNING_CRUSADE_CLASSIC;
+local isVanilla = _G.WOW_PROJECT_ID == _G.WOW_PROJECT_CLASSIC;
+
+if isTBC then
+    addon = LibStub("AceAddon-3.0"):NewAddon(RankSentinel, addonName,
+                                             "AceEvent-3.0", "AceComm-3.0")
+elseif isVanilla then
+    -- Clustering moot on classic, can only detect self spellIDs
+    addon = LibStub("AceAddon-3.0"):NewAddon(RankSentinel, addonName,
+                                             "AceEvent-3.0")
+end
 
 addon.Version = GetAddOnMetadata(addonName, "Version");
 
@@ -51,21 +62,29 @@ function addon:UpgradeProfile()
 end
 
 function addon:OnEnable()
-    self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED");
-    self:RegisterEvent("PLAYER_ENTERING_WORLD");
-    self:RegisterEvent("PLAYER_REGEN_ENABLED");
+    if WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+        self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED");
+        self:RegisterEvent("PLAYER_ENTERING_WORLD");
+        self:RegisterEvent("PLAYER_REGEN_ENABLED");
 
-    self:RegisterComm(self._commPrefix);
+        self:RegisterComm(self._commPrefix);
+        self:ClusterReset();
+
+        self.notificationsQueue = {};
+    elseif WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+        -- SpellID not a parameter of COMBAT_LOG_EVENT_UNFILTERED in Classic era
+        -- Self casted UNIT_SPELLCAST_SUCCEEDED contains spellID
+        self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED");
+        self:RegisterEvent("PLAYER_LEVEL_UP");
+
+        self.playerLevel = UnitLevel("Player");
+    end
 
     self:PrintMessage("Loaded " .. self.Version);
 
     self:UpgradeProfile();
 
     self.db.profile.dbVersion = self.Version;
-
-    self:ClusterReset();
-
-    self.notificationsQueue = {};
 
     if self.db.profile.debug then
         self:PrintMessage("Debug enabled, clearing cache on reload");
@@ -92,6 +111,11 @@ function addon:ChatCommand(cmd)
         self.db.profile.debug = not self.db.profile.debug
         self:PrintMessage("debug = " .. tostring(self.db.profile.debug));
     elseif msg == "whisper" then
+        if not isTBC then
+            self:PrintMessage("Whisper only supported on TBC");
+            return
+        end
+
         self.db.profile.whisper = not self.db.profile.whisper
         self:PrintMessage("whisper = " .. tostring(self.db.profile.whisper));
     elseif msg == "enable" then
@@ -101,6 +125,11 @@ function addon:ChatCommand(cmd)
         self.db.profile.combat = not self.db.profile.combat
         self:PrintMessage("combat = " .. tostring(self.db.profile.combat));
     elseif "cluster" == string.sub(msg, 1, #"cluster") then
+        if not isTBC then
+            self:PrintMessage("Cluster only supported on TBC");
+            return
+        end
+
         local _, sub = strsplit(' ', msg)
 
         if sub == "reset" then
