@@ -234,7 +234,7 @@ function addon:ProcessQueuedNotifications()
 
     for i = 1, #self.notificationsQueue do
         notification, target = strsplit("|", self.notificationsQueue[i]);
-        self:PrintMessage(target .. ": " .. notification);
+        SendChatMessage(notification, "WHISPER", nil, target)
     end
 
     self.notificationsQueue = {};
