@@ -22,6 +22,10 @@ Use `/ranksentinel` to get the latest commands.
 - `/ranksentinel cluster elect`: triggers lead election logic
 - `/ranksentinel ignore playerName`: ignores all abilities cast by playerName
 
+## Vanilla support
+
+[Classic Era and Season of Mastery realm combat logs do not support spellID](https://wowpedia.fandom.com/wiki/Patch_1.13.2/API_changes), as such this addon is limited to the current player's abilities.
+
 ## Reporting issues
 
 Ability data comes from [Gogo's revised ability list](https://docs.google.com/spreadsheets/d/1jtx1WyfChzACzh0WBWANtrqkRtS3D-zPWqs3eOnyVvY/edit?usp=sharing), please leave a comment for any ability data changes you have in mind.
