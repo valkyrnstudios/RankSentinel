@@ -25,7 +25,7 @@ AbilityData\TBC.lua
 Cluster.lua
 #@end-version-bcc@
 #@version-classic@
-Vanilla.lua
 AbilityData\Vanilla.lua
+Vanilla.lua
 #@end-version-classic@
 Cache.lua
