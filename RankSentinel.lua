@@ -259,11 +259,12 @@ function addon:ProcessQueuedNotifications()
     self:PrintMessage(string.format(L["Queue"]["Processing"],
                                     #self.notificationsQueue));
 
-    local notification, target = nil, nil;
+    local notification = nil;
 
     for i = 1, #self.notificationsQueue do
-        notification, target = strsplit("::", self.notificationsQueue[i]);
-        SendChatMessage(notification, "WHISPER", nil, target)
+        notification = self.notificationsQueue[i];
+
+        SendChatMessage(notification.text, "WHISPER", nil, notification.target)
     end
 
     self.notificationsQueue = {};
@@ -364,10 +365,10 @@ function addon:QueueNotification(notification, target)
     if InCombatLockdown() and not self.db.profile.combat then
         self:PrintMessage(string.format("Queued - %s, %s", target, notification));
 
-        self.notificationsQueue[#self.notificationsQueue + 1] = string.format(
-                                                                    "%s::%s",
-                                                                    notification,
-                                                                    target);
+        self.notificationsQueue[#self.notificationsQueue + 1] = {
+            text = notification,
+            target = target
+        };
     else
         SendChatMessage(notification, "WHISPER", nil, target)
     end
