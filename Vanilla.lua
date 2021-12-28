@@ -29,7 +29,5 @@ function addon:UNIT_SPELLCAST_SUCCEEDED(_, sourceGUID, _, spellID)
 
     self:PrintMessage(castStringMsg);
 
-    if self.db.profile.announcedSpells[PlayerSpellIndex] ~= true then
-        self.db.profile.announcedSpells[PlayerSpellIndex] = true
-    end
+    self.db.profile.announcedSpells[PlayerSpellIndex] = true
 end
