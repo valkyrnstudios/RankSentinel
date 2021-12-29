@@ -136,6 +136,8 @@ function addon:ChatCommand(cmd)
             self:ClusterReset();
         elseif sub == "elect" then
             self:ClusterElect();
+        elseif sub == "join" then
+            self:JoinCluster(self.playerName, addon.Version);
         else
             self:PrintCluster();
         end
