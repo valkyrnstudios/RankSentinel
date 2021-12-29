@@ -11,7 +11,8 @@ function addon:UNIT_SPELLCAST_SUCCEEDED(_, sourceGUID, _, spellID)
 
     if addon.AbilityData[spellID] == nil then return end
 
-    local PlayerSpellIndex = string.format("%s-%s", sourceGUID, spellID)
+    local PlayerSpellIndex = string.format("%s-%s-%s", sourceGUID,
+                                           self.playerLevel, spellID)
 
     if self.db.profile.announcedSpells[PlayerSpellIndex] ~= nil and
         not self.db.profile.debug then return end

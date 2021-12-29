@@ -185,12 +185,14 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
         return
     end
 
-    local PlayerSpellIndex = string.format("%s-%s", sourceGUID, spellID)
+    local castLevel = UnitLevel(sourceName)
+
+    local PlayerSpellIndex = string.format("%s-%s-%s", sourceGUID, castLevel,
+                                           spellID)
 
     if self.db.profile.announcedSpells[PlayerSpellIndex] ~= nil and
         not self.db.profile.debug then return end
 
-    local castLevel = UnitLevel(sourceName)
     local isMax, nextRankLevel = self:IsMaxRank(spellID, castLevel);
 
     if isMax then return end
