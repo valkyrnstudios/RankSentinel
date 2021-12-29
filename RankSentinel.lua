@@ -269,7 +269,9 @@ function addon:Annoy(msg, target)
 end
 
 function addon:InGroupWith(guid)
-    if IsInRaid() then
+    if guid == self.playerGUID then
+        return true
+    elseif IsInRaid() then
         for i = 1, GetNumGroupMembers() do
             if guid == UnitGUID("Raid" .. i) then return true end
         end
