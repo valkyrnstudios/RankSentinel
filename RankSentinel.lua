@@ -169,17 +169,17 @@ function addon:PrintHelp()
 end
 
 function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
-    if not self.db.profile.enable or UnitInBattleground("player") ~= nil or
-        UnitIsPossessed("target") then return end
+    if not self.db.profile.enable or UnitInBattleground("player") ~= nil then
+        return
+    end
 
     local _, subevent, _, sourceGUID, sourceName, _, _, _, destName, _, _,
           spellID, _ = CombatLogGetCurrentEventInfo()
 
     if subevent ~= "SPELL_CAST_SUCCESS" or
         self.db.profile.ignoredPlayers[sourceGUID] ~= nil or
-        addon.AbilityData[spellID] == nil or not self:InGroupWith(sourceGUID) then
-        return
-    end
+        addon.AbilityData[spellID] == nil or UnitIsPossessed(sourceName) or
+        not self:InGroupWith(sourceGUID) then return end
 
     local castLevel = UnitLevel(sourceName)
 
