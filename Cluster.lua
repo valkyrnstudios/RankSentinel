@@ -19,9 +19,7 @@ function RankSentinel:OnCommReceived(prefix, message, _, sender)
     elseif command == 'LEAD' then
         self.cluster.lead = data;
 
-        if self.db.profile.debug then
-            self:PrintMessage("Elected to lead: " .. data)
-        end
+        self:PrintMessage("Lead taken by " .. data)
     else
         self:PrintMessage(string.format("Unrecognized comm command: (%s)",
                                         command));
