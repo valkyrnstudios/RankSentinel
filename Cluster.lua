@@ -31,6 +31,10 @@ function RankSentinel:OnCommReceived(prefix, message, distribution, sender)
 end
 
 function RankSentinel:JoinCluster(name, version)
+    -- Protect against recursion or invalid data
+
+    if version:sub(1, 1) ~= "v" then return end
+
     if self.cluster.members[name] == nil then
         self.cluster.members[name] = version;
     end
@@ -47,6 +51,10 @@ function RankSentinel:RecordAnnoy(playerSpellIndex)
 end
 
 function RankSentinel:ClusterBroadcast(command, data)
+    if self.db.profile.debug then
+        self:PrintMessage(string.format("Broadcasting %s: %s", command, data));
+    end
+
     self:SendCommMessage(RankSentinel._commPrefix,
                          string.format("%s|%s", command, data), "RAID")
 end
