@@ -181,7 +181,9 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
 
     if subevent ~= "SPELL_CAST_SUCCESS" or
         self.db.profile.ignoredPlayers[sourceGUID] ~= nil or
-        addon.AbilityData[spellID] == nil then return end
+        addon.AbilityData[spellID] == nil or not self:InGroupWith(sourceGUID) then
+        return
+    end
 
     local PlayerSpellIndex = string.format("%s-%s", sourceGUID, spellID)
 
@@ -205,8 +207,6 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
         addon:Annoy(castStringMsg, "self")
 
         self:RecordAnnoy(PlayerSpellIndex)
-    elseif not addon:InGroupWith(sourceGUID) then
-        return
     else
         if self.db.profile.whisper then
             castStringMsg = string.format(self.db.profile.castString, "you",
