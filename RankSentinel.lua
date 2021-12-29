@@ -127,13 +127,14 @@ function addon:ChatCommand(cmd)
     elseif msg == "lead" then
         self:SetLead(self.playerName);
         self:PrintLead();
-    elseif "ignore" == string.sub(msg, 1, #"ignore") then
-        local _, name = strsplit(' ', msg)
-        if name then
-            self:IgnorePlayer(name);
-            self:PrintMessage("Ignored " .. name)
+    elseif "ignore" then
+        if UnitExists("target") then
+            self:IgnoreTarget();
         else
-            self:PrintMessage("Invalid parameter")
+            self:PrintMessage("Select a target to ignore");
+            self:PrintMessage(string.format("Currently ignoring %d players",
+                                            self:CountCache(
+                                                self.db.profile.ignoredPlayers)))
         end
     else
         self:PrintHelp()
