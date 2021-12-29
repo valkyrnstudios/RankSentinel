@@ -1,6 +1,6 @@
 local _, RankSentinel = ...
 
-function RankSentinel:OnCommReceived(prefix, message, distribution, sender)
+function RankSentinel:OnCommReceived(prefix, message, _, sender)
     if prefix ~= RankSentinel._commPrefix or sender == self.playerName then
         return
     end
@@ -15,7 +15,7 @@ function RankSentinel:OnCommReceived(prefix, message, distribution, sender)
     end
 
     if command == 'ANNOY' then
-        self:RecordAnnoy(data);
+        self:RecordAnnoy(sender, data);
     elseif command == 'LEAD' then
         self.cluster.lead = data;
 
@@ -28,12 +28,14 @@ function RankSentinel:OnCommReceived(prefix, message, distribution, sender)
     end
 end
 
-function RankSentinel:RecordAnnoy(playerSpellIndex)
+function RankSentinel:RecordAnnoy(sender, playerSpellIndex)
     if self.db.profile.announcedSpells[playerSpellIndex] ~= true then
         self.db.profile.announcedSpells[playerSpellIndex] = true
     end
 
-    self:Broadcast("ANNOY", playerSpellIndex);
+    if sender == self.playerName then
+        self:Broadcast("ANNOY", playerSpellIndex);
+    end
 end
 
 function RankSentinel:Broadcast(command, data)

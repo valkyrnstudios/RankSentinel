@@ -206,7 +206,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
 
         addon:Annoy(castStringMsg, "self")
 
-        self:RecordAnnoy(PlayerSpellIndex)
+        self:RecordAnnoy(self.playerName, PlayerSpellIndex)
     else
         if self.db.profile.whisper then
             castStringMsg = string.format(self.db.profile.castString, "you",
@@ -226,7 +226,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
             addon:Annoy(castStringMsg, "self")
         end
 
-        self:RecordAnnoy(PlayerSpellIndex)
+        self:RecordAnnoy(self.playerName, PlayerSpellIndex)
     end
 end
 
