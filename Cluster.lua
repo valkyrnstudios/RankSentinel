@@ -47,16 +47,11 @@ function RankSentinel:Broadcast(command, data)
                          string.format("%s|%s", command, data), "RAID")
 end
 
-function RankSentinel:ElectLead(playerName)
-    if not self.db.profile.enable or not self.db.profile.whisper then return end
+function RankSentinel:SetLead(playerName)
+    if not self.db.profile.enable or not self.db.profile.whisper or playerName ==
+        nil then return end
 
-    local leadName = playerName;
-
-    if self.Version == 'v9.9.9' or playerName == nil then
-        leadName = self.playerName;
-    end
-
-    self:Broadcast("LEAD", leadName);
+    self:Broadcast("LEAD", playerName);
 end
 
 function RankSentinel:PrintLead()

@@ -125,7 +125,7 @@ function addon:ChatCommand(cmd)
         self.db.profile.combat = not self.db.profile.combat
         self:PrintMessage("combat = " .. tostring(self.db.profile.combat));
     elseif msg == "lead" then
-        self:ElectLead();
+        self:SetLead();
         self:PrintLead();
     elseif "ignore" == string.sub(msg, 1, #"ignore") then
         local _, name = strsplit(' ', msg)
@@ -228,7 +228,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
     end
 end
 
-function addon:PLAYER_ENTERING_WORLD(...) self:ElectLead(); end
+function addon:PLAYER_ENTERING_WORLD(...) self:SetLead(); end
 
 function addon:PLAYER_REGEN_ENABLED(...)
     -- If player dead, combat for rest of the raid could be ongoing
