@@ -32,7 +32,12 @@ end
 
 function RankSentinel:JoinCluster(name, version)
     -- Protect against recursion or invalid data
-    if version:sub(1, 1) ~= "v" then return end
+    if version:sub(1, 1) ~= "v" then
+        self:PrintMessage(string.format(
+                              "Invalid join request from %s with version (%s)",
+                              name, version));
+        return
+    end
 
     if self.db.profile.debug then
         self:PrintMessage(string.format("Joining cluster as %s: %s", name,
