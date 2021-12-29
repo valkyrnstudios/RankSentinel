@@ -14,40 +14,17 @@ function RankSentinel:OnCommReceived(prefix, message, distribution, sender)
                               command, sender, data));
     end
 
-    if command == 'JOINED' then
-        self:JoinCluster(sender, data);
-    elseif command == 'ANNOY' then
+    if command == 'ANNOY' then
         self:RecordAnnoy(data);
     elseif command == 'LEAD' then
         self.cluster.lead = data;
 
         if self.db.profile.debug then
-            self:PrintMessage("Elected to cluster lead: " .. data)
+            self:PrintMessage("Elected to lead: " .. data)
         end
     else
         self:PrintMessage(string.format("Unrecognized comm command: (%s)",
                                         command));
-    end
-end
-
-function RankSentinel:JoinCluster(name, version)
-    -- Protect against recursion or invalid data
-    if version:sub(1, 1) ~= "v" then
-        self:PrintMessage(string.format(
-                              "Invalid join request from %s with version (%s)",
-                              name, version));
-        return
-    end
-
-    if self.db.profile.debug then
-        self:PrintMessage(string.format("Joining cluster as %s: %s", name,
-                                        version));
-    end
-
-    if name == self.playerName then
-        self:ClusterBroadcast("JOINED", version);
-    else
-        self.cluster.members[name] = version;
     end
 end
 
@@ -56,10 +33,10 @@ function RankSentinel:RecordAnnoy(playerSpellIndex)
         self.db.profile.announcedSpells[playerSpellIndex] = true
     end
 
-    self:ClusterBroadcast("ANNOY", playerSpellIndex);
+    self:Broadcast("ANNOY", playerSpellIndex);
 end
 
-function RankSentinel:ClusterBroadcast(command, data)
+function RankSentinel:Broadcast(command, data)
     if self.db.profile.debug then
         self:PrintMessage(string.format("Broadcasting %s: %s", command, data));
     end
@@ -68,55 +45,18 @@ function RankSentinel:ClusterBroadcast(command, data)
                          string.format("%s|%s", command, data), "RAID")
 end
 
-function RankSentinel:ClusterElect()
-    local leadName = nil;
+function RankSentinel:ElectLead(playerName)
+    local leadName = playerName;
 
-    if self.db.profile.debug then
-        self:PrintMessage("Electing lead from: ")
-        for name, version in pairs(self.cluster.members) do
-            self:PrintMessage(string.format(" - %s (%s)", name, version));
-        end
+    if self.Version == 'v9.9.9' or playerName == nil then
+        leadName = self.playerName;
     end
 
-    -- Elect local dev clone
-    if self.Version == 'v9.9.9' then leadName = self.playerName; end
-
-    -- TODO Set lead to lead to latest version
-
-    -- Set lead to lead or first assist found
-    if leadName == nil then
-        for name, _ in pairs(self.cluster.members) do
-            if UnitIsGroupLeader(name) then
-                leadName = name;
-                break
-            elseif IsInRaid() and UnitIsGroupAssistant(UnitGUID(name)) then
-                leadName = name;
-                break
-            end
-        end
-    end
-
-    -- Handle if elected lead is not in members, race/stale condition
-    if leadName == nil or self.cluster.members[leadName] == nil then
-        -- Fall back to current or newest player as lead
-        leadName = self.playerName
-    end
-
-    self:ClusterBroadcast("LEAD", leadName);
+    self:Broadcast("LEAD", leadName);
 end
 
-function RankSentinel:PrintCluster()
+function RankSentinel:PrintLead()
     self:PrintMessage("Cluster Lead: " .. self.cluster.lead);
-    self:PrintMessage("Cluster members:")
-
-    for name, version in pairs(self.cluster.members) do
-        self:PrintMessage(string.format(" - %s (%s)", name, version));
-    end
 end
 
-function RankSentinel:ClusterReset()
-    self.cluster = {
-        members = {[self.playerName] = self.Version},
-        lead = self.playerName
-    }
-end
+function RankSentinel:ResetLead() self.cluster = {lead = self.playerName} end

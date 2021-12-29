@@ -124,23 +124,13 @@ function addon:ChatCommand(cmd)
     elseif msg == "combat" then
         self.db.profile.combat = not self.db.profile.combat
         self:PrintMessage("combat = " .. tostring(self.db.profile.combat));
-    elseif "cluster" == string.sub(msg, 1, #"cluster") then
+    elseif msg == "elect" then
         if not isTBC then
-            self:PrintMessage("Cluster only supported on TBC");
+            self:PrintMessage("Election only supported on TBC");
             return
         end
 
-        local _, sub = strsplit(' ', msg)
-
-        if sub == "reset" then
-            self:ClusterReset();
-        elseif sub == "elect" then
-            self:ClusterElect();
-        elseif sub == "join" then
-            self:JoinCluster(self.playerName, self.Version);
-        else
-            self:PrintCluster();
-        end
+        self:ElectLead();
     elseif "ignore" == string.sub(msg, 1, #"ignore") then
         local _, name = strsplit(' ', msg)
         if name then
@@ -175,14 +165,8 @@ function addon:PrintHelp()
                                     L['Help']['count']));
     self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'clear',
                                     L['Help']['clear']));
-    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'cluster',
-                                    L['Help']['cluster']));
-    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'cluster reset',
-                                    L['Help']['cluster reset']));
-    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'cluster elect',
-                                    L['Help']['cluster elect']));
-    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'cluster join',
-                                    L['Help']['cluster join']));
+    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'elect',
+                                    L['Help']['elect']));
     self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'ignore playerName',
                                     L['Help']['ignore playerName']));
 end

@@ -27,9 +27,6 @@ L["Help"] = {
     ["count"] = 'prints current statistics',
     ["debug"] = 'toggles debug output for testing',
     ["clear"] = 'clears local ability caches',
-    ["cluster"] = 'prints cluster members',
-    ["cluster reset"] = 'resets cluster to defaults',
-    ["cluster elect"] = 'triggers lead election logic',
-    ["cluster join"] = 'send join request to party/raid cluster',
+    ["elect"] = 'elects a new lead',
     ["ignore playerName"] = 'ignores all abilities cast by playerName'
 }
