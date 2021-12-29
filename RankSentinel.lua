@@ -124,13 +124,9 @@ function addon:ChatCommand(cmd)
     elseif msg == "combat" then
         self.db.profile.combat = not self.db.profile.combat
         self:PrintMessage("combat = " .. tostring(self.db.profile.combat));
-    elseif msg == "elect" then
-        if not isTBC then
-            self:PrintMessage("Election only supported on TBC");
-            return
-        end
-
+    elseif msg == "lead" then
         self:ElectLead();
+        self:PrintLead();
     elseif "ignore" == string.sub(msg, 1, #"ignore") then
         local _, name = strsplit(' ', msg)
         if name then
@@ -165,8 +161,8 @@ function addon:PrintHelp()
                                     L['Help']['count']));
     self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'clear',
                                     L['Help']['clear']));
-    self:PrintMessage(string.format('- %s (%s)|cffffffff: %s|r', 'elect',
-                                    self.cluster.lead, L['Help']['elect']));
+    self:PrintMessage(string.format('- %s (%s)|cffffffff: %s|r', 'lead',
+                                    self.cluster.lead, L['Help']['lead']));
     self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'ignore playerName',
                                     L['Help']['ignore playerName']));
 end

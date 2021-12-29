@@ -48,6 +48,8 @@ function RankSentinel:Broadcast(command, data)
 end
 
 function RankSentinel:ElectLead(playerName)
+    if not self.db.profile.enable or not self.db.profile.whisper then return end
+
     local leadName = playerName;
 
     if self.Version == 'v9.9.9' or playerName == nil then

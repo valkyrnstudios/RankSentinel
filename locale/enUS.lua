@@ -27,6 +27,6 @@ L["Help"] = {
     ["count"] = 'prints current statistics',
     ["debug"] = 'toggles debug output for testing',
     ["clear"] = 'clears local ability caches',
-    ["elect"] = 'elects a new lead',
+    ["lead"] = 'sets yourself as lead',
     ["ignore playerName"] = 'ignores all abilities cast by playerName'
 }
