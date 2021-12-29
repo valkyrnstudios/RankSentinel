@@ -49,7 +49,7 @@ end
 
 function RankSentinel:SetLead(playerName)
     if not self.db.profile.enable or not self.db.profile.whisper or playerName ==
-        nil then return end
+        nil or UnitInBattleground("player") ~= nil then return end
 
     self:Broadcast("LEAD", playerName);
 end
