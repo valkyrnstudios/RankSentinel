@@ -1,8 +1,21 @@
 local _, addon = ...
 
-function addon:IgnorePlayer(name)
-    local guid = UnitGUID(name)
-    self.db.profile.ignoredPlayers[guid] = true;
+function addon:IgnoreTarget()
+    local guid = UnitGUID("target")
+    if not guid then
+        self:PrintMessage("Must target a unit");
+        return;
+    end
+
+    local name, _ = UnitName("target");
+
+    if self.db.profile.ignoredPlayers[guid] ~= true then
+        self:PrintMessage("Ignored " .. name);
+        self.db.profile.ignoredPlayers[guid] = true;
+    else
+        self:PrintMessage("Unignored " .. name);
+        self.db.profile.ignoredPlayers[guid] = nil;
+    end
 end
 
 function addon:CountCache(cache)
