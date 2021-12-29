@@ -137,7 +137,7 @@ function addon:ChatCommand(cmd)
         elseif sub == "elect" then
             self:ClusterElect();
         elseif sub == "join" then
-            self:JoinCluster(self.playerName, addon.Version);
+            self:JoinCluster(self.playerName, self.Version);
         else
             self:PrintCluster();
         end
@@ -150,7 +150,7 @@ function addon:ChatCommand(cmd)
             self:PrintMessage("Invalid parameter")
         end
     else
-        addon:PrintHelp()
+        self:PrintHelp()
     end
 end
 
