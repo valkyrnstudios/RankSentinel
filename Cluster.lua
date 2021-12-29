@@ -32,13 +32,18 @@ end
 
 function RankSentinel:JoinCluster(name, version)
     -- Protect against recursion or invalid data
-    if version:sub(1, 1) ~= "v" or name == self.playerName then return end
+    if version:sub(1, 1) ~= "v" then return end
 
-    if self.cluster.members[name] == nil then
-        self.cluster.members[name] = version;
+    if self.db.profile.debug then
+        self:PrintMessage(string.format("Joining cluster as %s: %s", name,
+                                        version));
     end
 
-    self:ClusterBroadcast("JOINED", string.format("%s,%s", name, version));
+    if name == self.playerName then
+        self:ClusterBroadcast("JOINED", string.format("%s,%s", name, version));
+    elseif self.cluster.members[name] == nil then
+        self.cluster.members[name] = version;
+    end
 end
 
 function RankSentinel:RecordAnnoy(playerSpellIndex)
