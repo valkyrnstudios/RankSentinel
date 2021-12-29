@@ -165,8 +165,8 @@ function addon:PrintHelp()
                                     L['Help']['count']));
     self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'clear',
                                     L['Help']['clear']));
-    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'elect',
-                                    L['Help']['elect']));
+    self:PrintMessage(string.format('- %s (%s)|cffffffff: %s|r', 'elect',
+                                    self.cluster.lead, L['Help']['elect']));
     self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'ignore playerName',
                                     L['Help']['ignore playerName']));
 end
