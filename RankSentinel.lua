@@ -127,7 +127,7 @@ function addon:ChatCommand(cmd)
     elseif msg == "lead" then
         self:SetLead(self.playerName);
         self:PrintLead();
-    elseif "ignore" then
+    elseif msg == "ignore" then
         if UnitExists("target") then
             self:IgnoreTarget();
         else
