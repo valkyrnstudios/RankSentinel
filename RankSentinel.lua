@@ -181,6 +181,8 @@ function addon:PrintHelp()
                                     L['Help']['cluster reset']));
     self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'cluster elect',
                                     L['Help']['cluster elect']));
+    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'cluster join',
+                                    L['Help']['cluster join']));
     self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'ignore playerName',
                                     L['Help']['ignore playerName']));
 end

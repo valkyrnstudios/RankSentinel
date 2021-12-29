@@ -32,8 +32,7 @@ end
 
 function RankSentinel:JoinCluster(name, version)
     -- Protect against recursion or invalid data
-
-    if version:sub(1, 1) ~= "v" then return end
+    if version:sub(1, 1) ~= "v" or name == self.playerName then return end
 
     if self.cluster.members[name] == nil then
         self.cluster.members[name] = version;

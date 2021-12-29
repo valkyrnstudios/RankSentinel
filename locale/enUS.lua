@@ -30,5 +30,6 @@ L["Help"] = {
     ["cluster"] = 'prints cluster members',
     ["cluster reset"] = 'resets cluster to defaults',
     ["cluster elect"] = 'triggers lead election logic',
+    ["cluster join"] = 'send join request to party/raid cluster',
     ["ignore playerName"] = 'ignores all abilities cast by playerName'
 }
