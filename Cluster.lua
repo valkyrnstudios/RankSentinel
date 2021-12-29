@@ -15,8 +15,7 @@ function RankSentinel:OnCommReceived(prefix, message, distribution, sender)
     end
 
     if command == 'JOINED' then
-        local joinData = strsplit(",", data);
-        self:JoinCluster(sender, joinData[#joinData]);
+        self:JoinCluster(sender, data);
     elseif command == 'ANNOY' then
         self:RecordAnnoy(data);
     elseif command == 'LEAD' then
@@ -33,9 +32,7 @@ end
 
 function RankSentinel:JoinCluster(name, version)
     -- Protect against recursion or invalid data
-    if version:sub(1, 1) ~= "v" or self.cluster.members[name] == nil then
-        return
-    end
+    if version:sub(1, 1) ~= "v" then return end
 
     if self.db.profile.debug then
         self:PrintMessage(string.format("Joining cluster as %s: %s", name,
@@ -43,7 +40,7 @@ function RankSentinel:JoinCluster(name, version)
     end
 
     if name == self.playerName then
-        self:ClusterBroadcast("JOINED", string.format("%s,%s", name, version));
+        self:ClusterBroadcast("JOINED", version);
     else
         self.cluster.members[name] = version;
     end
