@@ -68,7 +68,7 @@ function addon:OnEnable()
         self:RegisterEvent("PLAYER_REGEN_ENABLED");
 
         self:RegisterComm(self._commPrefix);
-        self:ClusterReset();
+        self:ResetLead();
 
         self.notificationsQueue = {};
     elseif WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
@@ -230,11 +230,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
     end
 end
 
-function addon:PLAYER_ENTERING_WORLD(...)
-    self:JoinCluster(self.playerName, self.Version);
-
-    self:ClusterElect();
-end
+function addon:PLAYER_ENTERING_WORLD(...) self:ElectLead(); end
 
 function addon:PLAYER_REGEN_ENABLED(...)
     -- If player dead, combat for rest of the raid could be ongoing
