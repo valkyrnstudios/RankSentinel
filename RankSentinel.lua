@@ -264,7 +264,7 @@ function addon:Annoy(msg, target)
             self:QueueNotification(msg, target);
         end
     else
-        self:PrintMessage(msg);
+        self:PrintMessage(msg:gsub('{rt7} ', '', 1):gsub("you", target));
     end
 end
 
