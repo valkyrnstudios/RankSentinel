@@ -351,7 +351,8 @@ end
 
 function addon:QueueNotification(notification, target)
     if InCombatLockdown() and not self.db.profile.combat then
-        self:PrintMessage(string.format("Queued - %s, %s", target, notification));
+        self:PrintMessage(string.format("Queued - %s, %s", target,
+                                        notification:gsub('{rt7} ', '', 1)));
 
         self.notificationsQueue[#self.notificationsQueue + 1] = {
             text = notification,
