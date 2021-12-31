@@ -175,11 +175,17 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
 
     local _, subevent, _, sourceGUID, sourceName, _, _, _, destName, _, _,
           spellID, _ = CombatLogGetCurrentEventInfo()
+    self:PrintMessage("Processing " .. spellID);
 
     if subevent ~= "SPELL_CAST_SUCCESS" or
         self.db.profile.ignoredPlayers[sourceGUID] ~= nil or
-        addon.AbilityData[spellID] == nil or UnitIsPossessed(sourceName) or
-        not self:InGroupWith(sourceGUID) then return end
+        addon.AbilityData[spellID] == nil or UnitIsPossessed(sourceName) then
+        return
+    end
+
+    local isInGroup, groupIndex = self:InGroupWith(sourceGUID)
+
+    if not isInGroup then return end
 
     local castLevel = UnitLevel(sourceName)
 
@@ -271,13 +277,52 @@ end
 function addon:InGroupWith(guid)
     if guid == self.playerGUID then
         return true
+    elseif strsplit("-", guid)[0] == 'Pet' then
+        self:PrintMessage("Is pet " .. guid);
+        if guid == UnitGUID("pet") then
+            self:PrintMessage("Is my pet " .. guid);
+            return true
+        elseif IsInRaid() then
+            for i = 1, GetNumGroupMembers() do
+                if guid == UnitGUID("RaidPet" .. i) then
+                    return true, i
+                end
+            end
+        elseif IsInGroup() then
+            for i = 1, GetNumGroupMembers() do
+                if guid == UnitGUID("PartyPet" .. i) then
+                    return true, i
+                end
+            end
+        end
     elseif IsInRaid() then
         for i = 1, GetNumGroupMembers() do
-            if guid == UnitGUID("Raid" .. i) then return true end
+            if guid == UnitGUID("Raid" .. i) then return true, i end
         end
     elseif IsInGroup() then
         for i = 1, GetNumGroupMembers() do
-            if guid == UnitGUID("Party" .. i) then return true end
+            if guid == UnitGUID("Party" .. i) then return true, i end
+        end
+    end
+end
+
+function addon:FindPetOwner(petGuid)
+    if not UnitIsUnit(petGuid, "pet") then
+        self:PrintMessage("Invalid parameter, not a pet " .. petGuid);
+        return nil
+    end
+
+    if IsInRaid() then
+        for i = 1, GetNumGroupMembers() do
+            if petGuid == UnitGUID("RaidPet" .. i) then
+                return true, i
+            end
+        end
+    elseif IsInGroup() then
+        for i = 1, GetNumGroupMembers() do
+            if petGuid == UnitGUID("PartyPet" .. i) then
+                return true, i
+            end
         end
     end
 end
