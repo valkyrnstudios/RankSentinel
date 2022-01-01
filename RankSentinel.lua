@@ -292,23 +292,26 @@ function addon:InGroupWith(guid)
 end
 
 function addon:IsPetOwnerInRaid(petGuid)
+    local unitType, _, _, _, _, _, spawnUID = strsplit("-", petGuid)
+
+    local petUID = string.sub(spawnUID, 3)
+
     local ownerId, ownerName = nil, nil
 
-    if self.db.profile.petOwnerCache[petGuid] ~= nil then
+    if self.db.profile.petOwnerCache[petUID] ~= nil then
         local isInGroup, _ = self:InGroupWith(
-                                 self.db.profile.petOwnerCache[petGuid]
-                                     .OwnerGUID)
+                                 self.db.profile.petOwnerCache[petUID].OwnerGUID)
 
-        return isInGroup, self.db.profile.petOwnerCache[petGuid];
+        return isInGroup, self.db.profile.petOwnerCache[petUID];
     end
 
     if petGuid == UnitGUID("pet") then
-        self.db.profile.petOwnerCache[petGuid] = {
+        self.db.profile.petOwnerCache[petUID] = {
             OwnerName = self.playerName,
             OwnerGUID = self.playerGUID
         }
 
-        return true, self.db.profile.petOwnerCache[petGuid]
+        return true, self.db.profile.petOwnerCache[petUID]
     elseif IsInRaid() then
         for i = 1, GetNumGroupMembers() do
             if petGuid == UnitGUID("RaidPet" .. i) then
@@ -316,11 +319,11 @@ function addon:IsPetOwnerInRaid(petGuid)
 
                 _, _, _, _, _, ownerName, _ = GetPlayerInfoByGUID(ownerId)
 
-                self.db.profile.petOwnerCache[petGuid] = {
+                self.db.profile.petOwnerCache[petUID] = {
                     OwnerName = ownerName,
                     OwnerGUID = ownerId
                 }
-                return true, self.db.profile.petOwnerCache[petGuid]
+                return true, self.db.profile.petOwnerCache[petUID]
             end
         end
     elseif IsInGroup() then
@@ -330,11 +333,11 @@ function addon:IsPetOwnerInRaid(petGuid)
 
                 _, _, _, _, _, ownerName, _ = GetPlayerInfoByGUID(ownerId)
 
-                self.db.profile.petOwnerCache[petGuid] = {
+                self.db.profile.petOwnerCache[petUID] = {
                     OwnerName = ownerName,
                     OwnerGUID = ownerId
                 }
-                return true, self.db.profile.petOwnerCache[petGuid]
+                return true, self.db.profile.petOwnerCache[petUID]
             end
         end
     end
