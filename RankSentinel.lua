@@ -202,8 +202,16 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
     if isMax then return end
 
     local spellLink = GetSpellLink(spellID)
-    local contactName = petOwner and petOwner.OwnerName or sourceName
+    local contactName = sourceName
     local castStringMsg = nil
+
+    if petOwner then
+        if petOwner.OwnerName == self.playerName then
+            contactName = "self"
+        else
+            contactName = petOwner.OwnerName
+        end
+    end
 
     if sourceGUID == self.playerGUID then
         castStringMsg = string.format(self.db.profile.castString, "you",
@@ -270,7 +278,7 @@ end
 function addon:Annoy(msg, target)
     if self.playerName == self.cluster.lead then
         if target == "self" then
-            self:PrintMessage(msg);
+            self:PrintMessage(msg:gsub('{rt7} ', '', 1));
         else
             self:QueueNotification(msg, target);
         end
