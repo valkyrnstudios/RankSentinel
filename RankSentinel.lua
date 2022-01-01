@@ -54,6 +54,9 @@ end
 
 function addon:UpgradeProfile()
     if not self.db.profile.isMaxRank then self.db.profile.isMaxRank = {} end
+    if not self.db.profile.petOwnerCache then
+        self.db.profile.petOwnerCache = {}
+    end
 
     if self.db.profile.dbVersion ~= addon.Version then
         self:PrintMessage("Addon version change, resetting cache");
@@ -175,7 +178,6 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
 
     local _, subevent, _, sourceGUID, sourceName, _, _, _, destName, _, _,
           spellID, _ = CombatLogGetCurrentEventInfo()
-    self:PrintMessage("Processing " .. spellID);
 
     if subevent ~= "SPELL_CAST_SUCCESS" or
         self.db.profile.ignoredPlayers[sourceGUID] ~= nil or
@@ -183,7 +185,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
         return
     end
 
-    local isInGroup, groupIndex = self:InGroupWith(sourceGUID)
+    local isInGroup, petOwner = self:InGroupWith(sourceGUID)
 
     if not isInGroup then return end
 
@@ -200,11 +202,12 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
     if isMax then return end
 
     local spellLink = GetSpellLink(spellID)
-    local castStringMsg = nil
+    local contactName = petOwner and petOwner.OwnerName or sourceName
+
+    local castStringMsg = string.format(self.db.profile.castString, "you",
+                                        spellLink, nextRankLevel)
 
     if sourceGUID == self.playerGUID then
-        castStringMsg = string.format(self.db.profile.castString, "You",
-                                      spellLink, nextRankLevel)
         castStringMsg = string.format("%s %s", L["AnnouncePrefix"]["Self"],
                                       castStringMsg)
 
@@ -213,17 +216,15 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
         self:RecordAnnoy(self.playerName, PlayerSpellIndex)
     else
         if self.db.profile.whisper then
-            castStringMsg = string.format(self.db.profile.castString, "you",
-                                          spellLink, nextRankLevel)
             castStringMsg = string.format("%s %s %s",
                                           L["AnnouncePrefix"]["Whisper"],
                                           castStringMsg,
                                           self.db.profile.postMessageString)
 
-            addon:Annoy(castStringMsg, sourceName)
+            addon:Annoy(castStringMsg, contactName)
         else
             castStringMsg = string.format(self.db.profile.castString,
-                                          sourceName, spellLink, nextRankLevel)
+                                          contactName, spellLink, nextRankLevel)
             castStringMsg = string.format("%s %s", L["AnnouncePrefix"]["Self"],
                                           castStringMsg)
 
@@ -276,52 +277,64 @@ end
 
 function addon:InGroupWith(guid)
     if guid == self.playerGUID then
-        return true
-    elseif strsplit("-", guid)[0] == 'Pet' then
-        self:PrintMessage("Is pet " .. guid);
-        if guid == UnitGUID("pet") then
-            self:PrintMessage("Is my pet " .. guid);
-            return true
-        elseif IsInRaid() then
-            for i = 1, GetNumGroupMembers() do
-                if guid == UnitGUID("RaidPet" .. i) then
-                    return true, i
-                end
-            end
-        elseif IsInGroup() then
-            for i = 1, GetNumGroupMembers() do
-                if guid == UnitGUID("PartyPet" .. i) then
-                    return true, i
-                end
-            end
-        end
+        return true, nil
+    elseif strsplit("-", guid) == 'Pet' then
+        return self:IsPetOwnerInRaid(guid)
     elseif IsInRaid() then
         for i = 1, GetNumGroupMembers() do
-            if guid == UnitGUID("Raid" .. i) then return true, i end
+            if guid == UnitGUID("Raid" .. i) then return true, nil end
         end
     elseif IsInGroup() then
         for i = 1, GetNumGroupMembers() do
-            if guid == UnitGUID("Party" .. i) then return true, i end
+            if guid == UnitGUID("Party" .. i) then return true, nil end
         end
     end
 end
 
-function addon:FindPetOwner(petGuid)
-    if not UnitIsUnit(petGuid, "pet") then
-        self:PrintMessage("Invalid parameter, not a pet " .. petGuid);
-        return nil
+function addon:IsPetOwnerInRaid(petGuid)
+    local ownerId, ownerName = nil, nil
+
+    if self.db.profile.petOwnerCache[petGuid] ~= nil then
+        local isInGroup, _ = self:InGroupWith(
+                                 self.db.profile.petOwnerCache[petGuid]
+                                     .OwnerGUID)
+
+        return isInGroup, self.db.profile.petOwnerCache[petGuid];
     end
 
-    if IsInRaid() then
+    if petGuid == UnitGUID("pet") then
+        self.db.profile.petOwnerCache[petGuid] = {
+            OwnerName = self.playerName,
+            OwnerGUID = self.playerGUID
+        }
+
+        return true, self.db.profile.petOwnerCache[petGuid]
+    elseif IsInRaid() then
         for i = 1, GetNumGroupMembers() do
             if petGuid == UnitGUID("RaidPet" .. i) then
-                return true, i
+                ownerId = UnitGUID("Raid" .. i)
+
+                _, _, _, _, _, ownerName, _ = GetPlayerInfoByGUID(ownerId)
+
+                self.db.profile.petOwnerCache[petGuid] = {
+                    OwnerName = ownerName,
+                    OwnerGUID = ownerId
+                }
+                return true, self.db.profile.petOwnerCache[petGuid]
             end
         end
     elseif IsInGroup() then
         for i = 1, GetNumGroupMembers() do
             if petGuid == UnitGUID("PartyPet" .. i) then
-                return true, i
+                ownerId = UnitGUID("Party" .. i)
+
+                _, _, _, _, _, ownerName, _ = GetPlayerInfoByGUID(ownerId)
+
+                self.db.profile.petOwnerCache[petGuid] = {
+                    OwnerName = ownerName,
+                    OwnerGUID = ownerId
+                }
+                return true, self.db.profile.petOwnerCache[petGuid]
             end
         end
     end
