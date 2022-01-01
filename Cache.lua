@@ -33,6 +33,7 @@ function addon:ClearCache()
     self.db.profile.announcedSpells = {};
     self.db.profile.ignoredPlayers = {};
     self.db.profile.isMaxRank = {};
+    self.db.profile.petOwnerCache = {};
 
     self:PrintMessage(string.format(
                           "Cache reset: %d entries purged, %d players unignored, and %d cached results",
