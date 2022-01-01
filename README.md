@@ -1,6 +1,6 @@
 # RankSentinel
 
-RankSentinel detect players (and now pets!) using lower ranked abilities and notifies them. Inspired by the legacy add-on [RankWatch](https://www.curseforge.com/wow/addons/rankwatch).
+RankSentinel detects group members (and now pets!) using lower ranked abilities and notifies them. Inspired by the legacy add-on [RankWatch](https://www.curseforge.com/wow/addons/rankwatch).
 
 RankSentinel is a [spiritual successor to the now defunct GogoWatch](https://github.com/valkyrnstudios/RankSentinel/issues/5) and SpellSnob add-ons.
 
@@ -17,10 +17,8 @@ Use `/ranksentinel` to get the latest commands.
 - `/ranksentinel count`: prints current statistics
 - `/ranksentinel debug`: toggles debug output for testing
 - `/ranksentinel clear`: clears local ability caches
-- `/ranksentinel cluster`: prints cluster members
-- `/ranksentinel cluster reset`: resets cluster to defaults
-- `/ranksentinel cluster elect`: triggers lead election logic
-- `/ranksentinel ignore playerName`: ignores all abilities cast by playerName
+- `/ranksentinel lead`: sets yourself as lead
+- `/ranksentinel ignore`: adds current target to addon ignore list, will not report rank errors
 
 ## Vanilla support
 

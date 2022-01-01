@@ -22,11 +22,11 @@ L["Help"] = {
     ["title"] = 'Command-line options',
     ["enable"] = 'toggles combat log parsing',
     ["whisper"] = 'toggles whispers to players',
-    ["combat"] = 'toggles whispers to players after combat (experimental)',
+    ["combat"] = 'toggles whispers to players after comba',
     ["reset"] = 'resets profile to defaults',
     ["count"] = 'prints current statistics',
     ["debug"] = 'toggles debug output for testing',
     ["clear"] = 'clears local ability caches',
     ["lead"] = 'sets yourself as lead',
-    ["ignore playerName"] = 'ignores all abilities cast by playerName'
+    ["ignore"] = 'adds current target to addon ignore list, will not report rank errors'
 }

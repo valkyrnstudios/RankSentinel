@@ -167,8 +167,8 @@ function addon:PrintHelp()
                                     L['Help']['clear']));
     self:PrintMessage(string.format('- %s (%s)|cffffffff: %s|r', 'lead',
                                     self.cluster.lead, L['Help']['lead']));
-    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'ignore playerName',
-                                    L['Help']['ignore playerName']));
+    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'ignore',
+                                    L['Help']['ignore']));
 end
 
 function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
