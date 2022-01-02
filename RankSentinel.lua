@@ -199,7 +199,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
 
     local isMax, nextRankLevel = self:IsMaxRank(spellID, castLevel);
 
-    if isMax then return end
+    if isMax or not nextRankLevel or nextRankLevel <= 0 then return end
 
     local spellLink = GetSpellLink(spellID)
     local contactName = sourceName
@@ -223,11 +223,10 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
 
         self:RecordAnnoy(self.playerName, PlayerSpellIndex)
     else
-        local identifier = petOwner and sourceName or "you"
-
         if self.db.profile.whisper then
             castStringMsg = string.format(self.db.profile.castString,
-                                          identifier, spellLink, nextRankLevel)
+                                          petOwner and sourceName or "you",
+                                          spellLink, nextRankLevel)
             castStringMsg = string.format("%s %s %s",
                                           L["AnnouncePrefix"]["Whisper"],
                                           castStringMsg,
@@ -236,7 +235,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
             addon:Annoy(castStringMsg, contactName)
         else
             castStringMsg = string.format(self.db.profile.castString,
-                                          identifier, spellLink, nextRankLevel)
+                                          sourceName, spellLink, nextRankLevel)
             castStringMsg = string.format("%s %s", L["AnnouncePrefix"]["Self"],
                                           castStringMsg)
 
@@ -404,6 +403,15 @@ function addon:IsMaxRank(spellID, casterLevel)
                 break
             end
         end
+    end
+
+    if nextRankData.Level == 0 then
+        if self.db.profile.debug then
+            self:PrintMessage(string.format(
+                                  "Failed to get next rank past %d, guessed %d",
+                                  spellID, nextRankID));
+        end
+        return nil, -1
     end
 
     local isMax = nextRankData.Level > casterLevel;
