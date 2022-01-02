@@ -191,8 +191,8 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
 
     local castLevel = UnitLevel(sourceName)
 
-    local PlayerSpellIndex = string.format("%s-%s-%s", sourceGUID, castLevel,
-                                           spellID)
+    local PlayerSpellIndex = string.format("%s-%s-%s", self:GetUID(sourceGUID),
+                                           castLevel, spellID)
 
     if self.db.profile.announcedSpells[PlayerSpellIndex] ~= nil and
         not self.db.profile.debug then return end
@@ -304,9 +304,7 @@ function addon:InGroupWith(guid)
 end
 
 function addon:IsPetOwnerInRaid(petGuid)
-    local unitType, _, _, _, _, _, spawnUID = strsplit("-", petGuid)
-
-    local petUID = string.sub(spawnUID, 3)
+    local petUID = self:GetUID(petGuid)
 
     local ownerId, ownerName = nil, nil
 
@@ -441,4 +439,14 @@ function addon:PrintMessage(msg)
         DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00" .. L[addonName] .. "|r: " ..
                                           msg, 0.0, 1.0, 0.0, 1.0);
     end
+end
+
+function RankSentinel:GetUID(guid)
+    local unitType, _, _, _, _, _, spawnUID = strsplit("-", guid)
+
+    if unitType == "Pet" then
+        return string.format("Pet-%s", string.sub(spawnUID, 3))
+    end
+
+    return guid
 end
