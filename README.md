@@ -1,10 +1,14 @@
 # RankSentinel
 
-RankSentinel detects group members (and now pets!) using lower ranked abilities and notifies them. Inspired by the legacy add-on [RankWatch](https://www.curseforge.com/wow/addons/rankwatch).
+RankSentinel detects group members (and now pets!) using lower ranked abilities and notifies them.
 
-RankSentinel is a [spiritual successor to the now defunct GogoWatch](https://github.com/valkyrnstudios/RankSentinel/issues/5) and SpellSnob add-ons.
+Ensure your raid group are getting the maximum performance out of their abilities. This addon has already caught so many pugs and guildies alike during testing who had no idea they were using an outdated rank.
 
-Legitimate Low-rank Abilities have been excluded; including All Heals, Rank 1 Frost Bolt, Rank 1 Earth Shock, Rank 1 Blizzard, etc.
+Legitimate low-rank Abilities have been excluded; including all heals, Frostbolt (Rank 1), Earth Shock (Rank 1), Blizzard (Rank 1), etc.
+
+A large focus has been on delivering the most optimized code possible, memory usage is ~724K in 5-mans and ~743K in 25-mans.
+
+Inspired by the legacy add-on [RankWatch](https://www.curseforge.com/wow/addons/rankwatch), RankSentinel is a [spiritual successor to the now defunct GogoWatch](https://github.com/valkyrnstudios/RankSentinel/issues/5) and SpellSnob add-ons.
 
 ## Commands
 
