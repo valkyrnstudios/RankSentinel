@@ -182,7 +182,8 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
     if subevent ~= "SPELL_CAST_SUCCESS" or
         self.db.profile.ignoredPlayers[sourceGUID] ~= nil or
         addon.AbilityData[spellID] == nil or not HasFullControl() or
-        UnitIsPossessed(sourceName) or UnitIsCharmed(sourceName) then return end
+        UnitIsPossessed(sourceName) or UnitIsCharmed(sourceName) or
+        UnitIsEnemy("Player", sourceName) then return end
 
     local isInGroup, petOwner = self:InGroupWith(sourceGUID)
 
@@ -449,7 +450,7 @@ function addon:PrintMessage(msg)
     end
 end
 
-function RankSentinel:GetUID(guid)
+function addon:GetUID(guid)
     local unitType, _, _, _, _, _, spawnUID = strsplit("-", guid)
 
     if unitType == "Pet" then
