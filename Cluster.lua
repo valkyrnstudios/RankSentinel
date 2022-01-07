@@ -48,6 +48,7 @@ function RankSentinel:Broadcast(command, data)
 end
 
 function RankSentinel:SetLead(playerName)
+    -- TODO add lead version
     if not self.db.profile.enable or not self.db.profile.whisper or playerName ==
         nil or UnitInBattleground("player") ~= nil then return end
 
