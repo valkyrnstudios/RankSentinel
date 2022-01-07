@@ -414,7 +414,7 @@ function addon:IsMaxRank(spellID, casterLevel)
         return nil, -1
     end
 
-    local isMax = nextRankData.Level > casterLevel;
+    local isMax = self:IsAlertableDifference(nextRankData.Level, casterLevel)
 
     if self.db.profile.debug then
         self:PrintMessage(string.format(
@@ -457,4 +457,20 @@ function RankSentinel:GetUID(guid)
     end
 
     return guid
+end
+
+function addon:IsAlertableDifference(nextRankLevel, casterLevel)
+    if casterLevel == 70 then
+        return nextRankLevel > casterLevel
+    elseif casterLevel % 10 == 0 then
+        return nextRankLevel > casterLevel
+    elseif casterLevel < 10 then
+        return nextRankLevel > casterLevel
+    elseif casterLevel < 20 then
+        return nextRankLevel > casterLevel + 3
+    elseif casterLevel < 60 then
+        return nextRankLevel > casterLevel + 2
+    end
+
+    return nextRankLevel > casterLevel
 end
