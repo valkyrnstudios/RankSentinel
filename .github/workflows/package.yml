@@ -22,7 +22,7 @@ jobs:
       - name: Package and release Classic
         uses: BigWigsMods/packager@master
         with:
-          args: -g classic
+          args: -g classic -p 0
 
       - name: Package and release BCC
         uses: BigWigsMods/packager@master
