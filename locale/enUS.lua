@@ -28,5 +28,8 @@ L["Help"] = {
     ["debug"] = 'toggles debug output for testing',
     ["clear"] = 'clears local ability caches',
     ["lead"] = 'sets yourself as lead',
-    ["ignore"] = 'adds current target to addon ignore list, will not report rank errors'
+    ["ignore"] = 'adds current target to addon ignore list, will not report rank errors',
+    ["queue"] = 'prints queued notifications',
+    ["queue clear"] = 'clears queued notifications',
+    ["queue process"] = 'processes queued notifications'
 }
