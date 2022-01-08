@@ -160,6 +160,8 @@ function addon:ChatCommand(cmd)
                                                 notification.text))
             end
         end
+    elseif msg == "sync" then
+        self:SyncCache()
     else
         self:PrintHelp()
     end

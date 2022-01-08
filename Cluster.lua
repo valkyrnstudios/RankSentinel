@@ -22,6 +22,8 @@ function RankSentinel:OnCommReceived(prefix, message, _, sender)
         if self.db.profile.debug then
             self:PrintMessage("Lead taken by " .. data)
         end
+    elseif command == 'SYNC' then
+        self:RecordAnnoy(sender, data);
     else
         self:PrintMessage(string.format("Unrecognized comm command: (%s)",
                                         command));
@@ -60,3 +62,5 @@ function RankSentinel:PrintLead()
 end
 
 function RankSentinel:ResetLead() self.cluster = {lead = self.playerName} end
+
+function RankSentinel:SyncCache() end

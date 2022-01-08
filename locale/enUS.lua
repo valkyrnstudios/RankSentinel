@@ -31,5 +31,6 @@ L["Help"] = {
     ["ignore"] = 'adds current target to addon ignore list, will not report rank errors',
     ["queue"] = 'prints queued notifications',
     ["queue clear"] = 'clears queued notifications',
-    ["queue process"] = 'processes queued notifications'
+    ["queue process"] = 'processes queued notifications',
+    ["sync"] = 'broadcast announcement cache'
 }
