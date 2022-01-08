@@ -89,6 +89,8 @@ function addon:OnEnable()
 
     self.db.profile.dbVersion = self.Version;
 
+    self.sessionReport = {}
+
     if self.db.profile.debug then
         self:PrintMessage("Debug enabled, clearing cache on reload");
         self:ClearCache();
@@ -163,6 +165,41 @@ function addon:ChatCommand(cmd)
         end
     elseif msg == "sync" then
         self:SyncBroadcast()
+    elseif "report" == string.sub(msg, 1, #"report") then
+        local _, channel = strsplit(' ', msg)
+
+        local reportSize = self:CountCache(self.sessionReport)
+
+        if channel == nil then
+            self:PrintMessage(string.format(
+                                  "Detected %d low ranks this session",
+                                  reportSize))
+
+            for _, reportEntry in pairs(self.sessionReport) do
+                print(string.format("%s - %s (Rank %d)", reportEntry.PlayerName,
+                                    reportEntry.SpellName, reportEntry.SpellRank))
+            end
+        elseif string.lower(channel) == "say" or string.lower(channel) == "raid" or
+            string.lower(channel) == "guild" then
+
+            -- TODO limit messages to avoid mute
+
+            SendChatMessage(string.format(
+                                "%s detected %d low ranks this session",
+                                L[addonName], reportSize), channel, nil)
+
+            for key, reportEntry in pairs(self.sessionReport) do
+                SendChatMessage(string.format("%s - %s (Rank %d)",
+                                              reportEntry.PlayerName,
+                                              reportEntry.SpellName,
+                                              reportEntry.SpellRank), channel,
+                                nil)
+                -- Remove entry after announcing to channel
+                self.sessionReport[key] = nil
+            end
+        else
+            self:PrintMessage("Unsupported channel " .. channel)
+        end
     else
         self:PrintHelp()
     end
@@ -183,6 +220,8 @@ function addon:PrintHelp()
     self:PrintMessage(string.format('- %s (%s)|cffffffff: %s|r', 'debug',
                                     tostring(self.db.profile.debug),
                                     L['Help']['debug']));
+    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'report [channel]',
+                                    L['Help']['report [channel]']));
     self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'reset',
                                     L['Help']['reset']));
     self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'count',
@@ -208,8 +247,8 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
         return
     end
 
-    local _, subevent, _, sourceGUID, sourceName, _, _, _, destName, _, _,
-          spellID, _ = CombatLogGetCurrentEventInfo()
+    local _, subevent, _, sourceGUID, sourceName, _, _, _, _, _, _, spellID,
+          spellName = CombatLogGetCurrentEventInfo()
 
     if subevent ~= "SPELL_CAST_SUCCESS" or
         self.db.profile.ignoredPlayers[sourceGUID] ~= nil or
@@ -244,6 +283,8 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
             contactName = petOwner.OwnerName
         end
     end
+
+    addon:UpdateSessionReport(PlayerSpellIndex, sourceName, spellName, spellID)
 
     if sourceGUID == self.playerGUID then
         castStringMsg = string.format(self.db.profile.castString, "you",
@@ -506,4 +547,18 @@ function addon:IsAlertableDifference(nextRankLevel, casterLevel)
     end
 
     return nextRankLevel > casterLevel
+end
+
+function addon:UpdateSessionReport(playerSpellIndex, playerName, spellName,
+                                   spellID)
+
+    if self.sessionReport[playerSpellIndex] ~= nil then return end
+
+    local spellRank = addon.AbilityData[spellID].Rank
+
+    self.sessionReport[playerSpellIndex] = {
+        ['PlayerName'] = playerName,
+        ['SpellName'] = spellName,
+        ['SpellRank'] = spellRank
+    }
 end
