@@ -161,6 +161,8 @@ function addon:ChatCommand(cmd)
                                                 notification.text))
             end
         end
+    elseif msg == "sync" then
+        self:SyncBroadcast()
     else
         self:PrintHelp()
     end
@@ -197,6 +199,8 @@ function addon:PrintHelp()
                                     L['Help']['queue clear']));
     self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'queue process',
                                     L['Help']['queue process']));
+    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'sync',
+                                    L['Help']['sync']));
 end
 
 function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
