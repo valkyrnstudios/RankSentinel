@@ -500,9 +500,9 @@ function addon:IsAlertableDifference(nextRankLevel, casterLevel)
     elseif casterLevel < 10 then
         return nextRankLevel > casterLevel
     elseif casterLevel < 20 then
-        return nextRankLevel > casterLevel + 3
+        return nextRankLevel + 3 > casterLevel
     elseif casterLevel < 60 then
-        return nextRankLevel > casterLevel + 2
+        return nextRankLevel + 2 > casterLevel
     end
 
     return nextRankLevel > casterLevel
