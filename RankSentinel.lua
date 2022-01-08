@@ -128,8 +128,9 @@ function addon:ChatCommand(cmd)
         self.db.profile.combat = not self.db.profile.combat
         self:PrintMessage("combat = " .. tostring(self.db.profile.combat));
     elseif msg == "lead" then
-        self:SetLead(self.playerName);
-        self:PrintLead();
+        self.cluster.lead = self.playerName
+        self:SetLead(self.playerName)
+        self:PrintLead()
     elseif msg == "ignore" then
         if UnitExists("target") then
             self:IgnoreTarget();
