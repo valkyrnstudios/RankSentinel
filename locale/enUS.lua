@@ -32,5 +32,6 @@ L["Help"] = {
     ["queue"] = 'prints queued notifications',
     ["queue clear"] = 'clears queued notifications',
     ["queue process"] = 'processes queued notifications',
-    ["sync"] = 'broadcast announcement cache'
+    ["sync"] = 'broadcast announcement cache',
+    ["report [channel]"] = 'report session data [say, raid, guild]'
 }
