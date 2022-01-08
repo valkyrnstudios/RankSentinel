@@ -23,7 +23,9 @@ function RankSentinel:OnCommReceived(prefix, message, _, sender)
             self:PrintMessage("Lead taken by " .. data)
         end
     elseif command == 'SYNC' then
-        self:RecordAnnoy(sender, data);
+        if self.db.profile.announcedSpells[data] ~= true then
+            self.db.profile.announcedSpells[data] = true
+        end
     else
         self:PrintMessage(string.format("Unrecognized comm command: (%s)",
                                         command));
@@ -63,4 +65,15 @@ end
 
 function RankSentinel:ResetLead() self.cluster = {lead = self.playerName} end
 
-function RankSentinel:SyncCache() end
+function RankSentinel:SyncBroadcast()
+    self:PrintMessage(string.format("Broadcasting sync %d", self:CountCache(
+                                        self.db.profile.announcedSpells)))
+
+    for key, _ in pairs(self.db.profile.announcedSpells) do
+        if self.db.profile.debug then
+            self:PrintMessage("Broadcasting " .. key)
+        end
+        self:SendCommMessage(RankSentinel._commPrefix,
+                             string.format("%s|%s", 'SYNC', key), "RAID", "BULK")
+    end
+end
