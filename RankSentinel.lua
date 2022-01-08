@@ -139,6 +139,27 @@ function addon:ChatCommand(cmd)
                                             self:CountCache(
                                                 self.db.profile.ignoredPlayers)))
         end
+    elseif "queue" == string.sub(msg, 1, #"queue") then
+        local _, sub = strsplit(' ', msg)
+        if sub == 'clear' or sub == 'reset' then
+            local queued = #self.notificationsQueue
+            self.notificationsQueue = {}
+
+            self:PrintMessage(string.format("Cleared %d queued notifications",
+                                            queued))
+        elseif sub == 'process' or sub == 'send' then
+            self:ProcessQueuedNotifications()
+        else
+            self:PrintMessage(string.format("Currently %d queued notifications",
+                                            #self.notificationsQueue))
+            local notification = nil
+
+            for i = 1, #self.notificationsQueue do
+                notification = self.notificationsQueue[i];
+                self:PrintMessage(string.format("%s - %s", notification.target,
+                                                notification.text))
+            end
+        end
     else
         self:PrintHelp()
     end
@@ -169,6 +190,12 @@ function addon:PrintHelp()
                                     self.cluster.lead, L['Help']['lead']));
     self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'ignore',
                                     L['Help']['ignore']));
+    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'queue',
+                                    L['Help']['queue']));
+    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'queue clear',
+                                    L['Help']['queue clear']));
+    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'queue process',
+                                    L['Help']['queue process']));
 end
 
 function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
