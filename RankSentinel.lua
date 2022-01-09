@@ -90,6 +90,7 @@ function addon:OnEnable()
     self.db.profile.dbVersion = self.Version;
 
     self.sessionReport = {}
+    self.unsupportedCommCache = {}
 
     if self.db.profile.debug then
         self:PrintMessage("Debug enabled, clearing cache on reload");

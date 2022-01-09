@@ -27,8 +27,12 @@ function RankSentinel:OnCommReceived(prefix, message, _, sender)
             self.db.profile.announcedSpells[data] = true
         end
     else
-        self:PrintMessage(string.format("Unrecognized comm command: (%s)",
-                                        command));
+        if self.unsupportedCommCache[command] == nil then
+            self.unsupportedCommCache[command] = true
+            self:PrintMessage(string.format(
+                                  "Unrecognized broadcast (%s), you or %s's client may be outdated",
+                                  command, sender));
+        end
     end
 end
 
