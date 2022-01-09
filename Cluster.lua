@@ -69,15 +69,39 @@ end
 
 function RankSentinel:ResetLead() self.cluster = {lead = self.playerName} end
 
-function RankSentinel:SyncBroadcast()
-    self:PrintMessage(string.format("Broadcasting sync %d", self:CountCache(
-                                        self.db.profile.announcedSpells)))
+function RankSentinel:SyncBroadcast(array, index)
+    local batch_size = 10
 
-    for key, _ in pairs(self.db.profile.announcedSpells) do
-        if self.db.profile.debug then
-            self:PrintMessage("Broadcasting " .. key)
+    if array == nil or index == nil then
+        self:PrintMessage(string.format("Broadcasting sync %d", self:CountCache(
+                                            self.db.profile.announcedSpells)))
+
+        local ordered_announcements = {}
+        for k in pairs(self.db.profile.announcedSpells) do
+            table.insert(ordered_announcements, k)
         end
-        self:SendCommMessage(RankSentinel._commPrefix,
-                             string.format("%s|%s", 'SYNC', key), "RAID", "BULK")
+
+        table.sort(ordered_announcements)
+
+        self:SyncBroadcast(ordered_announcements, 1)
+    else
+        self:PrintMessage(string.format("Syncing batch %d of %d", index,
+                                        index + batch_size))
+
+        for i = index, index + batch_size do
+            if array[i] == nil then return end
+
+            if self.db.profile.debug then
+                print(string.format("Sending %d - %s", i, array[i]))
+            end
+
+            self:SendCommMessage(RankSentinel._commPrefix,
+                                 string.format("%s|%s", 'SYNC', array[i]),
+                                 "RAID", "BULK")
+        end
+
+        C_Timer.After(3, function()
+            self:SyncBroadcast(array, index + batch_size)
+        end)
     end
 end
