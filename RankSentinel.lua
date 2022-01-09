@@ -283,9 +283,15 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
         else
             contactName = petOwner.OwnerName
         end
-    end
 
-    addon:UpdateSessionReport(PlayerSpellIndex, sourceName, spellName, spellID)
+        addon:UpdateSessionReport(PlayerSpellIndex, string.format("%s (%s)",
+                                                                  sourceName,
+                                                                  petOwner.OwnerName),
+                                  spellName, spellID)
+    else
+        addon:UpdateSessionReport(PlayerSpellIndex, sourceName, spellName,
+                                  spellID)
+    end
 
     if sourceGUID == self.playerGUID then
         castStringMsg = string.format(self.db.profile.castString, "you",
