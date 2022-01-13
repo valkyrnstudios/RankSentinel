@@ -47,6 +47,10 @@ function RankSentinel:RecordAnnoy(sender, playerSpellIndex)
 end
 
 function RankSentinel:Broadcast(command, data)
+    if not self.db.profile.enable or UnitInBattleground("player") ~= nil then
+        return
+    end
+
     if self.db.profile.debug then
         self:PrintMessage(string.format("Broadcasting %s: %s", command, data));
     end
