@@ -284,13 +284,13 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
             contactName = petOwner.OwnerName
         end
 
-        addon:UpdateSessionReport(PlayerSpellIndex, string.format("%s (%s)",
-                                                                  sourceName,
-                                                                  petOwner.OwnerName),
-                                  spellName, spellID)
+        self:UpdateSessionReport(PlayerSpellIndex, string.format("%s (%s)",
+                                                                 sourceName,
+                                                                 petOwner.OwnerName),
+                                 spellName, spellID)
     else
-        addon:UpdateSessionReport(PlayerSpellIndex, sourceName, spellName,
-                                  spellID)
+        self:UpdateSessionReport(PlayerSpellIndex, sourceName, spellName,
+                                 spellID)
     end
 
     if sourceGUID == self.playerGUID then
@@ -299,7 +299,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
         castStringMsg = string.format("%s %s", L["AnnouncePrefix"]["Self"],
                                       castStringMsg)
 
-        addon:Annoy(castStringMsg, "self")
+        self:Annoy(castStringMsg, "self")
 
         self:RecordAnnoy(self.playerName, PlayerSpellIndex)
     else
@@ -312,14 +312,14 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
                                           castStringMsg,
                                           self.db.profile.postMessageString)
 
-            addon:Annoy(castStringMsg, contactName)
+            self:Annoy(castStringMsg, contactName)
         else
             castStringMsg = string.format(self.db.profile.castString,
                                           sourceName, spellLink, nextRankLevel)
             castStringMsg = string.format("%s %s", L["AnnouncePrefix"]["Self"],
                                           castStringMsg)
 
-            addon:Annoy(castStringMsg, "self")
+            self:Annoy(castStringMsg, "self")
         end
 
         self:RecordAnnoy(self.playerName, PlayerSpellIndex)

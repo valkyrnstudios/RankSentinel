@@ -1,9 +1,7 @@
-local _, RankSentinel = ...
+local _, addon = ...
 
-function RankSentinel:OnCommReceived(prefix, message, _, sender)
-    if prefix ~= RankSentinel._commPrefix or sender == self.playerName then
-        return
-    end
+function addon:OnCommReceived(prefix, message, _, sender)
+    if prefix ~= addon._commPrefix or sender == self.playerName then return end
 
     local command, data = strsplit("|", message)
     if not command then return end
@@ -36,7 +34,7 @@ function RankSentinel:OnCommReceived(prefix, message, _, sender)
     end
 end
 
-function RankSentinel:RecordAnnoy(sender, playerSpellIndex)
+function addon:RecordAnnoy(sender, playerSpellIndex)
     if self.db.profile.announcedSpells[playerSpellIndex] ~= true then
         self.db.profile.announcedSpells[playerSpellIndex] = true
     end
@@ -46,7 +44,7 @@ function RankSentinel:RecordAnnoy(sender, playerSpellIndex)
     end
 end
 
-function RankSentinel:Broadcast(command, data)
+function addon:Broadcast(command, data)
     if not self.db.profile.enable or UnitInBattleground("player") ~= nil then
         return
     end
@@ -55,11 +53,11 @@ function RankSentinel:Broadcast(command, data)
         self:PrintMessage(string.format("Broadcasting %s: %s", command, data));
     end
 
-    self:SendCommMessage(RankSentinel._commPrefix,
+    self:SendCommMessage(addon._commPrefix,
                          string.format("%s|%s", command, data), "RAID")
 end
 
-function RankSentinel:SetLead(playerName)
+function addon:SetLead(playerName)
     -- TODO add lead version
     if not self.db.profile.enable or not self.db.profile.whisper or playerName ==
         nil or UnitInBattleground("player") ~= nil then return end
@@ -67,13 +65,13 @@ function RankSentinel:SetLead(playerName)
     self:Broadcast("LEAD", playerName);
 end
 
-function RankSentinel:PrintLead()
+function addon:PrintLead()
     self:PrintMessage("Cluster Lead: " .. self.cluster.lead);
 end
 
-function RankSentinel:ResetLead() self.cluster = {lead = self.playerName} end
+function addon:ResetLead() self.cluster = {lead = self.playerName} end
 
-function RankSentinel:SyncBroadcast(array, index)
+function addon:SyncBroadcast(array, index)
     local batch_size = 10
 
     if array == nil or index == nil then
@@ -99,7 +97,7 @@ function RankSentinel:SyncBroadcast(array, index)
                 print(string.format("Sending %d - %s", i, array[i]))
             end
 
-            self:SendCommMessage(RankSentinel._commPrefix,
+            self:SendCommMessage(addon._commPrefix,
                                  string.format("%s|%s", 'SYNC', array[i]),
                                  "RAID", "BULK")
         end
