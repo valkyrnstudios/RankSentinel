@@ -495,7 +495,7 @@ function addon:IsMaxRank(spellID, casterLevel)
         return nil, -1
     end
 
-    local isMax = self:IsAlertableDifference(nextRankData.Level, casterLevel)
+    local isMax = self:IsHighestAlertableRank(nextRankData.Level, casterLevel)
 
     if self.db.profile.debug then
         self:PrintMessage(string.format(
@@ -540,7 +540,7 @@ function addon:GetUID(guid)
     return guid
 end
 
-function addon:IsAlertableDifference(nextRankLevel, casterLevel)
+function addon:IsHighestAlertableRank(nextRankLevel, casterLevel)
     if casterLevel == 70 then
         return nextRankLevel > casterLevel
     elseif casterLevel < 10 then
