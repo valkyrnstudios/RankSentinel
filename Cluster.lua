@@ -87,7 +87,7 @@ function addon:SyncBroadcast(array, index)
 
         self:SyncBroadcast(ordered_announcements, 1)
     else
-        self:PrintMessage(string.format("Syncing batch %d of %d", index,
+        self:PrintMessage(string.format("Syncing batch %d to %d", index,
                                         index + batch_size))
 
         for i = index, index + batch_size do
