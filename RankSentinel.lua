@@ -248,8 +248,8 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
         return
     end
 
-    local _, subevent, _, sourceGUID, sourceName, _, _, _, _, _, _, spellID,
-          spellName = CombatLogGetCurrentEventInfo()
+    local _, subevent, _, sourceGUID, sourceName, _, _, _, destName, _, _,
+          spellID, spellName = CombatLogGetCurrentEventInfo()
 
     if subevent ~= "SPELL_CAST_SUCCESS" or
         self.db.profile.ignoredPlayers[sourceGUID] ~= nil or
@@ -269,7 +269,9 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
     if self.db.profile.announcedSpells[PlayerSpellIndex] ~= nil and
         not self.db.profile.debug then return end
 
-    local isMax, nextRankLevel = self:IsMaxRank(spellID, castLevel);
+    local targetLevel = destName and UnitLevel(destName) or 0
+
+    local isMax, nextRankLevel = self:IsMaxRank(spellID, castLevel, targetLevel);
 
     if isMax or not nextRankLevel or nextRankLevel <= 0 then return end
 
@@ -433,7 +435,11 @@ function addon:IsPetOwnerInRaid(petGuid)
     end
 end
 
-function addon:IsMaxRank(spellID, casterLevel)
+function addon:IsMaxRank(spellID, casterLevel, targetLevel)
+    -- UnitLevel(destName) returns 0 for non-party members
+    -- Ignore casts with larger than 10 level differences
+    if targetLevel >= 1 and targetLevel < casterLevel - 10 then return true end
+
     local lookup_key = string.format('%s-%s', spellID, casterLevel);
 
     if self.db.profile.isMaxRank[lookup_key] ~= nil and
