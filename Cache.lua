@@ -1,11 +1,6 @@
-local _, addon = ...
+local addonName, addon = ...
 
-function addon:CountCache(cache)
-    local count = 0;
-    for _ in pairs(cache) do count = count + 1 end
-
-    return count;
-end
+local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 
 function addon:ClearCache()
     local count = self:CountCache(self.db.profile.announcedSpells);
@@ -22,32 +17,11 @@ function addon:ClearCache()
                           count, playerCount, isMaxRankCount));
 end
 
-function addon:UpdateSessionReport(playerSpellIndex, playerName, spellName,
-                                   spellID)
+function addon:CountCache(cache)
+    local count = 0;
+    for _ in pairs(cache) do count = count + 1 end
 
-    if self.sessionReport[playerSpellIndex] ~= nil then return end
-
-    local spellRank = addon.AbilityData[spellID].Rank
-
-    self.sessionReport[playerSpellIndex] = {
-        ['PlayerName'] = playerName,
-        ['SpellName'] = spellName,
-        ['SpellRank'] = spellRank
-    }
-end
-
-function addon:QueueNotification(notification, target)
-    if InCombatLockdown() and not self.db.profile.combat then
-        self:PrintMessage(string.format("Queued - %s, %s", target,
-                                        notification:gsub('{rt7} ', '', 1)));
-
-        self.notificationsQueue[#self.notificationsQueue + 1] = {
-            text = notification,
-            target = target
-        };
-    else
-        SendChatMessage(notification, "WHISPER", nil, target)
-    end
+    return count;
 end
 
 function addon:ProcessQueuedNotifications()
@@ -65,4 +39,32 @@ function addon:ProcessQueuedNotifications()
     end
 
     self.notificationsQueue = {};
+end
+
+function addon:QueueNotification(notification, target)
+    if InCombatLockdown() and not self.db.profile.combat then
+        self:PrintMessage(string.format("Queued - %s, %s", target,
+                                        notification:gsub('{rt7} ', '', 1)));
+
+        self.notificationsQueue[#self.notificationsQueue + 1] = {
+            text = notification,
+            target = target
+        };
+    else
+        SendChatMessage(notification, "WHISPER", nil, target)
+    end
+end
+
+function addon:UpdateSessionReport(playerSpellIndex, playerName, spellName,
+                                   spellID)
+
+    if self.sessionReport[playerSpellIndex] ~= nil then return end
+
+    local spellRank = addon.AbilityData[spellID].Rank
+
+    self.sessionReport[playerSpellIndex] = {
+        ['PlayerName'] = playerName,
+        ['SpellName'] = spellName,
+        ['SpellRank'] = spellRank
+    }
 end

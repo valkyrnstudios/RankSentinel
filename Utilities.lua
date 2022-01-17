@@ -1,0 +1,167 @@
+local addonName, addon = ...
+
+local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
+
+function addon:GetUID(guid)
+    local unitType, _, _, _, _, _, spawnUID = strsplit("-", guid)
+
+    if unitType == "Pet" then
+        return string.format("Pet-%s", string.sub(spawnUID, 3))
+    end
+
+    return guid
+end
+
+function addon:IgnoreTarget()
+    local guid = UnitGUID("target")
+    if not guid then
+        self:PrintMessage("Must target a unit");
+        return;
+    end
+
+    local name, _ = UnitName("target");
+
+    if self.db.profile.ignoredPlayers[guid] ~= true then
+        self:PrintMessage("Ignored " .. name);
+        self.db.profile.ignoredPlayers[guid] = true;
+    else
+        self:PrintMessage("Unignored " .. name);
+        self.db.profile.ignoredPlayers[guid] = nil;
+    end
+end
+
+function addon:InGroupWith(guid)
+    if guid == self.playerGUID then
+        return true, nil
+    elseif strsplit("-", guid) == 'Pet' then
+        return self:IsPetOwnerInRaid(guid)
+    elseif IsInRaid() then
+        for i = 1, GetNumGroupMembers() do
+            if guid == UnitGUID("Raid" .. i) then return true, nil end
+        end
+    elseif IsInGroup() then
+        for i = 1, GetNumGroupMembers() do
+            if guid == UnitGUID("Party" .. i) then return true, nil end
+        end
+    end
+end
+
+function addon:IsHighestAlertableRank(nextRankLevel, casterLevel)
+    if casterLevel == 70 then
+        return nextRankLevel > casterLevel
+    elseif casterLevel < 10 then
+        return nextRankLevel > casterLevel
+    elseif casterLevel < 20 then
+        return nextRankLevel + 3 > casterLevel
+    elseif casterLevel < 60 then
+        return nextRankLevel + 2 > casterLevel
+    end
+
+    return nextRankLevel > casterLevel
+end
+
+function addon:IsPetOwnerInRaid(petGuid)
+    local petUID = self:GetUID(petGuid)
+
+    local ownerId, ownerName = nil, nil
+
+    if self.db.profile.petOwnerCache[petUID] ~= nil then
+        local isInGroup, _ = self:InGroupWith(
+                                 self.db.profile.petOwnerCache[petUID].OwnerGUID)
+
+        return isInGroup, self.db.profile.petOwnerCache[petUID];
+    end
+
+    if petGuid == UnitGUID("pet") then
+        self.db.profile.petOwnerCache[petUID] = {
+            OwnerName = self.playerName,
+            OwnerGUID = self.playerGUID
+        }
+
+        return true, self.db.profile.petOwnerCache[petUID]
+    elseif IsInRaid() then
+        for i = 1, GetNumGroupMembers() do
+            if petGuid == UnitGUID("RaidPet" .. i) then
+                ownerId = UnitGUID("Raid" .. i)
+
+                _, _, _, _, _, ownerName, _ = GetPlayerInfoByGUID(ownerId)
+
+                self.db.profile.petOwnerCache[petUID] = {
+                    OwnerName = ownerName,
+                    OwnerGUID = ownerId
+                }
+                return true, self.db.profile.petOwnerCache[petUID]
+            end
+        end
+    elseif IsInGroup() then
+        for i = 1, GetNumGroupMembers() do
+            if petGuid == UnitGUID("PartyPet" .. i) then
+                ownerId = UnitGUID("Party" .. i)
+
+                _, _, _, _, _, ownerName, _ = GetPlayerInfoByGUID(ownerId)
+
+                self.db.profile.petOwnerCache[petUID] = {
+                    OwnerName = ownerName,
+                    OwnerGUID = ownerId
+                }
+                return true, self.db.profile.petOwnerCache[petUID]
+            end
+        end
+    end
+end
+
+function addon:PrintHelp()
+    self:PrintMessage(string.format("%s (%s)", L['Help']['title'], self.Version))
+
+    self:PrintMessage(string.format('- %s (%s)|cffffffff: %s|r', 'enable',
+                                    tostring(self.db.profile.enable),
+                                    L['Help']['enable']));
+    self:PrintMessage(string.format('- %s (%s)|cffffffff: %s|r', 'whisper',
+                                    tostring(self.db.profile.whisper),
+                                    L['Help']['whisper']));
+    self:PrintMessage(string.format('- %s (%s)|cffffffff: %s|r', 'combat',
+                                    tostring(self.db.profile.combat),
+                                    L['Help']['combat']));
+    self:PrintMessage(string.format('- %s (%s)|cffffffff: %s|r', 'debug',
+                                    tostring(self.db.profile.debug),
+                                    L['Help']['debug']));
+    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'report [channel]',
+                                    L['Help']['report [channel]']));
+    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'reset',
+                                    L['Help']['reset']));
+    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'count',
+                                    L['Help']['count']));
+    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'clear',
+                                    L['Help']['clear']));
+    self:PrintMessage(string.format('- %s (%s)|cffffffff: %s|r', 'lead',
+                                    self.cluster.lead, L['Help']['lead']));
+    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'ignore',
+                                    L['Help']['ignore']));
+    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'queue',
+                                    L['Help']['queue']));
+    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'queue clear',
+                                    L['Help']['queue clear']));
+    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'queue process',
+                                    L['Help']['queue process']));
+    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'sync',
+                                    L['Help']['sync']));
+end
+
+function addon:PrintMessage(msg)
+    if (DEFAULT_CHAT_FRAME) then
+        DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00" .. L[addonName] .. "|r: " ..
+                                          msg, 0.0, 1.0, 0.0, 1.0);
+    end
+end
+
+function addon:UpgradeProfile()
+    if not self.db.profile.isMaxRank then self.db.profile.isMaxRank = {} end
+    if not self.db.profile.petOwnerCache then
+        self.db.profile.petOwnerCache = {}
+    end
+
+    if self.db.profile.dbVersion ~= addon.Version then
+        self:PrintMessage("Addon version change, resetting cache");
+        self:ClearCache();
+    end
+end
