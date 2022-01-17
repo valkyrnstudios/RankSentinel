@@ -339,23 +339,6 @@ function addon:PLAYER_REGEN_ENABLED(...)
     self:ProcessQueuedNotifications();
 end
 
-function addon:ProcessQueuedNotifications()
-    if #self.notificationsQueue == 0 then return end
-
-    self:PrintMessage(string.format(L["Queue"]["Processing"],
-                                    #self.notificationsQueue));
-
-    local notification = nil;
-
-    for i = 1, #self.notificationsQueue do
-        notification = self.notificationsQueue[i];
-
-        SendChatMessage(notification.text, "WHISPER", nil, notification.target)
-    end
-
-    self.notificationsQueue = {};
-end
-
 function addon:Annoy(msg, target)
     if self.playerName == self.cluster.lead then
         if target == "self" then
@@ -515,20 +498,6 @@ function addon:IsMaxRank(spellID, casterLevel, targetLevel)
     return isMax, nextRankData.Level
 end
 
-function addon:QueueNotification(notification, target)
-    if InCombatLockdown() and not self.db.profile.combat then
-        self:PrintMessage(string.format("Queued - %s, %s", target,
-                                        notification:gsub('{rt7} ', '', 1)));
-
-        self.notificationsQueue[#self.notificationsQueue + 1] = {
-            text = notification,
-            target = target
-        };
-    else
-        SendChatMessage(notification, "WHISPER", nil, target)
-    end
-end
-
 function addon:PrintMessage(msg)
     if (DEFAULT_CHAT_FRAME) then
         DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00" .. L[addonName] .. "|r: " ..
@@ -560,16 +529,20 @@ function addon:IsHighestAlertableRank(nextRankLevel, casterLevel)
     return nextRankLevel > casterLevel
 end
 
-function addon:UpdateSessionReport(playerSpellIndex, playerName, spellName,
-                                   spellID)
+function addon:IgnoreTarget()
+    local guid = UnitGUID("target")
+    if not guid then
+        self:PrintMessage("Must target a unit");
+        return;
+    end
 
-    if self.sessionReport[playerSpellIndex] ~= nil then return end
+    local name, _ = UnitName("target");
 
-    local spellRank = addon.AbilityData[spellID].Rank
-
-    self.sessionReport[playerSpellIndex] = {
-        ['PlayerName'] = playerName,
-        ['SpellName'] = spellName,
-        ['SpellRank'] = spellRank
-    }
+    if self.db.profile.ignoredPlayers[guid] ~= true then
+        self:PrintMessage("Ignored " .. name);
+        self.db.profile.ignoredPlayers[guid] = true;
+    else
+        self:PrintMessage("Unignored " .. name);
+        self.db.profile.ignoredPlayers[guid] = nil;
+    end
 end
