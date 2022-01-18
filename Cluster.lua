@@ -34,16 +34,6 @@ function addon:OnCommReceived(prefix, message, _, sender)
     end
 end
 
-function addon:RecordAnnoy(sender, playerSpellIndex)
-    if self.db.profile.announcedSpells[playerSpellIndex] ~= true then
-        self.db.profile.announcedSpells[playerSpellIndex] = true
-    end
-
-    if sender == self.playerName then
-        self:Broadcast("ANNOY", playerSpellIndex);
-    end
-end
-
 function addon:Broadcast(command, data)
     if not self.db.profile.enable or UnitInBattleground("player") ~= nil then
         return
@@ -57,6 +47,22 @@ function addon:Broadcast(command, data)
                          string.format("%s|%s", command, data), "RAID")
 end
 
+function addon:PrintLead()
+    self:PrintMessage("Cluster Lead: " .. self.cluster.lead);
+end
+
+function addon:RecordAnnoy(sender, playerSpellIndex)
+    if self.db.profile.announcedSpells[playerSpellIndex] ~= true then
+        self.db.profile.announcedSpells[playerSpellIndex] = true
+    end
+
+    if sender == self.playerName then
+        self:Broadcast("ANNOY", playerSpellIndex);
+    end
+end
+
+function addon:ResetLead() self.cluster = {lead = self.playerName} end
+
 function addon:SetLead(playerName)
     -- TODO add lead version
     if not self.db.profile.enable or not self.db.profile.whisper or playerName ==
@@ -64,12 +70,6 @@ function addon:SetLead(playerName)
 
     self:Broadcast("LEAD", playerName);
 end
-
-function addon:PrintLead()
-    self:PrintMessage("Cluster Lead: " .. self.cluster.lead);
-end
-
-function addon:ResetLead() self.cluster = {lead = self.playerName} end
 
 function addon:SyncBroadcast(array, index)
     local batch_size = 10
@@ -107,3 +107,5 @@ function addon:SyncBroadcast(array, index)
         end)
     end
 end
+
+function addon:PLAYER_ENTERING_WORLD(...) self:SetLead(self.playerName); end

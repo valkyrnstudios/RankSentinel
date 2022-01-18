@@ -1,30 +1,5 @@
 local _, addon = ...
 
-function addon:IgnoreTarget()
-    local guid = UnitGUID("target")
-    if not guid then
-        self:PrintMessage("Must target a unit");
-        return;
-    end
-
-    local name, _ = UnitName("target");
-
-    if self.db.profile.ignoredPlayers[guid] ~= true then
-        self:PrintMessage("Ignored " .. name);
-        self.db.profile.ignoredPlayers[guid] = true;
-    else
-        self:PrintMessage("Unignored " .. name);
-        self.db.profile.ignoredPlayers[guid] = nil;
-    end
-end
-
-function addon:CountCache(cache)
-    local count = 0;
-    for _ in pairs(cache) do count = count + 1 end
-
-    return count;
-end
-
 function addon:ClearCache()
     local count = self:CountCache(self.db.profile.announcedSpells);
     local playerCount = self:CountCache(self.db.profile.ignoredPlayers);
@@ -38,4 +13,56 @@ function addon:ClearCache()
     self:PrintMessage(string.format(
                           "Cache reset: %d entries purged, %d players unignored, and %d cached results",
                           count, playerCount, isMaxRankCount));
+end
+
+function addon:CountCache(cache)
+    local count = 0;
+    for _ in pairs(cache) do count = count + 1 end
+
+    return count;
+end
+
+function addon:ProcessQueuedNotifications()
+    if #self.notificationsQueue == 0 then return end
+
+    self:PrintMessage(string.format(self.L["Queue"]["Processing"],
+                                    #self.notificationsQueue));
+
+    local notification = nil;
+
+    for i = 1, #self.notificationsQueue do
+        notification = self.notificationsQueue[i];
+
+        SendChatMessage(notification.text, "WHISPER", nil, notification.target)
+    end
+
+    self.notificationsQueue = {};
+end
+
+function addon:QueueNotification(notification, target)
+    if InCombatLockdown() and not self.db.profile.combat then
+        self:PrintMessage(string.format("Queued - %s, %s", target,
+                                        notification:gsub('{rt7} ', '', 1)));
+
+        self.notificationsQueue[#self.notificationsQueue + 1] = {
+            text = notification,
+            target = target
+        };
+    else
+        SendChatMessage(notification, "WHISPER", nil, target)
+    end
+end
+
+function addon:UpdateSessionReport(playerSpellIndex, playerName, spellName,
+                                   spellID)
+
+    if self.sessionReport[playerSpellIndex] ~= nil then return end
+
+    local spellRank = addon.AbilityData[spellID].Rank
+
+    self.sessionReport[playerSpellIndex] = {
+        ['PlayerName'] = playerName,
+        ['SpellName'] = spellName,
+        ['SpellRank'] = spellRank
+    }
 end

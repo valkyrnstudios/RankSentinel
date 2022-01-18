@@ -22,3 +22,4 @@ RankSentinel.lua
 AbilityData\TBC.lua
 Cluster.lua
 Cache.lua
+Utilities.lua

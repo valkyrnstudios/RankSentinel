@@ -29,3 +29,4 @@ AbilityData\Vanilla.lua
 Vanilla.lua
 #@end-version-classic@
 Cache.lua
+Utilities.lua
