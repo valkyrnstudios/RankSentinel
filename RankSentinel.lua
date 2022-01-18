@@ -28,7 +28,7 @@ function addon:OnInitialize()
     local defaults = {
         profile = {
             enable = true,
-            whisper = true,
+            whisper = UnitLevel("Player") == 70,
             debug = false,
             combat = false,
             castString = self.L["CastString"],
