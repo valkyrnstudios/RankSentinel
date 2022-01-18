@@ -22,17 +22,17 @@ if string.match(addon.Version, 'project') then addon.Version = 'v9.9.9' end
 
 addon._commPrefix = string.upper(addonName)
 
-local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
-
 function addon:OnInitialize()
+    self.L = LibStub("AceLocale-3.0"):GetLocale(addonName)
+
     local defaults = {
         profile = {
             enable = true,
             whisper = true,
             debug = false,
             combat = false,
-            castString = L["CastString"],
-            postMessageString = L["PostMessageString"],
+            castString = self.L["CastString"],
+            postMessageString = self.L["PostMessageString"],
             announcedSpells = {},
             ignoredPlayers = {},
             isMaxRank = {},
@@ -150,7 +150,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
     if sourceGUID == self.playerGUID then
         castStringMsg = string.format(self.db.profile.castString, "you",
                                       spellLink, nextRankLevel)
-        castStringMsg = string.format("%s %s", L["AnnouncePrefix"]["Self"],
+        castStringMsg = string.format("%s %s", self.L["AnnouncePrefix"]["Self"],
                                       castStringMsg)
 
         self:Annoy(castStringMsg, "self")
@@ -162,7 +162,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
                                           petOwner and sourceName or "you",
                                           spellLink, nextRankLevel)
             castStringMsg = string.format("%s %s %s",
-                                          L["AnnouncePrefix"]["Whisper"],
+                                          self.L["AnnouncePrefix"]["Whisper"],
                                           castStringMsg,
                                           self.db.profile.postMessageString)
 
@@ -170,7 +170,8 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
         else
             castStringMsg = string.format(self.db.profile.castString,
                                           sourceName, spellLink, nextRankLevel)
-            castStringMsg = string.format("%s %s", L["AnnouncePrefix"]["Self"],
+            castStringMsg = string.format("%s %s",
+                                          self.L["AnnouncePrefix"]["Self"],
                                           castStringMsg)
 
             self:Annoy(castStringMsg, "self")
@@ -282,7 +283,7 @@ function addon:ChatCommand(cmd)
 
             SendChatMessage(string.format(
                                 "%s detected %d low ranks this session",
-                                L[addonName], reportSize), channel, nil)
+                                self.L[addonName], reportSize), channel, nil)
 
             for key, reportEntry in pairs(self.sessionReport) do
                 SendChatMessage(string.format("%s - %s (Rank %d)",

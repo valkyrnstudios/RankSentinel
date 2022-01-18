@@ -1,6 +1,4 @@
-local addonName, addon = ...
-
-local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
+local _, addon = ...
 
 function addon:ClearCache()
     local count = self:CountCache(self.db.profile.announcedSpells);
@@ -27,7 +25,7 @@ end
 function addon:ProcessQueuedNotifications()
     if #self.notificationsQueue == 0 then return end
 
-    self:PrintMessage(string.format(L["Queue"]["Processing"],
+    self:PrintMessage(string.format(self.L["Queue"]["Processing"],
                                     #self.notificationsQueue));
 
     local notification = nil;

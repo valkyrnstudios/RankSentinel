@@ -1,7 +1,5 @@
 local addonName, addon = ...
 
-local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
-
 function addon:GetUID(guid)
     local unitType, _, _, _, _, _, spawnUID = strsplit("-", guid)
 
@@ -111,46 +109,47 @@ function addon:IsPetOwnerInRaid(petGuid)
 end
 
 function addon:PrintHelp()
-    self:PrintMessage(string.format("%s (%s)", L['Help']['title'], self.Version))
+    self:PrintMessage(string.format("%s (%s)", self.L['Help']['title'],
+                                    self.Version))
 
     self:PrintMessage(string.format('- %s (%s)|cffffffff: %s|r', 'enable',
                                     tostring(self.db.profile.enable),
-                                    L['Help']['enable']));
+                                    self.L['Help']['enable']));
     self:PrintMessage(string.format('- %s (%s)|cffffffff: %s|r', 'whisper',
                                     tostring(self.db.profile.whisper),
-                                    L['Help']['whisper']));
+                                    self.L['Help']['whisper']));
     self:PrintMessage(string.format('- %s (%s)|cffffffff: %s|r', 'combat',
                                     tostring(self.db.profile.combat),
-                                    L['Help']['combat']));
+                                    self.L['Help']['combat']));
     self:PrintMessage(string.format('- %s (%s)|cffffffff: %s|r', 'debug',
                                     tostring(self.db.profile.debug),
-                                    L['Help']['debug']));
+                                    self.L['Help']['debug']));
     self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'report [channel]',
-                                    L['Help']['report [channel]']));
+                                    self.L['Help']['report [channel]']));
     self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'reset',
-                                    L['Help']['reset']));
+                                    self.L['Help']['reset']));
     self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'count',
-                                    L['Help']['count']));
+                                    self.L['Help']['count']));
     self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'clear',
-                                    L['Help']['clear']));
+                                    self.L['Help']['clear']));
     self:PrintMessage(string.format('- %s (%s)|cffffffff: %s|r', 'lead',
-                                    self.cluster.lead, L['Help']['lead']));
+                                    self.cluster.lead, self.L['Help']['lead']));
     self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'ignore',
-                                    L['Help']['ignore']));
+                                    self.L['Help']['ignore']));
     self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'queue',
-                                    L['Help']['queue']));
+                                    self.L['Help']['queue']));
     self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'queue clear',
-                                    L['Help']['queue clear']));
+                                    self.L['Help']['queue clear']));
     self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'queue process',
-                                    L['Help']['queue process']));
+                                    self.L['Help']['queue process']));
     self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'sync',
-                                    L['Help']['sync']));
+                                    self.L['Help']['sync']));
 end
 
 function addon:PrintMessage(msg)
     if (DEFAULT_CHAT_FRAME) then
-        DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00" .. L[addonName] .. "|r: " ..
-                                          msg, 0.0, 1.0, 0.0, 1.0);
+        DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00" .. self.L[addonName] ..
+                                          "|r: " .. msg, 0.0, 1.0, 0.0, 1.0);
     end
 end
 
