@@ -1,5 +1,18 @@
 local addonName, addon = ...
 
+function addon:Annoy(msg, target)
+    if self.playerName == self.cluster.lead then
+        if target == "self" then
+            self:PrintMessage(msg:gsub('{rt7} ', '', 1));
+        else
+            self:QueueNotification(msg, target);
+        end
+    else
+        self:PrintMessage(msg:gsub('{rt7} ', '', 1):gsub("you", target):gsub(
+                              addonName, self.cluster.lead));
+    end
+end
+
 function addon:GetUID(guid)
     local unitType, _, _, _, _, _, spawnUID = strsplit("-", guid)
 

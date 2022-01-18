@@ -181,19 +181,6 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
     end
 end
 
-function addon:Annoy(msg, target)
-    if self.playerName == self.cluster.lead then
-        if target == "self" then
-            self:PrintMessage(msg:gsub('{rt7} ', '', 1));
-        else
-            self:QueueNotification(msg, target);
-        end
-    else
-        self:PrintMessage(msg:gsub('{rt7} ', '', 1):gsub("you", target):gsub(
-                              addonName, self.cluster.lead));
-    end
-end
-
 function addon:ChatCommand(cmd)
     local msg = string.lower(cmd)
 
