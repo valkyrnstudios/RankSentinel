@@ -15,8 +15,6 @@ L["Notification"] = {
     ["Suffix"] = "You might be missing training or using an outdated ability shortcut."
 };
 
-L["Queue"] = {["Processing"] = "Processing %d queued notifications"}
-
 L["Help"] = {
     ["title"] = 'Command-line options',
     ["enable"] = 'toggles combat log parsing',

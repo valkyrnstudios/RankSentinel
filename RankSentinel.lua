@@ -137,13 +137,12 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
 
     if isMax or not nextRankLevel or nextRankLevel <= 0 then return end
 
-    local notification, target = self:BuildNotification(spellID, sourceGUID,
-                                                        sourceName,
+    local notification, target = self:BuildNotification(spellID, sourceName,
                                                         nextRankLevel, petOwner)
 
-    self:Annoy(notification, target)
+    self:QueueNotification(notification, target)
 
-    self:RecordAnnoy(self.playerName, playerSpellIndex)
+    self:RecordNotification(self.playerName, playerSpellIndex)
 end
 
 function addon:ChatCommand(cmd)

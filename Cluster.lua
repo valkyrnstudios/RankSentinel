@@ -12,8 +12,8 @@ function addon:OnCommReceived(prefix, message, _, sender)
                               command, sender, data));
     end
 
-    if command == 'ANNOY' then
-        self:RecordAnnoy(sender, data);
+    if command == 'NOTIFY' then
+        self:RecordNotification(sender, data);
     elseif command == 'LEAD' then
         self.cluster.lead = data;
 
@@ -51,13 +51,13 @@ function addon:PrintLead()
     self:PrintMessage("Cluster Lead: " .. self.cluster.lead);
 end
 
-function addon:RecordAnnoy(sender, playerSpellIndex)
+function addon:RecordNotification(sender, playerSpellIndex)
     if self.db.profile.announcedSpells[playerSpellIndex] ~= true then
         self.db.profile.announcedSpells[playerSpellIndex] = true
     end
 
     if sender == self.playerName then
-        self:Broadcast("ANNOY", playerSpellIndex);
+        self:Broadcast("NOTIFY", playerSpellIndex);
     end
 end
 

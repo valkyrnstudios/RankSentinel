@@ -23,10 +23,7 @@ function addon:CountCache(cache)
 end
 
 function addon:ProcessQueuedNotifications()
-    if #self.notificationsQueue == 0 then return end
-
-    self:PrintMessage(string.format(self.L["Queue"]["Processing"],
-                                    #self.notificationsQueue));
+    if #self.notificationsQueue == 0 or InCombatLockdown() then return end
 
     local notification = nil;
 
@@ -34,25 +31,28 @@ function addon:ProcessQueuedNotifications()
         notification = self.notificationsQueue[i];
 
         if notification.target ~= "self" then
-            SendChatMessage(notification.text, "WHISPER", nil,
+            SendChatMessage(notification.message, "WHISPER", nil,
                             notification.target)
         else
-            self:PrintMessage(notification.text)
+            self:PrintMessage(notification.message)
         end
     end
 
     self.notificationsQueue = {};
 end
 
-function addon:QueueNotification(notification, target)
-    self:PrintMessage(string.format("Queued - %s, %s", target,
-                                    notification:gsub('{rt7} ', '', 1)));
-
+function addon:QueueNotification(message, target)
     self.notificationsQueue[#self.notificationsQueue + 1] = {
-        text = notification,
+        message = message,
         target = target
     };
-    -- SendChatMessage(notification, "WHISPER", nil, target)
+
+    if InCombatLockdown() then
+        self:PrintMessage(string.format("Queued - %s, %s", target,
+                                        message:gsub('{rt7} ', '', 1)))
+    else
+        self:ProcessQueuedNotifications()
+    end
 end
 
 function addon:UpdateSessionReport(playerSpellIndex, playerName, spellName,

@@ -1,25 +1,16 @@
 local addonName, addon = ...
 
-function addon:Annoy(msg, target)
-    if self.playerName == self.cluster.lead then
-        self:QueueNotification(msg, target);
-    else
-        self:PrintMessage(msg);
-    end
-end
-
-function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
-                                 petOwner)
+function addon:BuildNotification(spellID, sourceName, nextRankLevel, petOwner)
     local spellLink = GetSpellLink(spellID)
     local contactName = sourceName
     local castStringMsg = nil
 
-    if sourceGUID == self.playerGUID then
+    if sourceName == self.playerName then
         castStringMsg = string.format(self.db.profile.notificationBase, "you",
                                       spellLink, nextRankLevel)
         castStringMsg = string.format("%s %s",
                                       self.L["Notification"].Prefix.Self,
-                                      castStringMsg):gsub('{rt7} ', '', 1)
+                                      castStringMsg) -- :gsub('{rt7} ', '', 1)
 
         contactName = "self"
     elseif self.db.profile.whisper and self.playerName == self.cluster.lead then
@@ -36,12 +27,9 @@ function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
         castStringMsg = string.format("%s %s",
                                       self.L["Notification"].Prefix.Self,
                                       castStringMsg)
-        castStringMsg = castStringMsg:gsub('{rt7} ', '', 1):gsub("you",
-                                                                 contactName)
-                            :gsub(addonName, self.cluster.lead)
+        -- castStringMsg = castStringMsg:gsub('{rt7} ', '', 1):gsub("you", contactName)
+        -- :gsub(addonName, self.cluster.lead)
     end
-
-    print(string.format("Debug (%s): %s", contactName, castStringMsg))
 
     return castStringMsg, contactName
 end
