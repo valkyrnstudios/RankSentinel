@@ -11,7 +11,7 @@ L["Notification"] = {
         ["Self"] = '|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7.blp:0|t',
         ["Whisper"] = string.format("{rt7} %s detected", addonName)
     },
-    ["Base"] = "%s just used a low rank of %s, next rank available at %d.",
+    ["Base"] = "%s used %s (Rank %d), next rank available at level %d.",
     ["Suffix"] = "You might be missing training or using an outdated ability shortcut."
 };
 

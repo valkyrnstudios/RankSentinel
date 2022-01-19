@@ -1,37 +1,32 @@
 local addonName, addon = ...
 
-function addon:BuildNotification(spellID, sourceName, nextRankLevel, petOwner)
+function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
+                                 petOwner)
     local spellLink = GetSpellLink(spellID)
+    local abilityData = self.AbilityData[spellID]
     local contactName = sourceName
-    local castStringMsg = nil
+    local msg = nil
+    local ability = string.format('%s (Rank %d)', spellLink, abilityData.Rank)
 
-    if sourceName == self.playerName then
-        castStringMsg = string.format(self.db.profile.notificationBase, "you",
-                                      spellLink, nextRankLevel)
-        castStringMsg = string.format("%s %s",
-                                      self.L["Notification"].Prefix.Self,
-                                      castStringMsg) -- :gsub('{rt7} ', '', 1)
-
-        contactName = "self"
+    if sourceGUID == self.playerGUID then
+        msg = string.format(self.db.profile.notificationBase, "you", spellLink,
+                            abilityData.Rank, nextRankLevel)
+        msg = string.format("%s %s", self.L["Notification"].Prefix.Self, msg) -- :gsub('{rt7} ', '', 1)
     elseif self.db.profile.whisper and self.playerName == self.cluster.lead then
-        castStringMsg = string.format(self.db.profile.notificationBase,
-                                      petOwner and sourceName or "you",
-                                      spellLink, nextRankLevel)
-        castStringMsg = string.format("%s %s %s",
-                                      self.L["Notification"].Prefix.Whisper,
-                                      castStringMsg,
-                                      self.db.profile.notificationSuffix)
+        msg = string.format(self.db.profile.notificationBase,
+                            petOwner and sourceName or "you", spellLink,
+                            abilityData.Rank, nextRankLevel)
+        msg = string.format("%s %s %s", self.L["Notification"].Prefix.Whisper,
+                            msg, self.db.profile.notificationSuffix)
     else
-        castStringMsg = string.format(self.db.profile.notificationBase,
-                                      sourceName, spellLink, nextRankLevel)
-        castStringMsg = string.format("%s %s",
-                                      self.L["Notification"].Prefix.Self,
-                                      castStringMsg)
-        -- castStringMsg = castStringMsg:gsub('{rt7} ', '', 1):gsub("you", contactName)
+        msg = string.format(self.db.profile.notificationBase, sourceName,
+                            spellLink, abilityData.Rank, nextRankLevel)
+        msg = string.format("%s %s", self.L["Notification"].Prefix.Self, msg)
+        -- msg = msg:gsub('{rt7} ', '', 1):gsub("you", contactName)
         -- :gsub(addonName, self.cluster.lead)
     end
 
-    return castStringMsg, contactName
+    return msg, contactName, ability
 end
 
 function addon:GetUID(guid)

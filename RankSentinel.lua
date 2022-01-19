@@ -104,7 +104,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
 
     if subevent ~= "SPELL_CAST_SUCCESS" or
         self.db.profile.ignoredPlayers[sourceGUID] ~= nil or
-        addon.AbilityData[spellID] == nil or not HasFullControl() or
+        self.AbilityData[spellID] == nil or not HasFullControl() or
         UnitIsPossessed(sourceName) or UnitIsCharmed(sourceName) or
         UnitIsEnemy("Player", sourceName) then return end
 
@@ -137,10 +137,11 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
 
     if isMax or not nextRankLevel or nextRankLevel <= 0 then return end
 
-    local notification, target = self:BuildNotification(spellID, sourceName,
-                                                        nextRankLevel, petOwner)
+    local notification, target, ability =
+        self:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
+                               petOwner)
 
-    self:QueueNotification(notification, target)
+    self:QueueNotification(notification, target, ability)
 
     self:RecordNotification(self.playerName, playerSpellIndex)
 end
@@ -205,7 +206,7 @@ function addon:ChatCommand(cmd)
             for i = 1, #self.notificationsQueue do
                 notification = self.notificationsQueue[i];
                 self:PrintMessage(string.format("%s - %s", notification.target,
-                                                notification.text))
+                                                notification.ability))
             end
         end
     elseif msg == "sync" then

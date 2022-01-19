@@ -30,7 +30,7 @@ function addon:ProcessQueuedNotifications()
     for i = 1, #self.notificationsQueue do
         notification = self.notificationsQueue[i];
 
-        if notification.target ~= "self" then
+        if notification.target ~= self.playerName then
             SendChatMessage(notification.message, "WHISPER", nil,
                             notification.target)
         else
@@ -41,15 +41,15 @@ function addon:ProcessQueuedNotifications()
     self.notificationsQueue = {};
 end
 
-function addon:QueueNotification(message, target)
+function addon:QueueNotification(message, target, ability)
     self.notificationsQueue[#self.notificationsQueue + 1] = {
         message = message,
-        target = target
+        target = target,
+        ability = ability
     };
 
     if InCombatLockdown() then
-        self:PrintMessage(string.format("Queued - %s, %s", target,
-                                        message:gsub('{rt7} ', '', 1)))
+        self:PrintMessage(string.format("Queued - %s, %s", target, ability))
     else
         self:ProcessQueuedNotifications()
     end
