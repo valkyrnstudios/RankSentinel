@@ -15,29 +15,33 @@ function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
     local castStringMsg = nil
 
     if sourceGUID == self.playerGUID then
-        castStringMsg = string.format(self.db.profile.castString, "you",
+        castStringMsg = string.format(self.db.profile.notificationBase, "you",
                                       spellLink, nextRankLevel)
-        castStringMsg = string.format("%s %s", self.L["AnnouncePrefix"]["Self"],
+        castStringMsg = string.format("%s %s",
+                                      self.L["Notification"].Prefix.Self,
                                       castStringMsg):gsub('{rt7} ', '', 1)
 
         contactName = "self"
     elseif self.db.profile.whisper and self.playerName == self.cluster.lead then
-        castStringMsg = string.format(self.db.profile.castString,
+        castStringMsg = string.format(self.db.profile.notificationBase,
                                       petOwner and sourceName or "you",
                                       spellLink, nextRankLevel)
         castStringMsg = string.format("%s %s %s",
-                                      self.L["AnnouncePrefix"]["Whisper"],
+                                      self.L["Notification"].Prefix.Whisper,
                                       castStringMsg,
-                                      self.db.profile.postMessageString)
+                                      self.db.profile.notificationSuffix)
     else
-        castStringMsg = string.format(self.db.profile.castString, sourceName,
-                                      spellLink, nextRankLevel)
-        castStringMsg = string.format("%s %s", self.L["AnnouncePrefix"]["Self"],
+        castStringMsg = string.format(self.db.profile.notificationBase,
+                                      sourceName, spellLink, nextRankLevel)
+        castStringMsg = string.format("%s %s",
+                                      self.L["Notification"].Prefix.Self,
                                       castStringMsg)
         castStringMsg = castStringMsg:gsub('{rt7} ', '', 1):gsub("you",
                                                                  contactName)
                             :gsub(addonName, self.cluster.lead)
     end
+
+    print(string.format("Debug (%s): %s", contactName, castStringMsg))
 
     return castStringMsg, contactName
 end

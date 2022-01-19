@@ -6,15 +6,14 @@ L["Enable"] = "Enable";
 L["Whisper"] = "Whisper";
 L["Debug"] = "Debug";
 
-L["AnnouncePrefix"] = {
-    ["Self"] = "\124TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7.png:0\124t",
-    ["Whisper"] = "{rt7} RankSentinel detected"
-}
-
-L["CastString"] = "%s just used a low rank of %s, next rank available at %d.";
-
-L["PostMessageString"] =
-    "You might be missing training or using an outdated ability shortcut.";
+L["Notification"] = {
+    ["Prefix"] = {
+        ["Self"] = '|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7.blp:0|t',
+        ["Whisper"] = string.format("{rt7} %s detected", addonName)
+    },
+    ["Base"] = "%s just used a low rank of %s, next rank available at %d.",
+    ["Suffix"] = "You might be missing training or using an outdated ability shortcut."
+};
 
 L["Queue"] = {["Processing"] = "Processing %d queued notifications"}
 
