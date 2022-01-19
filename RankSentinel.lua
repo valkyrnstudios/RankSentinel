@@ -115,10 +115,21 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
 
     local castLevel = UnitLevel(sourceName)
 
-    local PlayerSpellIndex = string.format("%s-%s-%s", self:GetUID(sourceGUID),
+    local playerSpellIndex = string.format("%s-%s-%s", self:GetUID(sourceGUID),
                                            castLevel, spellID)
 
-    if self.db.profile.announcedSpells[PlayerSpellIndex] ~= nil and
+    -- Add detection to session report, even if previously whispered
+    if petOwner then
+        self:UpdateSessionReport(playerSpellIndex, string.format("%s (%s)",
+                                                                 sourceName,
+                                                                 petOwner.OwnerName),
+                                 spellName, spellID)
+    else
+        self:UpdateSessionReport(playerSpellIndex, sourceName, spellName,
+                                 spellID)
+    end
+
+    if self.db.profile.announcedSpells[playerSpellIndex] ~= nil and
         not self.db.profile.debug then return end
 
     local targetLevel = destName and UnitLevel(destName) or 0
@@ -127,58 +138,13 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
 
     if isMax or not nextRankLevel or nextRankLevel <= 0 then return end
 
-    local spellLink = GetSpellLink(spellID)
-    local contactName = sourceName
-    local castStringMsg = nil
+    local notification, target = self:BuildNotification(spellID, sourceGUID,
+                                                        sourceName,
+                                                        nextRankLevel, petOwner)
 
-    if petOwner then
-        if petOwner.OwnerName == self.playerName then
-            contactName = "self"
-        else
-            contactName = petOwner.OwnerName
-        end
+    self:Annoy(notification, target)
 
-        self:UpdateSessionReport(PlayerSpellIndex, string.format("%s (%s)",
-                                                                 sourceName,
-                                                                 petOwner.OwnerName),
-                                 spellName, spellID)
-    else
-        self:UpdateSessionReport(PlayerSpellIndex, sourceName, spellName,
-                                 spellID)
-    end
-
-    if sourceGUID == self.playerGUID then
-        castStringMsg = string.format(self.db.profile.castString, "you",
-                                      spellLink, nextRankLevel)
-        castStringMsg = string.format("%s %s", self.L["AnnouncePrefix"]["Self"],
-                                      castStringMsg)
-
-        self:Annoy(castStringMsg, "self")
-
-        self:RecordAnnoy(self.playerName, PlayerSpellIndex)
-    else
-        if self.db.profile.whisper then
-            castStringMsg = string.format(self.db.profile.castString,
-                                          petOwner and sourceName or "you",
-                                          spellLink, nextRankLevel)
-            castStringMsg = string.format("%s %s %s",
-                                          self.L["AnnouncePrefix"]["Whisper"],
-                                          castStringMsg,
-                                          self.db.profile.postMessageString)
-
-            self:Annoy(castStringMsg, contactName)
-        else
-            castStringMsg = string.format(self.db.profile.castString,
-                                          sourceName, spellLink, nextRankLevel)
-            castStringMsg = string.format("%s %s",
-                                          self.L["AnnouncePrefix"]["Self"],
-                                          castStringMsg)
-
-            self:Annoy(castStringMsg, "self")
-        end
-
-        self:RecordAnnoy(self.playerName, PlayerSpellIndex)
-    end
+    self:RecordAnnoy(self.playerName, playerSpellIndex)
 end
 
 function addon:ChatCommand(cmd)

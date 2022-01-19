@@ -33,7 +33,12 @@ function addon:ProcessQueuedNotifications()
     for i = 1, #self.notificationsQueue do
         notification = self.notificationsQueue[i];
 
-        SendChatMessage(notification.text, "WHISPER", nil, notification.target)
+        if notification.target ~= "self" then
+            SendChatMessage(notification.text, "WHISPER", nil,
+                            notification.target)
+        else
+            self:PrintMessage(notification.text)
+        end
     end
 
     self.notificationsQueue = {};

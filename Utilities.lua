@@ -2,15 +2,44 @@ local addonName, addon = ...
 
 function addon:Annoy(msg, target)
     if self.playerName == self.cluster.lead then
-        if target == "self" then
-            self:PrintMessage(msg:gsub('{rt7} ', '', 1));
-        else
-            self:QueueNotification(msg, target);
-        end
+        self:QueueNotification(msg, target);
     else
-        self:PrintMessage(msg:gsub('{rt7} ', '', 1):gsub("you", target):gsub(
-                              addonName, self.cluster.lead));
+        self:PrintMessage(msg);
     end
+end
+
+function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
+                                 petOwner)
+    local spellLink = GetSpellLink(spellID)
+    local contactName = sourceName
+    local castStringMsg = nil
+
+    if sourceGUID == self.playerGUID then
+        castStringMsg = string.format(self.db.profile.castString, "you",
+                                      spellLink, nextRankLevel)
+        castStringMsg = string.format("%s %s", self.L["AnnouncePrefix"]["Self"],
+                                      castStringMsg):gsub('{rt7} ', '', 1)
+
+        contactName = "self"
+    elseif self.db.profile.whisper and self.playerName == self.cluster.lead then
+        castStringMsg = string.format(self.db.profile.castString,
+                                      petOwner and sourceName or "you",
+                                      spellLink, nextRankLevel)
+        castStringMsg = string.format("%s %s %s",
+                                      self.L["AnnouncePrefix"]["Whisper"],
+                                      castStringMsg,
+                                      self.db.profile.postMessageString)
+    else
+        castStringMsg = string.format(self.db.profile.castString, sourceName,
+                                      spellLink, nextRankLevel)
+        castStringMsg = string.format("%s %s", self.L["AnnouncePrefix"]["Self"],
+                                      castStringMsg)
+        castStringMsg = castStringMsg:gsub('{rt7} ', '', 1):gsub("you",
+                                                                 contactName)
+                            :gsub(addonName, self.cluster.lead)
+    end
+
+    return castStringMsg, contactName
 end
 
 function addon:GetUID(guid)
