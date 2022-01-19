@@ -30,7 +30,6 @@ function addon:OnInitialize()
             enable = true,
             whisper = UnitLevel("Player") == 70,
             debug = false,
-            combat = false,
             notificationBase = self.L["Notification"].Base,
             notificationSuffix = self.L["Notification"].Suffix,
             announcedSpells = {},
@@ -176,9 +175,6 @@ function addon:ChatCommand(cmd)
     elseif msg == "enable" then
         self.db.profile.enable = not self.db.profile.enable
         self:PrintMessage("enable = " .. tostring(self.db.profile.enable));
-    elseif msg == "combat" then
-        self.db.profile.combat = not self.db.profile.combat
-        self:PrintMessage("combat = " .. tostring(self.db.profile.combat));
     elseif msg == "lead" then
         self.cluster.lead = self.playerName
         self:SetLead(self.playerName)

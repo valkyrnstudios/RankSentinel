@@ -164,9 +164,6 @@ function addon:PrintHelp()
     self:PrintMessage(string.format('- %s (%s)|cffffffff: %s|r', 'whisper',
                                     tostring(self.db.profile.whisper),
                                     self.L['Help']['whisper']));
-    self:PrintMessage(string.format('- %s (%s)|cffffffff: %s|r', 'combat',
-                                    tostring(self.db.profile.combat),
-                                    self.L['Help']['combat']));
     self:PrintMessage(string.format('- %s (%s)|cffffffff: %s|r', 'debug',
                                     tostring(self.db.profile.debug),
                                     self.L['Help']['debug']));

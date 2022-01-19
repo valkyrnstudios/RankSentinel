@@ -45,17 +45,14 @@ function addon:ProcessQueuedNotifications()
 end
 
 function addon:QueueNotification(notification, target)
-    if InCombatLockdown() and not self.db.profile.combat then
-        self:PrintMessage(string.format("Queued - %s, %s", target,
-                                        notification:gsub('{rt7} ', '', 1)));
+    self:PrintMessage(string.format("Queued - %s, %s", target,
+                                    notification:gsub('{rt7} ', '', 1)));
 
-        self.notificationsQueue[#self.notificationsQueue + 1] = {
-            text = notification,
-            target = target
-        };
-    else
-        SendChatMessage(notification, "WHISPER", nil, target)
-    end
+    self.notificationsQueue[#self.notificationsQueue + 1] = {
+        text = notification,
+        target = target
+    };
+    -- SendChatMessage(notification, "WHISPER", nil, target)
 end
 
 function addon:UpdateSessionReport(playerSpellIndex, playerName, spellName,
