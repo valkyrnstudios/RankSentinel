@@ -2,17 +2,17 @@ local _, addon = ...
 
 function addon:ClearCache()
     local count = self:CountCache(self.db.profile.announcedSpells);
-    local playerCount = self:CountCache(self.db.profile.ignoredPlayers);
+    local petCount = self:CountCache(self.db.profile.petOwnerCache);
     local isMaxRankCount = self:CountCache(self.db.profile.isMaxRank);
 
     self.db.profile.announcedSpells = {};
-    self.db.profile.ignoredPlayers = {};
     self.db.profile.isMaxRank = {};
     self.db.profile.petOwnerCache = {};
+    self.session = {};
 
     self:PrintMessage(string.format(
-                          "Cache reset: %d entries purged, %d players unignored, and %d cached results",
-                          count, playerCount, isMaxRankCount));
+                          "Cache reset: %d entries purged, %d max ranks forgotten, %d pet owners cleared",
+                          count, isMaxRankCount, petCount));
 end
 
 function addon:CountCache(cache)
@@ -23,12 +23,12 @@ function addon:CountCache(cache)
 end
 
 function addon:ProcessQueuedNotifications()
-    if #self.notificationsQueue == 0 or InCombatLockdown() then return end
+    if #self.session.Queue == 0 or InCombatLockdown() then return end
 
     local notification = nil;
 
-    for i = 1, #self.notificationsQueue do
-        notification = self.notificationsQueue[i];
+    for i = 1, #self.session.Queue do
+        notification = self.session.Queue[i];
 
         if notification.target ~= self.playerName then
             SendChatMessage(notification.message, "WHISPER", nil,
@@ -38,11 +38,11 @@ function addon:ProcessQueuedNotifications()
         end
     end
 
-    self.notificationsQueue = {};
+    self.session.Queue = {};
 end
 
 function addon:QueueNotification(message, target, ability)
-    self.notificationsQueue[#self.notificationsQueue + 1] = {
+    self.session.Queue[#self.session.Queue + 1] = {
         message = message,
         target = target,
         ability = ability
@@ -58,11 +58,11 @@ end
 function addon:UpdateSessionReport(playerSpellIndex, playerName, spellName,
                                    spellID)
 
-    if self.sessionReport[playerSpellIndex] ~= nil then return end
+    if self.session.Report[playerSpellIndex] ~= nil then return end
 
     local spellRank = addon.AbilityData[spellID].Rank
 
-    self.sessionReport[playerSpellIndex] = {
+    self.session.Report[playerSpellIndex] = {
         ['PlayerName'] = playerName,
         ['SpellName'] = spellName,
         ['SpellRank'] = spellRank

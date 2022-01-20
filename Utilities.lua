@@ -6,18 +6,21 @@ function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
     local abilityData = self.AbilityData[spellID]
     local contactName = sourceName
     local msg = nil
+    local sourceUID = self:GetUID(sourceGUID)
     local ability = string.format('%s (Rank %d)', spellLink, abilityData.Rank)
 
     if sourceGUID == self.playerGUID then
         msg = string.format(self.db.profile.notificationBase, "you", spellLink,
                             abilityData.Rank, nextRankLevel)
-        msg = string.format("%s %s", self.L["Notification"].Prefix.Self, msg) -- :gsub('{rt7} ', '', 1)
+        msg = string.format("%s %s", self.L["Notification"].Prefix.Self, msg)
     elseif self.db.profile.whisper and self.playerName == self.cluster.lead then
         msg = string.format(self.db.profile.notificationBase,
                             petOwner and sourceName or "you", spellLink,
                             abilityData.Rank, nextRankLevel)
-        msg = string.format("%s %s %s", self.L["Notification"].Prefix.Whisper,
-                            msg, self.db.profile.notificationSuffix)
+        msg = string.format("%s %s%s", self.L["Notification"].Prefix.Whisper,
+                            msg,
+                            self.session.playersNotified[sourceUID] and ' ' ..
+                                self.self.db.profile.notificationSuffix or '')
     else
         msg = string.format(self.db.profile.notificationBase, sourceName,
                             spellLink, abilityData.Rank, nextRankLevel)
@@ -25,6 +28,8 @@ function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
         -- msg = msg:gsub('{rt7} ', '', 1):gsub("you", contactName)
         -- :gsub(addonName, self.cluster.lead)
     end
+
+    self.session.playersNotified[sourceUID] = true
 
     return msg, contactName, ability
 end

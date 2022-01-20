@@ -25,8 +25,8 @@ function addon:OnCommReceived(prefix, message, _, sender)
             self.db.profile.announcedSpells[data] = true
         end
     else
-        if self.unsupportedCommCache[command] == nil then
-            self.unsupportedCommCache[command] = true
+        if self.session.unsupportedComm[command] == nil then
+            self.session.unsupportedComm[command] = true
             self:PrintMessage(string.format(
                                   "Unrecognized broadcast (%s), you or %s's client may be outdated",
                                   command, sender));

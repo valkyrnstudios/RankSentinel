@@ -59,8 +59,6 @@ function addon:OnEnable()
 
         self:RegisterComm(self._commPrefix);
         self:ResetLead();
-
-        self.notificationsQueue = {};
     elseif isVanilla then
         -- SpellID not a parameter of COMBAT_LOG_EVENT_UNFILTERED in Classic era
         -- Self casted UNIT_SPELLCAST_SUCCEEDED contains spellID
@@ -76,8 +74,12 @@ function addon:OnEnable()
 
     self.db.profile.dbVersion = self.Version;
 
-    self.sessionReport = {}
-    self.unsupportedCommCache = {}
+    self.session = {
+        Queue = {},
+        Report = {},
+        unsupportedComm = {},
+        playersNotified = {}
+    }
 
     if self.db.profile.debug then
         self:PrintMessage("Debug enabled, clearing cache on reload");
@@ -191,8 +193,8 @@ function addon:ChatCommand(cmd)
     elseif "queue" == string.sub(msg, 1, #"queue") then
         local _, sub = strsplit(' ', msg)
         if sub == 'clear' or sub == 'reset' then
-            local queued = #self.notificationsQueue
-            self.notificationsQueue = {}
+            local queued = #self.session.Queue
+            self.session.Queue = {}
 
             self:PrintMessage(string.format("Cleared %d queued notifications",
                                             queued))
@@ -200,11 +202,11 @@ function addon:ChatCommand(cmd)
             self:ProcessQueuedNotifications()
         else
             self:PrintMessage(string.format("Currently %d queued notifications",
-                                            #self.notificationsQueue))
+                                            #self.session.Queue))
             local notification = nil
 
-            for i = 1, #self.notificationsQueue do
-                notification = self.notificationsQueue[i];
+            for i = 1, #self.session.Queue do
+                notification = self.session.Queue[i];
                 self:PrintMessage(string.format("%s - %s", notification.target,
                                                 notification.ability))
             end
@@ -214,14 +216,14 @@ function addon:ChatCommand(cmd)
     elseif "report" == string.sub(msg, 1, #"report") then
         local _, channel = strsplit(' ', msg)
 
-        local reportSize = self:CountCache(self.sessionReport)
+        local reportSize = self:CountCache(self.session.Report)
 
         if channel == nil then
             self:PrintMessage(string.format(
                                   "Detected %d low ranks this session",
                                   reportSize))
 
-            for _, reportEntry in pairs(self.sessionReport) do
+            for _, reportEntry in pairs(self.session.Report) do
                 print(string.format("%s - %s (Rank %d)", reportEntry.PlayerName,
                                     reportEntry.SpellName, reportEntry.SpellRank))
             end
@@ -234,14 +236,14 @@ function addon:ChatCommand(cmd)
                                 "%s detected %d low ranks this session",
                                 self.L[addonName], reportSize), channel, nil)
 
-            for key, reportEntry in pairs(self.sessionReport) do
+            for key, reportEntry in pairs(self.session.Report) do
                 SendChatMessage(string.format("%s - %s (Rank %d)",
                                               reportEntry.PlayerName,
                                               reportEntry.SpellName,
                                               reportEntry.SpellRank), channel,
                                 nil)
                 -- Remove entry after announcing to channel
-                self.sessionReport[key] = nil
+                self.session.Report[key] = nil
             end
         else
             self:PrintMessage("Unsupported channel " .. channel)
