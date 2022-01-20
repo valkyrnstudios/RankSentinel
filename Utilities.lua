@@ -47,18 +47,20 @@ end
 function addon:IgnoreTarget()
     local guid = UnitGUID("target")
     if not guid then
-        self:PrintMessage("Must target a unit");
-        return;
+        self:PrintMessage(self.L["Utilities"].IgnorePlayer.Error)
+        return
     end
 
-    local name, _ = UnitName("target");
+    local name, _ = UnitName("target")
 
     if self.db.profile.ignoredPlayers[guid] ~= true then
-        self:PrintMessage("Ignored " .. name);
-        self.db.profile.ignoredPlayers[guid] = true;
+        self:PrintMessage(string.format(
+                              self.L["Utilities"].IgnorePlayer.Ignored, name))
+        self.db.profile.ignoredPlayers[guid] = true
     else
-        self:PrintMessage("Unignored " .. name);
-        self.db.profile.ignoredPlayers[guid] = nil;
+        self:PrintMessage(string.format(self.L["Utilities"].IgnorePlayer
+                                            .Unignored, name))
+        self.db.profile.ignoredPlayers[guid] = nil
     end
 end
 
@@ -191,7 +193,7 @@ function addon:UpgradeProfile()
     end
 
     if self.db.profile.dbVersion ~= addon.Version then
-        self:PrintMessage("Addon version change, resetting cache");
+        self:PrintMessage(self.L["Utilities"].Upgrade);
         self:ClearCache();
     end
 end

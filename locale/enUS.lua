@@ -30,6 +30,15 @@ L["Cluster"] = {
     ["Batch"] = "Syncing batch %d to %d"
 }
 
+L["Utilities"] = {
+    ["Upgrade"] = "Addon version change, resetting cache",
+    ["IgnorePlayer"] = {
+        ["Error"] = "Must target a unit",
+        ["Ignored"] = "Ignored: %s",
+        ["Unignored"] = "Unignored: %s"
+    }
+}
+
 L["Help"] = {
     ["title"] = 'Command-line options',
     ["enable"] = 'toggles combat log parsing',
