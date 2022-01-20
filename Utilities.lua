@@ -21,13 +21,12 @@ function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
                   nextRankLevel)
         msg = fmt("%s %s%s", self.L["Notification"].Prefix.Whisper, msg,
                   self.session.PlayersNotified[sourceUID] ~= true and ' ' ..
-                      self.self.db.profile.notificationSuffix or '')
+                      self.db.profile.notificationSuffix or '')
     else
         msg = fmt(self.db.profile.notificationBase, sourceName, spellLink,
                   abilityData.Rank, nextRankLevel)
         msg = fmt("%s %s", self.L["Notification"].Prefix.Self, msg)
-        -- msg = msg:gsub('{rt7} ', '', 1):gsub("you", contactName)
-        -- :gsub(addonName, self.cluster.lead)
+        msg = msg:gsub("you", contactName):gsub(addonName, self.cluster.lead)
     end
 
     self.session.PlayersNotified[sourceUID] = true
