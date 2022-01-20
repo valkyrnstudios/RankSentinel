@@ -39,6 +39,28 @@ L["Utilities"] = {
     }
 }
 
+L["ChatCommand"] = {
+    ["Reset"] = "Settings reset",
+    ["Count"] = {
+        ["Spells"] = "Spells caught: %d",
+        ["Pets"] = "Pet owners: %d",
+        ["Ranks"] = "Ranks cached: %d"
+    },
+    ["Ignore"] = {
+        ["Target"] = "Select a target to ignore",
+        ["Count"] = "Currently ignoring %d players"
+    },
+    ["Queue"] = {
+        ["Clear"] = "Cleared %d queued notifications",
+        ["Count"] = "Currently %d queued notifications"
+    },
+    ["Report"] = {
+        ["Header"] = "Detected %d low ranks this session",
+        ["Summary"] = "%s - %s (Rank %d)",
+        ["Unsupported"] = "Unsupported channel %s"
+    }
+}
+
 L["Help"] = {
     ["title"] = 'Command-line options',
     ["enable"] = 'toggles combat log parsing',

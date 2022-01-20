@@ -1,11 +1,9 @@
--- addon name and a table scoped to our addon files is passed in by the wow client when the addon loads
--- we can use that to avoid polluting the global namespace shared by all addons.
 local addonName, RankSentinel = ...
 
-local addon = nil;
+local addon = nil
 
-local isTBC = _G.WOW_PROJECT_ID == _G.WOW_PROJECT_BURNING_CRUSADE_CLASSIC;
-local isVanilla = _G.WOW_PROJECT_ID == _G.WOW_PROJECT_CLASSIC;
+local isTBC = _G.WOW_PROJECT_ID == _G.WOW_PROJECT_BURNING_CRUSADE_CLASSIC
+local isVanilla = _G.WOW_PROJECT_ID == _G.WOW_PROJECT_CLASSIC
 
 if isTBC then
     addon = LibStub("AceAddon-3.0"):NewAddon(RankSentinel, addonName,
@@ -16,7 +14,7 @@ elseif isVanilla then
                                              "AceEvent-3.0")
 end
 
-addon.Version = GetAddOnMetadata(addonName, "Version");
+addon.Version = GetAddOnMetadata(addonName, "Version")
 
 if string.match(addon.Version, 'project') then addon.Version = 'v9.9.9' end
 
@@ -153,19 +151,20 @@ function addon:ChatCommand(cmd)
 
     if msg == "reset" then
         self.db:ResetProfile()
-        self:PrintMessage(string.format("Settings reset"))
+        self:PrintMessage(self.L["ChatCommand"].Reset)
     elseif msg == "count" then
-        self:PrintMessage(string.format("Spells caught: %d", self:CountCache(
+        self:PrintMessage(string.format(self.L["Count"].Spells, self:CountCache(
                                             self.db.profile.announcedSpells)))
-        self:PrintMessage(string.format("Ignored players: %d", self:CountCache(
-                                            self.db.profile.ignoredPlayers)))
-        self:PrintMessage(string.format("Ranks cached: %d", self:CountCache(
+        self:PrintMessage(string.format(self.L["Count"].Pets, self:CountCache(
+                                            self.db.profile.petOwnerCache)))
+        self:PrintMessage(string.format(self.L["Count"].Ranks, self:CountCache(
                                             self.db.profile.isMaxRank)))
     elseif msg == "clear" then
         self:ClearCache();
     elseif msg == "debug" then
         self.db.profile.debug = not self.db.profile.debug
-        self:PrintMessage("debug = " .. tostring(self.db.profile.debug));
+        self:PrintMessage(string.format("%s = %s", self.L["Debug"],
+                                        tostring(self.db.profile.debug)));
     elseif msg == "whisper" then
         if not isTBC then
             self:PrintMessage("Whisper only supported on TBC");
@@ -173,10 +172,12 @@ function addon:ChatCommand(cmd)
         end
 
         self.db.profile.whisper = not self.db.profile.whisper
-        self:PrintMessage("whisper = " .. tostring(self.db.profile.whisper));
+        self:PrintMessage(string.format("%s = %s", self.L["Whisper"],
+                                        tostring(self.db.profile.whisper)));
     elseif msg == "enable" then
         self.db.profile.enable = not self.db.profile.enable
-        self:PrintMessage("enable = " .. tostring(self.db.profile.enable));
+        self:PrintMessage(string.format("%s = %s", self.L["Enable"],
+                                        tostring(self.db.profile.enable)));
     elseif msg == "lead" then
         self.cluster.lead = self.playerName
         self:SetLead(self.playerName)
@@ -185,8 +186,8 @@ function addon:ChatCommand(cmd)
         if UnitExists("target") then
             self:IgnoreTarget();
         else
-            self:PrintMessage("Select a target to ignore");
-            self:PrintMessage(string.format("Currently ignoring %d players",
+            self:PrintMessage(self.L["ChatCommand"].Ignore.Target);
+            self:PrintMessage(string.format(self.L["ChatCommand"].Ignore.Count,
                                             self:CountCache(
                                                 self.db.profile.ignoredPlayers)))
         end
@@ -196,12 +197,12 @@ function addon:ChatCommand(cmd)
             local queued = #self.session.Queue
             self.session.Queue = {}
 
-            self:PrintMessage(string.format("Cleared %d queued notifications",
+            self:PrintMessage(string.format(self.L["ChatCommand"].Queue.Clear,
                                             queued))
         elseif sub == 'process' or sub == 'send' then
             self:ProcessQueuedNotifications()
         else
-            self:PrintMessage(string.format("Currently %d queued notifications",
+            self:PrintMessage(string.format(self.L["ChatCommand"].Queue.Count,
                                             #self.session.Queue))
             local notification = nil
 
@@ -219,34 +220,34 @@ function addon:ChatCommand(cmd)
         local reportSize = self:CountCache(self.session.Report)
 
         if channel == nil then
-            self:PrintMessage(string.format(
-                                  "Detected %d low ranks this session",
-                                  reportSize))
+            self:PrintMessage(string.format(self.L["ChatCommand"].Report.Header,
+                                            reportSize))
 
             for _, reportEntry in pairs(self.session.Report) do
-                print(string.format("%s - %s (Rank %d)", reportEntry.PlayerName,
+                print(string.format(self.L["ChatCommand"].Report.Summary,
+                                    reportEntry.PlayerName,
                                     reportEntry.SpellName, reportEntry.SpellRank))
             end
         elseif string.lower(channel) == "say" or string.lower(channel) == "raid" or
             string.lower(channel) == "guild" then
 
-            -- TODO limit messages to avoid mute
-
-            SendChatMessage(string.format(
-                                "%s detected %d low ranks this session",
-                                self.L[addonName], reportSize), channel, nil)
+            SendChatMessage(string.format(self.L["ChatCommand"].Report.Header,
+                                          self.L[addonName], reportSize),
+                            channel, nil)
 
             for key, reportEntry in pairs(self.session.Report) do
-                SendChatMessage(string.format("%s - %s (Rank %d)",
-                                              reportEntry.PlayerName,
-                                              reportEntry.SpellName,
-                                              reportEntry.SpellRank), channel,
-                                nil)
+                SendChatMessage(string.format(
+                                    self.L["ChatCommand"].Report.Summary,
+                                    reportEntry.PlayerName,
+                                    reportEntry.SpellName, reportEntry.SpellRank),
+                                channel, nil)
                 -- Remove entry after announcing to channel
                 self.session.Report[key] = nil
             end
         else
-            self:PrintMessage("Unsupported channel " .. channel)
+            self:PrintMessage(string.format(
+                                  self.L["ChatCommand"].Report.Unsupported,
+                                  channel))
         end
     else
         self:PrintHelp()

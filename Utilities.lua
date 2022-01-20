@@ -19,8 +19,9 @@ function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
                             abilityData.Rank, nextRankLevel)
         msg = string.format("%s %s%s", self.L["Notification"].Prefix.Whisper,
                             msg,
-                            self.session.playersNotified[sourceUID] and ' ' ..
-                                self.self.db.profile.notificationSuffix or '')
+                            self.session.playersNotified[sourceUID] ~= true and
+                                ' ' .. self.self.db.profile.notificationSuffix or
+                                '')
     else
         msg = string.format(self.db.profile.notificationBase, sourceName,
                             spellLink, abilityData.Rank, nextRankLevel)
