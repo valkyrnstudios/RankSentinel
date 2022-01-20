@@ -15,6 +15,16 @@ L["Notification"] = {
     ["Suffix"] = "You might be missing training or using an outdated ability shortcut."
 };
 
+L["Broadcast"] = {
+    ["Unrecognized"] = "Unrecognized broadcast (%s), you or %s's client may be outdated"
+}
+
+L["Cluster"] = {
+    ["Lead"] = "Cluster Lead: %s",
+    ["Sync"] = "Broadcasting sync %d",
+    ["Batch"] = "Syncing batch %d to %d"
+}
+
 L["Help"] = {
     ["title"] = 'Command-line options',
     ["enable"] = 'toggles combat log parsing',

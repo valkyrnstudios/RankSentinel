@@ -27,9 +27,8 @@ function addon:OnCommReceived(prefix, message, _, sender)
     else
         if self.session.unsupportedComm[command] == nil then
             self.session.unsupportedComm[command] = true
-            self:PrintMessage(string.format(
-                                  "Unrecognized broadcast (%s), you or %s's client may be outdated",
-                                  command, sender));
+            self:PrintMessage(string.format(self.L["Broadcast"].Unrecognized,
+                                            command, sender));
         end
     end
 end
@@ -48,7 +47,7 @@ function addon:Broadcast(command, data)
 end
 
 function addon:PrintLead()
-    self:PrintMessage("Cluster Lead: " .. self.cluster.lead);
+    self:PrintMessage(string.format(self.L["Cluster"].Lead, self.cluster.lead));
 end
 
 function addon:RecordNotification(sender, playerSpellIndex)
@@ -75,7 +74,7 @@ function addon:SyncBroadcast(array, index)
     local batch_size = 10
 
     if array == nil or index == nil then
-        self:PrintMessage(string.format("Broadcasting sync %d", self:CountCache(
+        self:PrintMessage(string.format(self.L["Cluster"].Sync, self:CountCache(
                                             self.db.profile.announcedSpells)))
 
         local ordered_announcements = {}
@@ -87,7 +86,7 @@ function addon:SyncBroadcast(array, index)
 
         self:SyncBroadcast(ordered_announcements, 1)
     else
-        self:PrintMessage(string.format("Syncing batch %d to %d", index,
+        self:PrintMessage(string.format(self.L["Cluster"].Batch, index,
                                         index + batch_size))
 
         for i = index, index + batch_size do
