@@ -10,7 +10,12 @@ function addon:ClearCache()
     self.db.profile.announcedSpells = {};
     self.db.profile.isMaxRank = {};
     self.db.profile.petOwnerCache = {};
-    self.session = {};
+    self.session = {
+        Queue = {},
+        Report = {},
+        UnsupportedComm = {},
+        PlayersNotified = {}
+    }
 
     self:PrintMessage(
         fmt(self.L["Cache"].Reset, count, isMaxRankCount, petCount));
