@@ -1,5 +1,7 @@
 local _, addon = ...
 
+local fmt = string.format
+
 function addon:OnCommReceived(prefix, message, _, sender)
     if prefix ~= addon._commPrefix or sender == self.playerName then return end
 
@@ -7,8 +9,7 @@ function addon:OnCommReceived(prefix, message, _, sender)
     if not command then return end
 
     if self.db.profile.debug then
-        self:PrintMessage(string.format(
-                              "OnCommReceived: %s; Sender: %s; Data: %s",
+        self:PrintMessage(fmt("OnCommReceived: %s; Sender: %s; Data: %s",
                               command, sender, data));
     end
 
@@ -27,8 +28,8 @@ function addon:OnCommReceived(prefix, message, _, sender)
     else
         if self.session.unsupportedComm[command] == nil then
             self.session.unsupportedComm[command] = true
-            self:PrintMessage(string.format(self.L["Broadcast"].Unrecognized,
-                                            command, sender));
+            self:PrintMessage(fmt(self.L["Broadcast"].Unrecognized, command,
+                                  sender));
         end
     end
 end
@@ -39,15 +40,14 @@ function addon:Broadcast(command, data)
     end
 
     if self.db.profile.debug then
-        self:PrintMessage(string.format("Broadcasting %s: %s", command, data));
+        self:PrintMessage(fmt("Broadcasting %s: %s", command, data));
     end
 
-    self:SendCommMessage(addon._commPrefix,
-                         string.format("%s|%s", command, data), "RAID")
+    self:SendCommMessage(addon._commPrefix, fmt("%s|%s", command, data), "RAID")
 end
 
 function addon:PrintLead()
-    self:PrintMessage(string.format(self.L["Cluster"].Lead, self.cluster.lead));
+    self:PrintMessage(fmt(self.L["Cluster"].Lead, self.cluster.lead));
 end
 
 function addon:RecordNotification(sender, playerSpellIndex)
@@ -74,8 +74,8 @@ function addon:SyncBroadcast(array, index)
     local batch_size = 10
 
     if array == nil or index == nil then
-        self:PrintMessage(string.format(self.L["Cluster"].Sync, self:CountCache(
-                                            self.db.profile.announcedSpells)))
+        self:PrintMessage(fmt(self.L["Cluster"].Sync,
+                              self:CountCache(self.db.profile.announcedSpells)))
 
         local ordered_announcements = {}
         for k in pairs(self.db.profile.announcedSpells) do
@@ -86,19 +86,18 @@ function addon:SyncBroadcast(array, index)
 
         self:SyncBroadcast(ordered_announcements, 1)
     else
-        self:PrintMessage(string.format(self.L["Cluster"].Batch, index,
-                                        index + batch_size))
+        self:PrintMessage(
+            fmt(self.L["Cluster"].Batch, index, index + batch_size))
 
         for i = index, index + batch_size do
             if array[i] == nil then return end
 
             if self.db.profile.debug then
-                print(string.format("Sending %d - %s", i, array[i]))
+                print(fmt("Sending %d - %s", i, array[i]))
             end
 
             self:SendCommMessage(addon._commPrefix,
-                                 string.format("%s|%s", 'SYNC', array[i]),
-                                 "RAID", "BULK")
+                                 fmt("%s|%s", 'SYNC', array[i]), "RAID", "BULK")
         end
 
         C_Timer.After(3, function()

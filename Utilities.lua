@@ -1,5 +1,7 @@
 local addonName, addon = ...
 
+local fmt = string.format
+
 function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
                                  petOwner)
     local spellLink = GetSpellLink(spellID)
@@ -7,25 +9,23 @@ function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
     local contactName = sourceName
     local msg = nil
     local sourceUID = self:GetUID(sourceGUID)
-    local ability = string.format('%s (Rank %d)', spellLink, abilityData.Rank)
+    local ability = fmt('%s (Rank %d)', spellLink, abilityData.Rank)
 
     if sourceGUID == self.playerGUID then
-        msg = string.format(self.db.profile.notificationBase, "you", spellLink,
-                            abilityData.Rank, nextRankLevel)
-        msg = string.format("%s %s", self.L["Notification"].Prefix.Self, msg)
+        msg = fmt(self.db.profile.notificationBase, "you", spellLink,
+                  abilityData.Rank, nextRankLevel)
+        msg = fmt("%s %s", self.L["Notification"].Prefix.Self, msg)
     elseif self.db.profile.whisper and self.playerName == self.cluster.lead then
-        msg = string.format(self.db.profile.notificationBase,
-                            petOwner and sourceName or "you", spellLink,
-                            abilityData.Rank, nextRankLevel)
-        msg = string.format("%s %s%s", self.L["Notification"].Prefix.Whisper,
-                            msg,
-                            self.session.playersNotified[sourceUID] ~= true and
-                                ' ' .. self.self.db.profile.notificationSuffix or
-                                '')
+        msg = fmt(self.db.profile.notificationBase,
+                  petOwner and sourceName or "you", spellLink, abilityData.Rank,
+                  nextRankLevel)
+        msg = fmt("%s %s%s", self.L["Notification"].Prefix.Whisper, msg,
+                  self.session.playersNotified[sourceUID] ~= true and ' ' ..
+                      self.self.db.profile.notificationSuffix or '')
     else
-        msg = string.format(self.db.profile.notificationBase, sourceName,
-                            spellLink, abilityData.Rank, nextRankLevel)
-        msg = string.format("%s %s", self.L["Notification"].Prefix.Self, msg)
+        msg = fmt(self.db.profile.notificationBase, sourceName, spellLink,
+                  abilityData.Rank, nextRankLevel)
+        msg = fmt("%s %s", self.L["Notification"].Prefix.Self, msg)
         -- msg = msg:gsub('{rt7} ', '', 1):gsub("you", contactName)
         -- :gsub(addonName, self.cluster.lead)
     end
@@ -38,9 +38,7 @@ end
 function addon:GetUID(guid)
     local unitType, _, _, _, _, _, spawnUID = strsplit("-", guid)
 
-    if unitType == "Pet" then
-        return string.format("Pet-%s", string.sub(spawnUID, 3))
-    end
+    if unitType == "Pet" then return fmt("Pet-%s", string.sub(spawnUID, 3)) end
 
     return guid
 end
@@ -55,12 +53,10 @@ function addon:IgnoreTarget()
     local name, _ = UnitName("target")
 
     if self.db.profile.ignoredPlayers[guid] ~= true then
-        self:PrintMessage(string.format(
-                              self.L["Utilities"].IgnorePlayer.Ignored, name))
+        self:PrintMessage(fmt(self.L["Utilities"].IgnorePlayer.Ignored, name))
         self.db.profile.ignoredPlayers[guid] = true
     else
-        self:PrintMessage(string.format(self.L["Utilities"].IgnorePlayer
-                                            .Unignored, name))
+        self:PrintMessage(fmt(self.L["Utilities"].IgnorePlayer.Unignored, name))
         self.db.profile.ignoredPlayers[guid] = nil
     end
 end
@@ -146,38 +142,37 @@ function addon:IsPetOwnerInRaid(petGuid)
 end
 
 function addon:PrintHelp()
-    self:PrintMessage(string.format("%s (%s)", self.L['Help']['title'],
-                                    self.Version))
+    self:PrintMessage(fmt("%s (%s)", self.L['Help']['title'], self.Version))
 
-    self:PrintMessage(string.format('- %s (%s)|cffffffff: %s|r', 'enable',
-                                    tostring(self.db.profile.enable),
-                                    self.L['Help']['enable']));
-    self:PrintMessage(string.format('- %s (%s)|cffffffff: %s|r', 'whisper',
-                                    tostring(self.db.profile.whisper),
-                                    self.L['Help']['whisper']));
-    self:PrintMessage(string.format('- %s (%s)|cffffffff: %s|r', 'debug',
-                                    tostring(self.db.profile.debug),
-                                    self.L['Help']['debug']));
-    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'report [channel]',
-                                    self.L['Help']['report [channel]']));
-    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'reset',
-                                    self.L['Help']['reset']));
-    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'count',
-                                    self.L['Help']['count']));
-    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'clear',
-                                    self.L['Help']['clear']));
-    self:PrintMessage(string.format('- %s (%s)|cffffffff: %s|r', 'lead',
-                                    self.cluster.lead, self.L['Help']['lead']));
-    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'ignore',
-                                    self.L['Help']['ignore']));
-    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'queue',
-                                    self.L['Help']['queue']));
-    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'queue clear',
-                                    self.L['Help']['queue clear']));
-    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'queue process',
-                                    self.L['Help']['queue process']));
-    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'sync',
-                                    self.L['Help']['sync']));
+    self:PrintMessage(fmt('- %s (%s)|cffffffff: %s|r', 'enable',
+                          tostring(self.db.profile.enable),
+                          self.L['Help']['enable']));
+    self:PrintMessage(fmt('- %s (%s)|cffffffff: %s|r', 'whisper',
+                          tostring(self.db.profile.whisper),
+                          self.L['Help']['whisper']));
+    self:PrintMessage(fmt('- %s (%s)|cffffffff: %s|r', 'debug',
+                          tostring(self.db.profile.debug),
+                          self.L['Help']['debug']));
+    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'report [channel]',
+                          self.L['Help']['report [channel]']));
+    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'reset',
+                          self.L['Help']['reset']));
+    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'count',
+                          self.L['Help']['count']));
+    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'clear',
+                          self.L['Help']['clear']));
+    self:PrintMessage(fmt('- %s (%s)|cffffffff: %s|r', 'lead',
+                          self.cluster.lead, self.L['Help']['lead']));
+    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'ignore',
+                          self.L['Help']['ignore']));
+    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'queue',
+                          self.L['Help']['queue']));
+    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'queue clear',
+                          self.L['Help']['queue clear']));
+    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'queue process',
+                          self.L['Help']['queue process']));
+    self:PrintMessage(
+        fmt('- %s|cffffffff: %s|r', 'sync', self.L['Help']['sync']));
 end
 
 function addon:PrintMessage(msg)

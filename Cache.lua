@@ -1,5 +1,7 @@
 local _, addon = ...
 
+local fmt = string.format
+
 function addon:ClearCache()
     local count = self:CountCache(self.db.profile.announcedSpells);
     local petCount = self:CountCache(self.db.profile.petOwnerCache);
@@ -10,8 +12,8 @@ function addon:ClearCache()
     self.db.profile.petOwnerCache = {};
     self.session = {};
 
-    self:PrintMessage(string.format(self.L["Cache"].Reset, count,
-                                    isMaxRankCount, petCount));
+    self:PrintMessage(
+        fmt(self.L["Cache"].Reset, count, isMaxRankCount, petCount));
 end
 
 function addon:CountCache(cache)
@@ -48,7 +50,7 @@ function addon:QueueNotification(message, target, ability)
     };
 
     if InCombatLockdown() then
-        self:PrintMessage(string.format(self.L["Cache"].Queue, target, ability))
+        self:PrintMessage(fmt(self.L["Cache"].Queue, target, ability))
     else
         self:ProcessQueuedNotifications()
     end
