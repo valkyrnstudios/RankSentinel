@@ -20,7 +20,7 @@ function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
                   petOwner and sourceName or "you", spellLink, abilityData.Rank,
                   nextRankLevel)
         msg = fmt("%s %s%s", self.L["Notification"].Prefix.Whisper, msg,
-                  self.session.playersNotified[sourceUID] ~= true and ' ' ..
+                  self.session.PlayersNotified[sourceUID] ~= true and ' ' ..
                       self.self.db.profile.notificationSuffix or '')
     else
         msg = fmt(self.db.profile.notificationBase, sourceName, spellLink,
@@ -30,7 +30,7 @@ function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
         -- :gsub(addonName, self.cluster.lead)
     end
 
-    self.session.playersNotified[sourceUID] = true
+    self.session.PlayersNotified[sourceUID] = true
 
     return msg, contactName, ability
 end

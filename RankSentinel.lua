@@ -77,8 +77,8 @@ function addon:OnEnable()
     self.session = {
         Queue = {},
         Report = {},
-        unsupportedComm = {},
-        playersNotified = {}
+        UnsupportedComm = {},
+        PlayersNotified = {}
     }
 
     if self.db.profile.debug then
@@ -119,16 +119,6 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
     local playerSpellIndex = fmt("%s-%s-%s", self:GetUID(sourceGUID), castLevel,
                                  spellID)
 
-    -- Add detection to session report, even if previously whispered
-    if petOwner then
-        self:UpdateSessionReport(playerSpellIndex, fmt("%s (%s)", sourceName,
-                                                       petOwner.OwnerName),
-                                 spellName, spellID)
-    else
-        self:UpdateSessionReport(playerSpellIndex, sourceName, spellName,
-                                 spellID)
-    end
-
     if self.db.profile.announcedSpells[playerSpellIndex] ~= nil and
         not self.db.profile.debug then return end
 
@@ -137,6 +127,15 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
     local isMax, nextRankLevel = self:IsMaxRank(spellID, castLevel, targetLevel);
 
     if isMax or not nextRankLevel or nextRankLevel <= 0 then return end
+
+    if petOwner then
+        self:UpdateSessionReport(playerSpellIndex, fmt("%s (%s)", sourceName,
+                                                       petOwner.OwnerName),
+                                 spellName, spellID)
+    else
+        self:UpdateSessionReport(playerSpellIndex, sourceName, spellName,
+                                 spellID)
+    end
 
     local notification, target, ability =
         self:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,

@@ -26,8 +26,8 @@ function addon:OnCommReceived(prefix, message, _, sender)
             self.db.profile.announcedSpells[data] = true
         end
     else
-        if self.session.unsupportedComm[command] == nil then
-            self.session.unsupportedComm[command] = true
+        if self.session.UnsupportedComm[command] == nil then
+            self.session.UnsupportedComm[command] = true
             self:PrintMessage(fmt(self.L["Broadcast"].Unrecognized, command,
                                   sender));
         end
