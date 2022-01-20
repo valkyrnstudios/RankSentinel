@@ -15,6 +15,11 @@ L["Notification"] = {
     ["Suffix"] = "You might be missing training or using an outdated ability shortcut."
 };
 
+L["Cache"] = {
+    ["Reset"] = "Cache reset: %d entries purged, %d max ranks forgotten, %d pet owners cleared",
+    ["Queue"] = "Queued - %s, %s"
+}
+
 L["Broadcast"] = {
     ["Unrecognized"] = "Unrecognized broadcast (%s), you or %s's client may be outdated"
 }

@@ -10,9 +10,8 @@ function addon:ClearCache()
     self.db.profile.petOwnerCache = {};
     self.session = {};
 
-    self:PrintMessage(string.format(
-                          "Cache reset: %d entries purged, %d max ranks forgotten, %d pet owners cleared",
-                          count, isMaxRankCount, petCount));
+    self:PrintMessage(string.format(self.L["Cache"].Reset, count,
+                                    isMaxRankCount, petCount));
 end
 
 function addon:CountCache(cache)
@@ -49,7 +48,7 @@ function addon:QueueNotification(message, target, ability)
     };
 
     if InCombatLockdown() then
-        self:PrintMessage(string.format("Queued - %s, %s", target, ability))
+        self:PrintMessage(string.format(self.L["Cache"].Queue, target, ability))
     else
         self:ProcessQueuedNotifications()
     end
