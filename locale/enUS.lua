@@ -86,7 +86,7 @@ L["ChatCommand"] = {
         ["Count"] = "Currently %d queued notifications"
     },
     ["Report"] = {
-        ["Header"] = "Detected %d low ranks this session",
+        ["Header"] = "%sDetected %d low ranks this session",
         ["Summary"] = "%s - %s (Rank %d)",
         ["Unsupported"] = "Unsupported channel %s"
     },
@@ -110,7 +110,7 @@ L["Help"] = {
     ["queue clear"] = 'clears queued notifications',
     ["queue process"] = 'processes queued notifications',
     ["sync"] = 'broadcast announcement cache',
-    ["report [channel]"] = 'report session data [say, raid, guild]',
+    ["report [channel]"] = 'report session data [self, say, raid, guild]',
     ["flavor"] = 'list available notification flavors',
     ["flavor option"] = 'set notification flavor to option'
 }

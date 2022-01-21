@@ -219,8 +219,8 @@ function addon:ChatCommand(cmd)
 
         local reportSize = self:CountCache(self.session.Report)
 
-        if channel == nil then
-            self:PrintMessage(fmt(self.L["ChatCommand"].Report.Header,
+        if channel == nil or channel == "self" then
+            self:PrintMessage(fmt(self.L["ChatCommand"].Report.Header, '',
                                   reportSize))
 
             for _, reportEntry in pairs(self.session.Report) do
@@ -228,11 +228,10 @@ function addon:ChatCommand(cmd)
                           reportEntry.PlayerName, reportEntry.SpellName,
                           reportEntry.SpellRank))
             end
-        elseif string.lower(channel) == "say" or string.lower(channel) == "raid" or
-            string.lower(channel) == "guild" then
-
+        elseif channel == "say" or channel == "raid" or channel == "guild" then
             SendChatMessage(fmt(self.L["ChatCommand"].Report.Header,
-                                self.L[addonName], reportSize), channel, nil)
+                                self.L[addonName] .. ': ', reportSize), channel,
+                            nil)
 
             for key, reportEntry in pairs(self.session.Report) do
                 SendChatMessage(fmt(self.L["ChatCommand"].Report.Summary,
