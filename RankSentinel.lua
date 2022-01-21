@@ -272,7 +272,7 @@ function addon:ChatCommand(cmd)
             end
         end
     else
-        self:PrintHelp()
+        self:PrintHelp(msg)
     end
 end
 
