@@ -99,6 +99,7 @@ L["ChatCommand"] = {
 
 L["Help"] = {
     ["title"] = 'Command-line options',
+    ["advanced"] = 'Advanced command-line options',
     ["enable"] = 'toggles combat log parsing',
     ["whisper"] = 'toggles whispers to players',
     ["reset"] = 'resets profile to defaults',

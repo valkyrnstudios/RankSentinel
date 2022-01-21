@@ -142,43 +142,67 @@ function addon:IsPetOwnerInRaid(petGuid)
     end
 end
 
-function addon:PrintHelp()
+function addon:PrintHelp(subHelp)
+    if subHelp == 'advanced' then
+        self:PrintMessage(fmt("%s (%s)", self.L['Help']['advanced'],
+                              self.Version))
+
+        self:PrintMessage(fmt('- %s (%s)|cffffffff: %s|r', 'debug',
+                              tostring(self.db.profile.debug),
+                              self.L['Help']['debug']))
+
+        self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'clear',
+                              self.L['Help']['clear']))
+
+        self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'ignore',
+                              self.L['Help']['ignore']))
+
+        self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'queue',
+                              self.L['Help']['queue']))
+
+        self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'queue clear',
+                              self.L['Help']['queue clear']))
+
+        self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'queue process',
+                              self.L['Help']['queue process']))
+
+        self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'reset',
+                              self.L['Help']['reset']))
+
+        self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'sync',
+                              self.L['Help']['sync']))
+
+        return
+    end
+
     self:PrintMessage(fmt("%s (%s)", self.L['Help']['title'], self.Version))
 
     self:PrintMessage(fmt('- %s (%s)|cffffffff: %s|r', 'enable',
                           tostring(self.db.profile.enable),
-                          self.L['Help']['enable']));
+                          self.L['Help']['enable']))
+
     self:PrintMessage(fmt('- %s (%s)|cffffffff: %s|r', 'whisper',
                           tostring(self.db.profile.whisper),
-                          self.L['Help']['whisper']));
-    self:PrintMessage(fmt('- %s (%s)|cffffffff: %s|r', 'debug',
-                          tostring(self.db.profile.debug),
-                          self.L['Help']['debug']));
+                          self.L['Help']['whisper']))
+
     self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'report [channel]',
-                          self.L['Help']['report [channel]']));
-    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'reset',
-                          self.L['Help']['reset']));
+                          self.L['Help']['report [channel]']))
+
     self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'count',
-                          self.L['Help']['count']));
-    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'clear',
-                          self.L['Help']['clear']));
+                          self.L['Help']['count']))
+
     self:PrintMessage(fmt('- %s (%s)|cffffffff: %s|r', 'lead',
-                          self.cluster.lead, self.L['Help']['lead']));
-    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'ignore',
-                          self.L['Help']['ignore']));
-    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'queue',
-                          self.L['Help']['queue']));
-    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'queue clear',
-                          self.L['Help']['queue clear']));
-    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'queue process',
-                          self.L['Help']['queue process']));
-    self:PrintMessage(
-        fmt('- %s|cffffffff: %s|r', 'sync', self.L['Help']['sync']))
+                          self.cluster.lead, self.L['Help']['lead']))
+
     self:PrintMessage(fmt('- %s (%s)|cffffffff: %s |r', 'flavor',
                           self.db.profile.notificationFlavor,
                           self.L['Help']['flavor']))
+
     self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'flavor [option]',
                           self.L['Help']['flavor [option]']))
+
+    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'advanced',
+                          self.L['Help']['advanced']))
 end
 
 function addon:PrintMessage(msg)
