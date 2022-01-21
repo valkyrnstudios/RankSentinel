@@ -35,16 +35,15 @@ L["Notification"] = {
         ["Suffix"] = "Not ta be a knocker, but make sure ya prepare before venturin' out in the brush",
         ["By"] = " came from %s"
     },
-    ["gogo"] = {
+    ["gogowatch"] = {
         ["Prefix"] = {
-            ["Self"] = '|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_3.blp:0|t',
-            ["Whisper"] = string.format(
-                "{rt3} %s: Friendly reminder to be the best possible,",
-                addonName)
+            ["Self"] = '|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7.blp:0|t you',
+            ["Whisper"] = string.format("{rt7} %s: Friendly Reminder! You",
+                                        addonName)
         },
-        ["Base"] = "there's a higher rank of %s (Rank %d)%s, available after level %d.",
-        ["Suffix"] = "Please check your action bars or visit your trainer when you can. Cheers!",
-        ["By"] = " cast by %s"
+        ["Base"] = "just used a low rank of %s (Rank %d)%s.",
+        ["Suffix"] = "Please check your Action Bars or visit your Class Trainer to make sure you've got the right ability for your level.",
+        ["By"] = " (on %s)"
     },
     ["bro"] = {
         ["Prefix"] = {
