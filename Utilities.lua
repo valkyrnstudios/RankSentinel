@@ -16,23 +16,21 @@ function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
     end
 
     if sourceGUID == self.playerGUID then
-        msg = fmt(self.notifications.Base, self.notifications.You, spellLink,
-                  abilityData.Rank, nextRankLevel)
+        msg = fmt(self.notifications.Base, spellLink, abilityData.Rank, '',
+                  nextRankLevel)
         msg = fmt("%s %s", self.notifications.Prefix.Self, msg)
     elseif self.db.profile.whisper and self.playerName == self.cluster.lead then
-        msg = fmt(self.notifications.Base,
-                  petOwner and sourceName or self.notifications.You, spellLink,
-                  abilityData.Rank, nextRankLevel)
+        msg = fmt(self.notifications.Base, spellLink, abilityData.Rank,
+                  petOwner and sourceName or '', nextRankLevel)
         msg = fmt("%s %s%s", self.notifications.Prefix.Whisper, msg,
                   self.session.PlayersNotified[sourceUID] ~= true and ' ' ..
                       self.notifications.Suffix or '')
     else
         msg = fmt(self.notifications.Base, sourceName, spellLink,
-                  abilityData.Rank, nextRankLevel)
+                  abilityData.Rank, fmt(self.notifications.By, contactName),
+                  nextRankLevel)
         msg = fmt("%s %s", self.notifications.Prefix.Self, msg)
-        msg = msg:gsub(self.notifications.You, contactName):gsub(addonName,
-                                                                 self.cluster
-                                                                     .lead)
+        msg = msg:gsub(addonName, self.cluster.lead)
     end
 
     self.session.PlayersNotified[sourceUID] = true
@@ -232,7 +230,7 @@ function addon:GetRandomNotificationFlavor()
     local keyset = {}
 
     for k, v in pairs(self.L["Notification"]) do
-        if v and v.You ~= nil then table.insert(keyset, k) end
+        if v and v.By ~= nil then table.insert(keyset, k) end
     end
 
     return self.L["Notification"][keyset[math.random(#keyset)]]

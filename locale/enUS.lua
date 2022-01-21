@@ -13,46 +13,47 @@ L["Notification"] = {
             ["Self"] = '|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7.blp:0|t',
             ["Whisper"] = string.format("{rt7} %s detected", addonName)
         },
-        ["Base"] = "%s used %s (Rank %d), next rank available at level %d.",
-        ["Suffix"] = "You might be missing training or using an outdated ability shortcut.",
-        ["You"] = "you"
+        ["Base"] = "%s (Rank %d) was used%s, there's a newer rank at level %d.",
+        ["Suffix"] = "Please quickly check your keybinds or see if a trainer has something waiting for you.",
+        ["By"] = " by %s"
     },
     ["troll"] = {
         ["Prefix"] = {
             ["Self"] = '|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_8.blp:0|t',
-            ["Whisper"] = string.format("{rt8} %s: Oi, ", addonName)
+            ["Whisper"] = string.format("{rt8} %s: Oi,", addonName)
         },
-        ["Base"] = "%s be usin' %s (Rank %d), new at %d, mon.",
+        ["Base"] = "%s (Rank %d) be used%s, new at %d mon.",
         ["Suffix"] = "Ya may be missin' trainin' or usin' an old shortcut",
-        ["You"] = "ya"
+        ["By"] = " from %s"
     },
     ["aussie"] = {
         ["Prefix"] = {
             ["Self"] = '|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_1.blp:0|t',
-            ["Whisper"] = string.format("{rt1} %s: sprung", addonName)
+            ["Whisper"] = string.format("{rt1} %s caught", addonName)
         },
-        ["Base"] = "%s usin' %s (Rank %d), it's an oldie, new one at %d.",
+        ["Base"] = "%s (Rank %d) cast%s, it's an oldie, new one at %d though.",
         ["Suffix"] = "Not ta be a knocker, but make sure ya prepare before venturin' out in the brush",
-        ["You"] = "you"
+        ["By"] = " came from %s"
     },
     ["gogo"] = {
         ["Prefix"] = {
-            ["Self"] = '|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_3.blp:0|t to be the best that',
+            ["Self"] = '|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_3.blp:0|t',
             ["Whisper"] = string.format(
-                "{rt3} %s: Friendly reminder to be the best that", addonName)
+                "{rt3} %s: Friendly reminder to be the best possible,",
+                addonName)
         },
-        ["Base"] = "%s can be! There's a higher rank of %s (Rank %d) available at level %d.",
+        ["Base"] = "there's a higher rank of %s (Rank %d)%s, available after level %d.",
         ["Suffix"] = "Please check your action bars or visit your trainer when you can. Cheers!",
-        ["You"] = "you"
+        ["By"] = " cast by %s"
     },
     ["bro"] = {
         ["Prefix"] = {
             ["Self"] = '|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_2.blp:0|t',
-            ["Whisper"] = "{rt2} Dude,"
+            ["Whisper"] = "{rt2} Bruh,"
         },
-        ["Base"] = "%s why u even %s (Rank %d), l2train at %d.",
+        ["Base"] = "%s (Rank %d)%s y u even, l2train at %d.",
         ["Suffix"] = "L2play scrub.",
-        ["You"] = "bruh"
+        ["By"] = " from %s"
     }
 }
 
