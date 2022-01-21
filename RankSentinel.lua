@@ -30,16 +30,18 @@ function addon:OnInitialize()
             enable = true,
             whisper = UnitLevel("Player") == 70,
             debug = false,
-            notificationBase = self.L["Notification"].Base,
-            notificationSuffix = self.L["Notification"].Suffix,
             announcedSpells = {},
             ignoredPlayers = {},
             isMaxRank = {},
-            dbVersion = 'v0.0.0'
+            dbVersion = 'v0.0.0',
+            notificationFlavor = "default"
         }
     }
 
     self.db = LibStub("AceDB-3.0"):New("RankSentinelDB", defaults, true)
+
+    self.notifications = self.L["Notification"][self.db.profile
+                             .notificationFlavor]
 
     self.playerGUID = UnitGUID("Player");
     self.playerName = UnitName("Player");

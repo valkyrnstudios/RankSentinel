@@ -12,20 +12,19 @@ function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
     local ability = fmt('%s (Rank %d)', spellLink, abilityData.Rank)
 
     if sourceGUID == self.playerGUID then
-        msg = fmt(self.db.profile.notificationBase, "you", spellLink,
-                  abilityData.Rank, nextRankLevel)
-        msg = fmt("%s %s", self.L["Notification"].Prefix.Self, msg)
-    elseif self.db.profile.whisper and self.playerName == self.cluster.lead then
-        msg = fmt(self.db.profile.notificationBase,
-                  petOwner and sourceName or "you", spellLink, abilityData.Rank,
+        msg = fmt(self.notifications.Base, "you", spellLink, abilityData.Rank,
                   nextRankLevel)
-        msg = fmt("%s %s%s", self.L["Notification"].Prefix.Whisper, msg,
+        msg = fmt("%s %s", self.notifications.Prefix.Self, msg)
+    elseif self.db.profile.whisper and self.playerName == self.cluster.lead then
+        msg = fmt(self.notifications.Base, petOwner and sourceName or "you",
+                  spellLink, abilityData.Rank, nextRankLevel)
+        msg = fmt("%s %s%s", self.notifications.Prefix.Whisper, msg,
                   self.session.PlayersNotified[sourceUID] ~= true and ' ' ..
-                      self.db.profile.notificationSuffix or '')
+                      self.notifications.Suffix or '')
     else
-        msg = fmt(self.db.profile.notificationBase, sourceName, spellLink,
+        msg = fmt(self.notifications.Base, sourceName, spellLink,
                   abilityData.Rank, nextRankLevel)
-        msg = fmt("%s %s", self.L["Notification"].Prefix.Self, msg)
+        msg = fmt("%s %s", self.notifications.Prefix.Self, msg)
         msg = msg:gsub("you", contactName):gsub(addonName, self.cluster.lead)
     end
 
