@@ -33,6 +33,7 @@ function addon:OnInitialize()
             announcedSpells = {},
             ignoredPlayers = {},
             isMaxRank = {},
+            petOwnerCache = {},
             dbVersion = 'v0.0.0',
             notificationFlavor = "default"
         }
