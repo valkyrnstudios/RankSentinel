@@ -19,7 +19,7 @@ L["Notification"] = {
     ["troll"] = {
         ["Prefix"] = {
             ["Self"] = '|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_8.blp:0|t',
-            ["Whisper"] = string.format("{rt8} %s Oy!", addonName)
+            ["Whisper"] = string.format("{rt8} %s: Oi, ", addonName)
         },
         ["Base"] = "%s be usin' %s (Rank %d), new at %d, mon.",
         ["Suffix"] = "Ya may be missin' trainin' or usin' an old shortcut",
@@ -28,7 +28,7 @@ L["Notification"] = {
     ["aussie"] = {
         ["Prefix"] = {
             ["Self"] = '|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_1.blp:0|t',
-            ["Whisper"] = string.format("{rt1} %s sprung ya:", addonName)
+            ["Whisper"] = string.format("{rt1} %s: sprung", addonName)
         },
         ["Base"] = "%s usin' %s (Rank %d), it's an oldie, new one at %d.",
         ["Suffix"] = "Not ta be a knocker, but make sure ya prepare before venturin' out in the brush",
@@ -47,10 +47,10 @@ L["Notification"] = {
     ["bro"] = {
         ["Prefix"] = {
             ["Self"] = '|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_2.blp:0|t',
-            ["Whisper"] = string.format("{rt2} %s: Dude.", addonName)
+            ["Whisper"] = "{rt2} Dude,"
         },
         ["Base"] = "%s why u even %s (Rank %d), l2train at %d.",
-        ["Suffix"] = "Go train scrub.",
+        ["Suffix"] = "L2play scrub.",
         ["You"] = "bruh"
     }
 }
