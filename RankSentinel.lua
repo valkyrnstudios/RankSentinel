@@ -40,8 +40,15 @@ function addon:OnInitialize()
 
     self.db = LibStub("AceDB-3.0"):New("RankSentinelDB", defaults, true)
 
-    self.notifications = self.L["Notification"][self.db.profile
-                             .notificationFlavor]
+    if self.L["Notification"][self.db.profile.notificationFlavor] ~= nil then
+        self.notifications = self.L["Notification"][self.db.profile
+                                 .notificationFlavor]
+    else
+        self:PrintMessage(fmt(self.L["ChatCommand"].Flavor.Unavailable,
+                              self.db.profile.notificationFlavor or ''))
+        self.db.profile.notificationFlavor = "default"
+        self.notifications = self.L["Notification"]["default"]
+    end
 
     self.playerGUID = UnitGUID("Player");
     self.playerName = UnitName("Player");
@@ -253,9 +260,14 @@ function addon:ChatCommand(cmd)
 
             self:PrintMessage(fmt(self.L["ChatCommand"].Flavor.Set, sub))
         else
+            if sub ~= nil then
+                self:PrintMessage(fmt(self.L["ChatCommand"].Flavor.Unavailable,
+                                      sub))
+            end
+
             self:PrintMessage(self.L["ChatCommand"].Flavor.Available)
 
-            for flavor, _ in sort(self.L["Notification"]) do
+            for flavor, _ in pairs(self.L["Notification"]) do
                 self:PrintMessage(fmt("- %s", flavor))
             end
         end

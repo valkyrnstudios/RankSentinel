@@ -174,10 +174,11 @@ function addon:PrintHelp()
                           self.L['Help']['queue process']));
     self:PrintMessage(
         fmt('- %s|cffffffff: %s|r', 'sync', self.L['Help']['sync']))
-    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'flavor',
+    self:PrintMessage(fmt('- %s (%s)|cffffffff: %s |r', 'flavor',
+                          self.db.profile.notificationFlavor,
                           self.L['Help']['flavor']))
-    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'flavor option',
-                          self.L['Help']['flavor option']))
+    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'flavor [option]',
+                          self.L['Help']['flavor [option]']))
 end
 
 function addon:PrintMessage(msg)

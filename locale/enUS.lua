@@ -92,7 +92,8 @@ L["ChatCommand"] = {
     },
     ["Flavor"] = {
         ["Set"] = "Notification flavor set to: %s",
-        ["Available"] = "Available notification flavors are"
+        ["Available"] = "Available notification flavors are",
+        ["Unavailable"] = "%s flavor is no longer available, resetting to default"
     }
 }
 
@@ -112,5 +113,5 @@ L["Help"] = {
     ["sync"] = 'broadcast announcement cache',
     ["report [channel]"] = 'report session data [self, say, raid, guild]',
     ["flavor"] = 'list available notification flavors',
-    ["flavor option"] = 'set notification flavor to option'
+    ["flavor [option]"] = 'set notification flavor to option'
 }
