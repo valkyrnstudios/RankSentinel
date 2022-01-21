@@ -80,6 +80,15 @@ function addon:InGroupWith(guid)
     end
 end
 
+function addon:InitializeSession()
+    self.session = {
+        Queue = {},
+        Report = {},
+        UnsupportedComm = {},
+        PlayersNotified = {}
+    }
+end
+
 function addon:IsHighestAlertableRank(nextRankLevel, casterLevel)
     if casterLevel == 70 then
         return nextRankLevel > casterLevel

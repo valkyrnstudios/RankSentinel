@@ -72,15 +72,9 @@ function addon:OnEnable()
     self:PrintMessage("Loaded " .. self.Version);
 
     self:UpgradeProfile();
+    self:InitializeSession()
 
     self.db.profile.dbVersion = self.Version;
-
-    self.session = {
-        Queue = {},
-        Report = {},
-        UnsupportedComm = {},
-        PlayersNotified = {}
-    }
 
     if self.db.profile.debug then
         self:PrintMessage("Debug enabled, clearing cache on reload");
