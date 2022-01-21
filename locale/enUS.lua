@@ -34,7 +34,7 @@ L["Notification"] = {
         ["Suffix"] = "Not ta be a knocker, but make sure ya prepare before venturin' out in the brush",
         ["You"] = "you"
     },
-    ["polite"] = {
+    ["gogo"] = {
         ["Prefix"] = {
             ["Self"] = '|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_3.blp:0|t to be the best that',
             ["Whisper"] = string.format(
