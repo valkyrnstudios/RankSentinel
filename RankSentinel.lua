@@ -38,7 +38,7 @@ function addon:OnInitialize()
         }
     }
 
-    self.db = LibStub("AceDB-3.0"):New("RankSentinelDB", defaults, true)
+    self.db = LibStub("AceDB-3.0"):New("RankSentinelDB", defaults)
 
     if self.L["Notification"][self.db.profile.notificationFlavor] ~= nil then
         self.notifications = self.L["Notification"][self.db.profile

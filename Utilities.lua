@@ -218,7 +218,10 @@ function addon:UpgradeProfile()
         self.db.profile.petOwnerCache = {}
     end
 
-    if self.db.profile.dbVersion ~= addon.Version then
+    if self.db:GetCurrentProfile() == "Default" then
+        self:PrintMessage("Old profile detected, resetting database")
+        self.db:ResetDB()
+    elseif self.db.profile.dbVersion ~= addon.Version then
         self:PrintMessage(self.L["Utilities"].Upgrade);
         self:ClearCache();
     end
