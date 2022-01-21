@@ -1,24 +1,45 @@
 local addonName, addon = ...
 
-function addon:Annoy(msg, target)
-    if self.playerName == self.cluster.lead then
-        if target == "self" then
-            self:PrintMessage(msg:gsub('{rt7} ', '', 1));
-        else
-            self:QueueNotification(msg, target);
-        end
+local fmt = string.format
+
+function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
+                                 petOwner)
+    local spellLink = GetSpellLink(spellID)
+    local abilityData = self.AbilityData[spellID]
+    local contactName = sourceName
+    local msg = nil
+    local sourceUID = self:GetUID(sourceGUID)
+    local ability = fmt('%s (Rank %d)', spellLink, abilityData.Rank)
+
+    if sourceGUID == self.playerGUID then
+        msg = fmt(self.notifications.Base, self.notifications.You, spellLink,
+                  abilityData.Rank, nextRankLevel)
+        msg = fmt("%s %s", self.notifications.Prefix.Self, msg)
+    elseif self.db.profile.whisper and self.playerName == self.cluster.lead then
+        msg = fmt(self.notifications.Base,
+                  petOwner and sourceName or self.notifications.You, spellLink,
+                  abilityData.Rank, nextRankLevel)
+        msg = fmt("%s %s%s", self.notifications.Prefix.Whisper, msg,
+                  self.session.PlayersNotified[sourceUID] ~= true and ' ' ..
+                      self.notifications.Suffix or '')
     else
-        self:PrintMessage(msg:gsub('{rt7} ', '', 1):gsub("you", target):gsub(
-                              addonName, self.cluster.lead));
+        msg = fmt(self.notifications.Base, sourceName, spellLink,
+                  abilityData.Rank, nextRankLevel)
+        msg = fmt("%s %s", self.notifications.Prefix.Self, msg)
+        msg = msg:gsub(self.notifications.You, contactName):gsub(addonName,
+                                                                 self.cluster
+                                                                     .lead)
     end
+
+    self.session.PlayersNotified[sourceUID] = true
+
+    return msg, contactName, ability
 end
 
 function addon:GetUID(guid)
     local unitType, _, _, _, _, _, spawnUID = strsplit("-", guid)
 
-    if unitType == "Pet" then
-        return string.format("Pet-%s", string.sub(spawnUID, 3))
-    end
+    if unitType == "Pet" then return fmt("Pet-%s", string.sub(spawnUID, 3)) end
 
     return guid
 end
@@ -26,18 +47,18 @@ end
 function addon:IgnoreTarget()
     local guid = UnitGUID("target")
     if not guid then
-        self:PrintMessage("Must target a unit");
-        return;
+        self:PrintMessage(self.L["Utilities"].IgnorePlayer.Error)
+        return
     end
 
-    local name, _ = UnitName("target");
+    local name, _ = UnitName("target")
 
     if self.db.profile.ignoredPlayers[guid] ~= true then
-        self:PrintMessage("Ignored " .. name);
-        self.db.profile.ignoredPlayers[guid] = true;
+        self:PrintMessage(fmt(self.L["Utilities"].IgnorePlayer.Ignored, name))
+        self.db.profile.ignoredPlayers[guid] = true
     else
-        self:PrintMessage("Unignored " .. name);
-        self.db.profile.ignoredPlayers[guid] = nil;
+        self:PrintMessage(fmt(self.L["Utilities"].IgnorePlayer.Unignored, name))
+        self.db.profile.ignoredPlayers[guid] = nil
     end
 end
 
@@ -122,41 +143,41 @@ function addon:IsPetOwnerInRaid(petGuid)
 end
 
 function addon:PrintHelp()
-    self:PrintMessage(string.format("%s (%s)", self.L['Help']['title'],
-                                    self.Version))
+    self:PrintMessage(fmt("%s (%s)", self.L['Help']['title'], self.Version))
 
-    self:PrintMessage(string.format('- %s (%s)|cffffffff: %s|r', 'enable',
-                                    tostring(self.db.profile.enable),
-                                    self.L['Help']['enable']));
-    self:PrintMessage(string.format('- %s (%s)|cffffffff: %s|r', 'whisper',
-                                    tostring(self.db.profile.whisper),
-                                    self.L['Help']['whisper']));
-    self:PrintMessage(string.format('- %s (%s)|cffffffff: %s|r', 'combat',
-                                    tostring(self.db.profile.combat),
-                                    self.L['Help']['combat']));
-    self:PrintMessage(string.format('- %s (%s)|cffffffff: %s|r', 'debug',
-                                    tostring(self.db.profile.debug),
-                                    self.L['Help']['debug']));
-    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'report [channel]',
-                                    self.L['Help']['report [channel]']));
-    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'reset',
-                                    self.L['Help']['reset']));
-    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'count',
-                                    self.L['Help']['count']));
-    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'clear',
-                                    self.L['Help']['clear']));
-    self:PrintMessage(string.format('- %s (%s)|cffffffff: %s|r', 'lead',
-                                    self.cluster.lead, self.L['Help']['lead']));
-    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'ignore',
-                                    self.L['Help']['ignore']));
-    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'queue',
-                                    self.L['Help']['queue']));
-    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'queue clear',
-                                    self.L['Help']['queue clear']));
-    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'queue process',
-                                    self.L['Help']['queue process']));
-    self:PrintMessage(string.format('- %s|cffffffff: %s|r', 'sync',
-                                    self.L['Help']['sync']));
+    self:PrintMessage(fmt('- %s (%s)|cffffffff: %s|r', 'enable',
+                          tostring(self.db.profile.enable),
+                          self.L['Help']['enable']));
+    self:PrintMessage(fmt('- %s (%s)|cffffffff: %s|r', 'whisper',
+                          tostring(self.db.profile.whisper),
+                          self.L['Help']['whisper']));
+    self:PrintMessage(fmt('- %s (%s)|cffffffff: %s|r', 'debug',
+                          tostring(self.db.profile.debug),
+                          self.L['Help']['debug']));
+    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'report [channel]',
+                          self.L['Help']['report [channel]']));
+    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'reset',
+                          self.L['Help']['reset']));
+    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'count',
+                          self.L['Help']['count']));
+    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'clear',
+                          self.L['Help']['clear']));
+    self:PrintMessage(fmt('- %s (%s)|cffffffff: %s|r', 'lead',
+                          self.cluster.lead, self.L['Help']['lead']));
+    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'ignore',
+                          self.L['Help']['ignore']));
+    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'queue',
+                          self.L['Help']['queue']));
+    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'queue clear',
+                          self.L['Help']['queue clear']));
+    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'queue process',
+                          self.L['Help']['queue process']));
+    self:PrintMessage(
+        fmt('- %s|cffffffff: %s|r', 'sync', self.L['Help']['sync']))
+    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'flavor',
+                          self.L['Help']['flavor']))
+    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'flavor option',
+                          self.L['Help']['flavor option']))
 end
 
 function addon:PrintMessage(msg)
@@ -173,7 +194,7 @@ function addon:UpgradeProfile()
     end
 
     if self.db.profile.dbVersion ~= addon.Version then
-        self:PrintMessage("Addon version change, resetting cache");
+        self:PrintMessage(self.L["Utilities"].Upgrade);
         self:ClearCache();
     end
 end
