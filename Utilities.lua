@@ -12,12 +12,13 @@ function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
     local ability = fmt('%s (Rank %d)', spellLink, abilityData.Rank)
 
     if sourceGUID == self.playerGUID then
-        msg = fmt(self.notifications.Base, "you", spellLink, abilityData.Rank,
-                  nextRankLevel)
+        msg = fmt(self.notifications.Base, self.notifications.You, spellLink,
+                  abilityData.Rank, nextRankLevel)
         msg = fmt("%s %s", self.notifications.Prefix.Self, msg)
     elseif self.db.profile.whisper and self.playerName == self.cluster.lead then
-        msg = fmt(self.notifications.Base, petOwner and sourceName or "you",
-                  spellLink, abilityData.Rank, nextRankLevel)
+        msg = fmt(self.notifications.Base,
+                  petOwner and sourceName or self.notifications.You, spellLink,
+                  abilityData.Rank, nextRankLevel)
         msg = fmt("%s %s%s", self.notifications.Prefix.Whisper, msg,
                   self.session.PlayersNotified[sourceUID] ~= true and ' ' ..
                       self.notifications.Suffix or '')
@@ -25,7 +26,9 @@ function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
         msg = fmt(self.notifications.Base, sourceName, spellLink,
                   abilityData.Rank, nextRankLevel)
         msg = fmt("%s %s", self.notifications.Prefix.Self, msg)
-        msg = msg:gsub("you", contactName):gsub(addonName, self.cluster.lead)
+        msg = msg:gsub(self.notifications.You, contactName):gsub(addonName,
+                                                                 self.cluster
+                                                                     .lead)
     end
 
     self.session.PlayersNotified[sourceUID] = true
@@ -170,7 +173,11 @@ function addon:PrintHelp()
     self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'queue process',
                           self.L['Help']['queue process']));
     self:PrintMessage(
-        fmt('- %s|cffffffff: %s|r', 'sync', self.L['Help']['sync']));
+        fmt('- %s|cffffffff: %s|r', 'sync', self.L['Help']['sync']))
+    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'flavor',
+                          self.L['Help']['flavor']))
+    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'flavor option',
+                          self.L['Help']['flavor option']))
 end
 
 function addon:PrintMessage(msg)

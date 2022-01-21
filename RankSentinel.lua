@@ -246,6 +246,20 @@ function addon:ChatCommand(cmd)
             self:PrintMessage(fmt(self.L["ChatCommand"].Report.Unsupported,
                                   channel))
         end
+    elseif "flavor" == string.sub(msg, 1, #"flavor") then
+        local _, sub = strsplit(' ', msg)
+        if self.L["Notification"][sub] ~= nil then
+            self.db.profile.notificationFlavor = sub
+            self.notifications = self.L["Notification"][sub]
+
+            self:PrintMessage(fmt(self.L["ChatCommand"].Flavor.Set, sub))
+        else
+            self:PrintMessage(self.L["ChatCommand"].Flavor.Available)
+
+            for flavor, _ in sort(self.L["Notification"]) do
+                self:PrintMessage(fmt("- %s", flavor))
+            end
+        end
     else
         self:PrintHelp()
     end
