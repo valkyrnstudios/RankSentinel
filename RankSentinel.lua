@@ -251,11 +251,22 @@ function addon:ChatCommand(cmd)
                 self:PrintMessage(fmt(self.L["ChatCommand"].Flavor.Unavailable,
                                       sub))
             end
+            local flavorBaseExample = nil
 
             self:PrintMessage(self.L["ChatCommand"].Flavor.Available)
 
             for flavor, _ in pairs(self.L["Notification"]) do
-                self:PrintMessage(fmt("- %s", flavor))
+                if self.L["Notification"][flavor] and
+                    self.L["Notification"][flavor].Base ~= nil then
+                    flavorBaseExample = fmt("|cffffffff: " ..
+                                                self.L["Notification"][flavor]
+                                                    .Base, '[Spell]', '9', '',
+                                            '62') .. '|r'
+                else
+                    flavorBaseExample = ''
+                end
+
+                self:PrintMessage(fmt("- %s%s", flavor, flavorBaseExample))
             end
         end
     else
