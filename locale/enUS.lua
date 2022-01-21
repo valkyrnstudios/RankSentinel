@@ -43,6 +43,15 @@ L["Notification"] = {
         ["Base"] = "%s can be! There's a higher rank of %s (Rank %d) available at level %d.",
         ["Suffix"] = "Please check your action bars or visit your trainer when you can. Cheers!",
         ["You"] = "you"
+    },
+    ["bro"] = {
+        ["Prefix"] = {
+            ["Self"] = '|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_2.blp:0|t',
+            ["Whisper"] = string.format("{rt2} %s: Dude.", addonName)
+        },
+        ["Base"] = "%s why u even %s (Rank %d), l2train at %d.",
+        ["Suffix"] = "Go train scrub.",
+        ["You"] = "bruh"
     }
 }
 
