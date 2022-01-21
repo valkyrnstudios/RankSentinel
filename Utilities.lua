@@ -11,6 +11,10 @@ function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
     local sourceUID = self:GetUID(sourceGUID)
     local ability = fmt('%s (Rank %d)', spellLink, abilityData.Rank)
 
+    if self.db.profile.notificationFlavor == 'random' then
+        self.notifications = self:GetRandomNotificationFlavor()
+    end
+
     if sourceGUID == self.playerGUID then
         msg = fmt(self.notifications.Base, self.notifications.You, spellLink,
                   abilityData.Rank, nextRankLevel)
@@ -210,6 +214,28 @@ function addon:PrintMessage(msg)
         DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00" .. self.L[addonName] ..
                                           "|r: " .. msg, 0.0, 1.0, 0.0, 1.0);
     end
+end
+
+function addon:SetNotificationFlavor(flavor)
+    if self.L["Notification"][flavor] ~= nil then
+        self.notifications = self.L["Notification"][self.db.profile
+                                 .notificationFlavor]
+    else
+        self:PrintMessage(fmt(self.L["ChatCommand"].Flavor.Unavailable,
+                              flavor or ''))
+        self.db.profile.notificationFlavor = "default"
+        self.notifications = self.L["Notification"]["default"]
+    end
+end
+
+function addon:GetRandomNotificationFlavor()
+    local keyset = {}
+
+    for k, v in pairs(self.L["Notification"]) do
+        if v and v.You ~= nil then table.insert(keyset, k) end
+    end
+
+    return self.L["Notification"][keyset[math.random(#keyset)]]
 end
 
 function addon:UpgradeProfile()

@@ -7,6 +7,7 @@ L["Whisper"] = "Whisper";
 L["Debug"] = "Debug";
 
 L["Notification"] = {
+    ["random"] = false,
     ["default"] = {
         ["Prefix"] = {
             ["Self"] = '|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7.blp:0|t',
