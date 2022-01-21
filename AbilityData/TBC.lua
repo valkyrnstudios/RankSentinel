@@ -1,4 +1,4 @@
--- Built on 2022-01-12
+-- Built on 2022-01-20
 
 local _, addon = ...
 
@@ -92,7 +92,6 @@ addon.AbilityData = {
   [9880] = { Rank = 6, Level = 50, AbilityGroup = 18 },
   [9881] = { Rank = 7, Level = 58, AbilityGroup = 18 },
   [26996] = { Rank = 8, Level = 67, AbilityGroup = 18 },
-  [8921] = { Rank = 1, Level = 4, AbilityGroup = 19 },
   [8924] = { Rank = 2, Level = 10, AbilityGroup = 19 },
   [8925] = { Rank = 3, Level = 16, AbilityGroup = 19 },
   [8926] = { Rank = 4, Level = 22, AbilityGroup = 19 },
@@ -156,7 +155,6 @@ addon.AbilityData = {
   [8955] = { Rank = 2, Level = 38, AbilityGroup = 29 },
   [9901] = { Rank = 3, Level = 54, AbilityGroup = 29 },
   [26995] = { Rank = 4, Level = 70, AbilityGroup = 29 },
-  [2912] = { Rank = 1, Level = 20, AbilityGroup = 30 },
   [8949] = { Rank = 2, Level = 26, AbilityGroup = 30 },
   [8950] = { Rank = 3, Level = 34, AbilityGroup = 30 },
   [8951] = { Rank = 4, Level = 42, AbilityGroup = 30 },
@@ -1295,7 +1293,7 @@ addon.AbilityData = {
   [11659] = { Rank = 7, Level = 44, AbilityGroup = 231 },
   [11660] = { Rank = 8, Level = 52, AbilityGroup = 231 },
   [11661] = { Rank = 9, Level = 60, AbilityGroup = 231 },
-  [25307] = { Rank = 10, Level = 60, AbilityGroup = 231 },
+  [25307] = { Rank = 10, Level = 62, AbilityGroup = 231 },
   [27209] = { Rank = 11, Level = 69, AbilityGroup = 231 },
   [6229] = { Rank = 1, Level = 32, AbilityGroup = 232 },
   [11739] = { Rank = 2, Level = 42, AbilityGroup = 232 },
@@ -1613,7 +1611,7 @@ addon.AbilityGroups = {
   { 33876, 33982, 33983 },
   { 1126, 5232, 6756, 5234, 8907, 9884, 9885, 26990 },
   { 6807, 6808, 6809, 8972, 9745, 9880, 9881, 26996 },
-  { 8921, 8924, 8925, 8926, 8927, 8928, 8929, 9833, 9834, 9835, 26987, 26988 },
+  { 8924, 8925, 8926, 8927, 8928, 8929, 9833, 9834, 9835, 26987, 26988 },
   { 16689, 16810, 16811, 16812, 16813, 17329, 27009 },
   { 9005, 9823, 9827, 27006 },
   { 9007, 9824, 9826, 27007 },
@@ -1624,7 +1622,7 @@ addon.AbilityGroups = {
   { 1079, 9492, 9493, 9752, 9894, 9896, 27008 },
   { 5221, 6800, 8992, 9829, 9830, 27001, 27002 },
   { 2908, 8955, 9901, 26995 },
-  { 2912, 8949, 8950, 8951, 9875, 9876, 25298, 26986 },
+  { 8949, 8950, 8951, 9875, 9876, 25298, 26986 },
   { 779, 780, 769, 9754, 9908, 26997 },
   { 467, 782, 1075, 8914, 9756, 9910, 26992 },
   { 5217, 6793, 9845, 9846 },
