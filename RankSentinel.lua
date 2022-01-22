@@ -55,22 +55,24 @@ end
 
 function addon:OnEnable()
     if isTBC then
-        self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED");
-        self:RegisterEvent("PLAYER_ENTERING_WORLD");
-        self:RegisterEvent("PLAYER_REGEN_ENABLED");
+        self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+        self:RegisterEvent("PLAYER_ENTERING_WORLD")
+        self:RegisterEvent("PLAYER_REGEN_ENABLED")
+        self:RegisterEvent("GROUP_LEFT")
+        self:RegisterEvent("GROUP_JOINED")
 
-        self:RegisterComm(self._commPrefix);
+        self:RegisterComm(self._commPrefix)
         self:ResetLead();
     elseif isVanilla then
         -- SpellID not a parameter of COMBAT_LOG_EVENT_UNFILTERED in Classic era
         -- Self casted UNIT_SPELLCAST_SUCCEEDED contains spellID
-        self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED");
-        self:RegisterEvent("PLAYER_LEVEL_UP");
+        self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+        self:RegisterEvent("PLAYER_LEVEL_UP")
 
-        self.playerLevel = UnitLevel("Player");
+        self.playerLevel = UnitLevel("Player")
     end
 
-    self:PrintMessage("Loaded " .. self.Version);
+    self:PrintMessage("Loaded " .. self.Version)
 
     self:UpgradeProfile();
     self:InitializeSession()

@@ -107,3 +107,13 @@ function addon:SyncBroadcast(array, index)
 end
 
 function addon:PLAYER_ENTERING_WORLD(...) self:SetLead(self.playerName); end
+
+function addon:GROUP_LEFT(...)
+    self:SetLead(self.playerName)
+    self:InitializeSession()
+end
+
+function addon:GROUP_JOINED(...)
+    -- TODO get lead
+    self:InitializeSession()
+end
