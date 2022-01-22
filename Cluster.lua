@@ -106,7 +106,7 @@ function addon:SyncBroadcast(array, index)
     end
 end
 
-function addon:PLAYER_ENTERING_WORLD(...) self:SetLead(self.playerName); end
+function addon:PLAYER_ENTERING_WORLD(...) self:ResetLead() end
 
 function addon:GROUP_LEFT(...)
     self:SetLead(self.playerName)
