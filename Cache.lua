@@ -32,11 +32,14 @@ function addon:ProcessQueuedNotifications()
     for i = 1, #self.session.Queue do
         notification = self.session.Queue[i];
 
-        if notification.target ~= self.playerName then
+        if notification.target == self.playerName then
+            self:PrintMessage(notification.message)
+        elseif self.playerName ~= self.cluster.lead then
+            self:PrintMessage(fmt("%s - %s", notification.target,
+                                  notification.ability))
+        else
             SendChatMessage(notification.message, "WHISPER", nil,
                             notification.target)
-        else
-            self:PrintMessage(notification.message)
         end
     end
 
@@ -48,9 +51,9 @@ function addon:QueueNotification(message, target, ability)
         message = message,
         target = target,
         ability = ability
-    };
+    }
 
-    if InCombatLockdown() then
+    if InCombatLockdown() and self.playerName == self.cluster.lead then
         self:PrintMessage(fmt(self.L["Cache"].Queue, target, ability))
     else
         self:ProcessQueuedNotifications()
