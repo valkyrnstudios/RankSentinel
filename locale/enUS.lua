@@ -62,6 +62,15 @@ L["Notification"] = {
         ["Base"] = "puny %s %d power%s smash lurn gud smash %d.",
         ["Suffix"] = "Big smash!",
         ["By"] = " from %s"
+    },
+    ["murloc"] = {
+        ["Prefix"] = {
+            ["Self"] = '|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_8.blp:0|t',
+            ["Whisper"] = "{rt8} Mmmrrglllm,"
+        },
+        ["Base"] = "mrrrggk %s %d%s urka %d.",
+        ["Suffix"] = "Mmmm mrrrggk!",
+        ["By"] = " mmgr %s"
     }
 }
 
