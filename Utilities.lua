@@ -254,7 +254,8 @@ function addon:UpgradeProfile()
     if self.db:GetCurrentProfile() == "Default" then
         self:PrintMessage("Old profile detected, resetting database")
         self.db:ResetDB()
-    elseif self.db.profile.dbVersion ~= addon.Version then
+    elseif self.db.profile.dbVersion ~= addon.Version and addon.Version ~=
+        'v0.0.0' then
         self:PrintMessage(self.L["Utilities"].Upgrade);
         self:ClearCache();
     end
