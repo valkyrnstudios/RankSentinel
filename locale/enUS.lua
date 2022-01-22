@@ -53,6 +53,15 @@ L["Notification"] = {
         ["Base"] = "%s (Rank %d)%s y u even, l2train at %d.",
         ["Suffix"] = "L2play scrub.",
         ["By"] = " from %s"
+    },
+    ["ogre"] = {
+        ["Prefix"] = {
+            ["Self"] = '|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_8.blp:0|t me see',
+            ["Whisper"] = "{rt8} me see"
+        },
+        ["Base"] = "puny %s %d power%s smash lurn gud smash %d.",
+        ["Suffix"] = "Big smash!",
+        ["By"] = " from %s"
     }
 }
 
