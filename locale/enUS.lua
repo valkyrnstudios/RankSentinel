@@ -26,15 +26,6 @@ L["Notification"] = {
         ["Suffix"] = "Ya may be missin' trainin' or usin' an old shortcut",
         ["By"] = " from %s"
     },
-    ["aussie"] = {
-        ["Prefix"] = {
-            ["Self"] = '|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_1.blp:0|t',
-            ["Whisper"] = string.format("{rt1} %s caught", addonName)
-        },
-        ["Base"] = "%s (Rank %d) cast%s, it's an oldie, new one at %d though.",
-        ["Suffix"] = "Not ta be a knocker, but make sure ya prepare before venturin' out in the brush",
-        ["By"] = " came from %s"
-    },
     ["gogowatch"] = {
         ["Prefix"] = {
             ["Self"] = '|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7.blp:0|t you',
