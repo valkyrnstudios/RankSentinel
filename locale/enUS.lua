@@ -65,10 +65,10 @@ L["Notification"] = {
     },
     ["murloc"] = {
         ["Prefix"] = {
-            ["Self"] = '|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_8.blp:0|t',
-            ["Whisper"] = "{rt8} Mmmrrglllm,"
+            ["Self"] = '|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_4.blp:0|t',
+            ["Whisper"] = "{rt4} Mmmrrglllm,"
         },
-        ["Base"] = "mrrrggk %s %d%s urka %d.",
+        ["Base"] = "nk mrrrggk %s %d%s urka %d.",
         ["Suffix"] = "Mmmm mrrrggk!",
         ["By"] = " mmgr %s"
     }
