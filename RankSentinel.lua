@@ -28,7 +28,7 @@ function addon:OnInitialize()
     local defaults = {
         profile = {
             enable = true,
-            whisper = UnitLevel("Player") == 70,
+            whisper = true,
             debug = false,
             announcedSpells = {},
             ignoredPlayers = {},
