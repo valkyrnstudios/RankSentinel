@@ -21,6 +21,9 @@ function addon:OnCommReceived(prefix, message, _, sender)
         if self.db.profile.debug then
             self:PrintMessage("Lead taken by " .. data)
         end
+    elseif command == 'JOIN' then
+        self:SendCommMessage(addon._commPrefix, 'LEAD|' .. self.cluster.lead,
+                             "WHISPER", sender)
     elseif command == 'SYNC' then
         if self.db.profile.announcedSpells[data] ~= true then
             self.db.profile.announcedSpells[data] = true
@@ -114,6 +117,6 @@ function addon:GROUP_LEFT(...)
 end
 
 function addon:GROUP_JOINED(...)
-    -- TODO get lead
+    self:Broadcast("JOIN", self.playerName);
     self:InitializeSession()
 end
