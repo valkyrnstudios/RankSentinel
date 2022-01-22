@@ -17,21 +17,26 @@ Use `/ranksentinel` to get the latest commands.
 
 - `/ranksentinel enable`: toggles combat log parsing
 - `/ranksentinel whisper`: toggles whispers to players
-- `/ranksentinel combat`: toggles whispers to players after comba
-- `/ranksentinel debug`: toggles debug output for testing
-- `/ranksentinel report [channel]`: report session data [say, raid, guild]
-- `/ranksentinel reset`: resets profile to defaults
+- `/ranksentinel report [channel]`: report session data [self, say, raid, guild]
 - `/ranksentinel count`: prints current statistics
-- `/ranksentinel clear`: clears local ability caches
 - `/ranksentinel lead`: sets yourself as lead
+- `/ranksentinel flavor`: list available notification flavors
+- `/ranksentinel flavor [option]`: set notification flavor to option
+- `/ranksentinel advanced`: Advanced command-line options
+
+Use `/ranksentinel advanced` to get additional commands.
+
+- `/ranksentinel debug`: toggles debug output for testing
+- `/ranksentinel clear`: clears local ability caches
 - `/ranksentinel ignore`: adds current target to addon ignore list, will not report rank errors
 - `/ranksentinel queue`: prints queued notifications
 - `/ranksentinel queue clear`: clears queued notifications
 - `/ranksentinel queue process`: processes queued notifications
+- `/ranksentinel reset`: resets profile to defaults
 - `/ranksentinel sync`: broadcast announcement cache
 
 ## Contributors
 
 - Gogo - for continued addon collaboration and data curation
-- Aevala and Fathom - ability data feedback, exclusions
+- Aevala and Fathom - ability data feedback
 - Splendiferus - for continued testing and feedback
