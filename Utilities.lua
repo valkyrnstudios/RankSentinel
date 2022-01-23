@@ -26,10 +26,10 @@ function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
                   nextRankLevel)
 
         if self.session.PlayersNotified[sourceUID] == true or petOwner then
+            msg = fmt("%s %s", self.notifications.Prefix.Whisper, msg)
+        else
             msg = fmt("%s %s %s", self.notifications.Prefix.Whisper, msg,
                       self.notifications.Suffix)
-        else
-            msg = fmt("%s %s", self.notifications.Prefix.Whisper, msg)
         end
     else
         msg = fmt(self.notifications.Base, sourceName, spellLink,
