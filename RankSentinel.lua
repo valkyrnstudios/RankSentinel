@@ -120,6 +120,10 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
     if self.db.profile.announcedSpells[playerSpellIndex] ~= nil and
         not self.db.profile.debug then return end
 
+    -- Ignore ranks when mana < 25%
+    if UnitPowerType(sourceName) == Enum.PowerType.Mana and
+        UnitPower(sourceName) / UnitPowerMax(sourceName) < 0.25 then return end
+
     local targetLevel = destName and UnitLevel(destName) or 0
 
     local isMax, nextRankLevel = self:IsMaxRank(spellID, castLevel, targetLevel);
