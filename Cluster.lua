@@ -68,7 +68,8 @@ function addon:ResetLead() self.cluster = {lead = self.playerName} end
 function addon:SetLead(playerName)
     -- TODO add lead version
     if not self.db.profile.enable or not self.db.profile.whisper or playerName ==
-        nil or UnitInBattleground("player") ~= nil then return end
+        nil or UnitInBattleground("player") ~= nil or
+        not string.match(addon.Version, 'v%d.%d.%d') then return end
 
     self:Broadcast("LEAD", playerName);
 end
@@ -109,7 +110,7 @@ function addon:SyncBroadcast(array, index)
     end
 end
 
-function addon:PLAYER_ENTERING_WORLD(...) self:ResetLead() end
+function addon:PLAYER_ENTERING_WORLD(...) self:SetLead(self.playerName) end
 
 function addon:GROUP_LEFT(...)
     self:SetLead(self.playerName)
