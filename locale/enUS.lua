@@ -62,6 +62,15 @@ L["Notification"] = {
         ["Base"] = "nk mrrrggk %s %d%s urka %d.",
         ["Suffix"] = "Mmmm mrrrggk!",
         ["By"] = " mmgr %s"
+    },
+    ["pirate"] = {
+        ["Prefix"] = {
+            ["Self"] = '|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_2.blp:0|t',
+            ["Whisper"] = "{rt2} Ahoy!"
+        },
+        ["Base"] = "%s (Rank %d) be used%s, there be better booty at %d.",
+        ["Suffix"] = "Check yer dock master fer a new beauty!",
+        ["By"] = " by ye %s"
     }
 }
 
