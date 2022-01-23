@@ -6,36 +6,42 @@ function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
                                  petOwner)
     local spellLink = GetSpellLink(spellID)
     local abilityData = self.AbilityData[spellID]
-    local contactName = sourceName
+    local contactName = petOwner and petOwner.OwnerName or sourceName
+    local by = petOwner and fmt(self.notifications.By, sourceName) or ''
     local msg = nil
     local sourceUID = self:GetUID(sourceGUID)
-    local ability = fmt('%s (Rank %d)', spellLink, abilityData.Rank)
 
     if self.db.profile.notificationFlavor == 'random' then
         self.notifications = self:GetRandomNotificationFlavor()
     end
 
     if sourceGUID == self.playerGUID then
-        msg = fmt(self.notifications.Base, spellLink, abilityData.Rank, '',
+        msg = fmt(self.notifications.Base, spellLink, abilityData.Rank, by,
                   nextRankLevel)
+
         msg = fmt("%s %s", self.notifications.Prefix.Self, msg)
+
     elseif self.db.profile.whisper and self.playerName == self.cluster.lead then
-        msg = fmt(self.notifications.Base, spellLink, abilityData.Rank,
-                  petOwner and sourceName or '', nextRankLevel)
-        msg = fmt("%s %s%s", self.notifications.Prefix.Whisper, msg,
-                  self.session.PlayersNotified[sourceUID] ~= true and ' ' ..
-                      self.notifications.Suffix or '')
+        msg = fmt(self.notifications.Base, spellLink, abilityData.Rank, by,
+                  nextRankLevel)
+
+        if self.session.PlayersNotified[sourceUID] == true then
+            msg = fmt("%s %s %s", self.notifications.Prefix.Whisper, msg,
+                      self.notifications.Suffix)
+        else
+            msg = fmt("%s %s", self.notifications.Prefix.Whisper, msg)
+        end
     else
         msg = fmt(self.notifications.Base, sourceName, spellLink,
-                  abilityData.Rank, fmt(self.notifications.By, contactName),
-                  nextRankLevel)
+                  abilityData.Rank, by, nextRankLevel)
+
         msg = fmt("%s %s", self.notifications.Prefix.Self, msg)
         msg = msg:gsub(addonName, self.cluster.lead)
     end
 
     self.session.PlayersNotified[sourceUID] = true
 
-    return msg, contactName, ability
+    return msg, contactName, fmt('%s (Rank %d)', spellLink, abilityData.Rank)
 end
 
 function addon:GetUID(guid)
