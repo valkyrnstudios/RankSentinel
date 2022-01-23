@@ -34,7 +34,7 @@ function addon:ProcessQueuedNotifications()
 
         if notification.target == self.playerName then
             self:PrintMessage(notification.message)
-        elseif self.playerName == self.cluster.lead then
+        elseif self.playerName == self.cluster.lead and self.db.profile.whisper then
             SendChatMessage(notification.message, "WHISPER", nil,
                             notification.target)
         else
