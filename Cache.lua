@@ -34,12 +34,12 @@ function addon:ProcessQueuedNotifications()
 
         if notification.target == self.playerName then
             self:PrintMessage(notification.message)
-        elseif self.playerName ~= self.cluster.lead then
-            self:PrintMessage(fmt("%s - %s", notification.target,
-                                  notification.ability))
-        else
+        elseif self.playerName == self.cluster.lead then
             SendChatMessage(notification.message, "WHISPER", nil,
                             notification.target)
+        else
+            self:PrintMessage(fmt("%s - %s", notification.target,
+                                  notification.ability))
         end
     end
 
