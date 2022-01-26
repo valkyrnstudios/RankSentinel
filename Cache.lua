@@ -25,25 +25,31 @@ function addon:CountCache(cache)
 end
 
 function addon:ProcessQueuedNotifications()
-    if #self.session.Queue == 0 or InCombatLockdown() then return end
+    if #self.session.Queue == 0 or InCombatLockdown() or
+        UnitIsDeadOrGhost("Player") then return end
 
-    local notification = nil;
+    local notification = nil
+    local retry = {}
 
     for i = 1, #self.session.Queue do
-        notification = self.session.Queue[i];
+        notification = self.session.Queue[i]
 
         if notification.target == self.playerName then
             self:PrintMessage(notification.message)
         elseif self.playerName == self.cluster.lead and self.db.profile.whisper then
-            SendChatMessage(notification.message, "WHISPER", nil,
-                            notification.target)
+            if UnitAffectingCombat(notification.target) then
+                retry[#retry + 1] = notification
+            else
+                SendChatMessage(notification.message, "WHISPER", nil,
+                                notification.target)
+            end
         else
             self:PrintMessage(fmt("%s - %s", notification.target,
                                   notification.ability))
         end
     end
 
-    self.session.Queue = {};
+    self.session.Queue = retry
 end
 
 function addon:QueueNotification(message, target, ability)

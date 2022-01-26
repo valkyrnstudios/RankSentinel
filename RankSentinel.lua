@@ -57,7 +57,24 @@ function addon:OnEnable()
     if isTBC then
         self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
         self:RegisterEvent("PLAYER_ENTERING_WORLD")
-        self:RegisterEvent("PLAYER_REGEN_ENABLED")
+        self:RegisterEvent("PLAYER_REGEN_ENABLED", function(...)
+            C_Timer.After(5, function()
+                self:ProcessQueuedNotifications()
+            end)
+        end)
+
+        self:RegisterEvent("PLAYER_UNGHOST", function(...)
+            C_Timer.After(5, function()
+                self:ProcessQueuedNotifications()
+            end)
+        end)
+
+        self:RegisterEvent("PLAYER_ALIVE", function(...)
+            C_Timer.After(5, function()
+                self:ProcessQueuedNotifications()
+            end)
+        end)
+
         self:RegisterEvent("GROUP_LEFT")
         self:RegisterEvent("GROUP_JOINED")
 
@@ -83,15 +100,6 @@ function addon:OnEnable()
         self:PrintMessage("Debug enabled, clearing cache on reload");
         self:ClearCache();
     end
-end
-
-function addon:PLAYER_REGEN_ENABLED(...)
-    -- If player dead, combat for rest of the raid could be ongoing
-    if UnitIsDeadOrGhost("Player") then return end
-
-    -- TODO trigger notification processing again without waiting for a combat cycle
-    -- PLAYER_UNGHOST, PLAYER_ALIVE
-    self:ProcessQueuedNotifications();
 end
 
 function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
