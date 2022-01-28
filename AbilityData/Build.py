@@ -17,9 +17,9 @@ eras = {
 }
 
 for eraLua, eraCsv in eras.items():
-  if not os.path.isdir('./AbilityData'):
-    print('Missing {0}'.format(eraCsv));
-    exit()
+  if not os.path.exists('./AbilityData/{0}'.format(eraCsv)):
+    print('{0} not found'.format(eraCsv));
+    continue
 
   header = []
   ability_list = []
