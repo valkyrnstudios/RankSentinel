@@ -236,7 +236,8 @@ function addon:ChatCommand(cmd)
                           reportEntry.PlayerName, reportEntry.SpellName,
                           reportEntry.SpellRank))
             end
-        elseif channel == "say" or channel == "raid" or channel == "guild" then
+        elseif channel == "say" or channel == "party" or channel == "raid" or
+            channel == "guild" then
             SendChatMessage(fmt(self.L["ChatCommand"].Report.Header,
                                 self.L[addonName] .. ': ', reportSize), channel,
                             nil)

@@ -140,7 +140,7 @@ L["Help"] = {
     ["queue clear"] = 'clears queued notifications',
     ["queue process"] = 'processes queued notifications',
     ["sync"] = 'broadcast announcement cache',
-    ["report [channel]"] = 'report session data [self, say, raid, guild]',
+    ["report [channel]"] = 'report session data [self, say, party, raid, guild]',
     ["flavor"] = 'list available notification flavors',
     ["flavor [option]"] = 'set notification flavor to option'
 }
