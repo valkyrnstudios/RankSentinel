@@ -126,6 +126,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
                                  spellID)
 
     if self.db.profile.announcedSpells[playerSpellIndex] ~= nil and
+        self.session.Report[playerSpellIndex] ~= nil and
         not self.db.profile.debug then return end
 
     -- Ignore ranks when mana < 25%
@@ -146,6 +147,8 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
         self:UpdateSessionReport(playerSpellIndex, sourceName, spellName,
                                  spellID)
     end
+
+    if self.db.profile.announcedSpells[playerSpellIndex] ~= nil then return end
 
     local notification, target, ability =
         self:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
