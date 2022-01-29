@@ -4,7 +4,6 @@ local fmt = string.format
 
 function addon:ClearCache()
     local count = self:CountCache(self.db.profile.announcedSpells);
-    local petCount = self:CountCache(self.db.profile.petOwnerCache);
     local isMaxRankCount = self:CountCache(self.db.profile.isMaxRank);
 
     self.db.profile.announcedSpells = {};

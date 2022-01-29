@@ -168,8 +168,6 @@ function addon:ChatCommand(cmd)
     elseif msg == "count" then
         self:PrintMessage(fmt(self.L["ChatCommand"].Count.Spells,
                               self:CountCache(self.db.profile.announcedSpells)))
-        self:PrintMessage(fmt(self.L["ChatCommand"].Count.Pets,
-                              self:CountCache(self.db.profile.petOwnerCache)))
         self:PrintMessage(fmt(self.L["ChatCommand"].Count.Ranks,
                               self:CountCache(self.db.profile.isMaxRank)))
     elseif msg == "clear" then

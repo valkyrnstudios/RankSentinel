@@ -75,7 +75,7 @@ L["Notification"] = {
 }
 
 L["Cache"] = {
-    ["Reset"] = "Cache reset: %d entries purged, %d max ranks forgotten, %d pet owners cleared",
+    ["Reset"] = "Cache reset: %d entries purged and %d max ranks forgotten",
     ["Queue"] = "Queued - %s, %s"
 }
 
@@ -102,7 +102,6 @@ L["ChatCommand"] = {
     ["Reset"] = "Settings reset",
     ["Count"] = {
         ["Spells"] = "Spells caught: %d",
-        ["Pets"] = "Pet owners: %d",
         ["Ranks"] = "Ranks cached: %d"
     },
     ["Ignore"] = {
