@@ -104,6 +104,8 @@ function addon:IsHighestAlertableRank(nextRankLevel, casterLevel)
         return nextRankLevel + 3 > casterLevel
     elseif casterLevel < 60 then
         return nextRankLevel + 2 > casterLevel
+    elseif casterLevel < 70 then
+        return nextRankLevel + 1 > casterLevel
     end
 
     return nextRankLevel > casterLevel
