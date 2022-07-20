@@ -13,7 +13,8 @@ if not os.path.isdir('./AbilityData'):
 
 eras = {
   'TBC.lua': 'tbc.csv',
-  'Vanilla.lua': 'vanilla.csv'
+  'Vanilla.lua': 'vanilla.csv',
+  "Wrath.lua": 'wrath.csv'
 }
 
 for eraLua, eraCsv in eras.items():
@@ -58,7 +59,7 @@ for eraLua, eraCsv in eras.items():
         reverse_lookup[ability_group_id][ability['Ability ID']] = parsed_rank
 
       else:
-        print('Excluding {0}{1} - {2}'.format(ability['Ability'], parsed_rank, ability['Note']))
+        print('Excluding {0} {1} - {2}'.format(ability['Ability'], parsed_rank, ability['Note']))
         excluded_count += 1
 
     print('{0} Loaded / {1} Excluded abilities'.format(len(ability_list), excluded_count))
