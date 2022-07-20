@@ -1,5 +1,7 @@
-## Interface: 20503
-## Interface-Classic: 11401
+## Interface: 20504
+## Interface-Classic: 11402
+## Interface-BCC: 20504
+## Interface-Wrath: 30400
 ## Title: RankSentinel
 ## Version: @project-version@
 ## Author: SabreValkyrn
@@ -7,6 +9,7 @@
 ## SavedVariables: RankSentinelDB
 ## X-Credits: Gogo, Splendiferus, Aevala, Fathom
 ## X-Curse-Project-ID: 560210
+## X-Wago-ID: RqGY3R6g
 ## X-Embeds: Ace3
 
 libs\LibStub\LibStub.lua
@@ -20,6 +23,10 @@ libs\AceComm-3.0\AceComm-3.0.xml
 locale\enUS.lua
 
 RankSentinel.lua
+#@version-wrath@
+AbilityData\Wrath.lua
+Cluster.lua
+#@end-version-wrath@
 #@version-bcc@
 AbilityData\TBC.lua
 Cluster.lua
