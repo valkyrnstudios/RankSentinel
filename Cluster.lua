@@ -10,7 +10,7 @@ function addon:OnCommReceived(prefix, message, _, sender)
 
     if self.db.profile.debug then
         self:PrintMessage(fmt("OnCommReceived: %s; Sender: %s; Data: %s",
-                              command, sender, data));
+            command, sender, data));
     end
 
     if command == 'NOTIFY' then
@@ -23,7 +23,7 @@ function addon:OnCommReceived(prefix, message, _, sender)
         end
     elseif command == 'JOIN' then
         self:SendCommMessage(addon._commPrefix, 'LEAD|' .. self.cluster.lead,
-                             "WHISPER", sender)
+            "WHISPER", sender)
     elseif command == 'SYNC' then
         if self.db.profile.announcedSpells[data] ~= true then
             self.db.profile.announcedSpells[data] = true
@@ -32,7 +32,7 @@ function addon:OnCommReceived(prefix, message, _, sender)
         if self.session.UnsupportedComm[command] == nil then
             self.session.UnsupportedComm[command] = true
             self:PrintMessage(fmt(self.L["Broadcast"].Unrecognized, command,
-                                  sender));
+                sender));
         end
     end
 end
@@ -63,7 +63,7 @@ function addon:RecordNotification(sender, playerSpellIndex)
     end
 end
 
-function addon:ResetLead() self.cluster = {lead = self.playerName} end
+function addon:ResetLead() self.cluster = { lead = self.playerName } end
 
 function addon:SetLead(playerName)
     -- TODO add lead version
@@ -79,7 +79,7 @@ function addon:SyncBroadcast(array, index)
 
     if array == nil or index == nil then
         self:PrintMessage(fmt(self.L["Cluster"].Sync,
-                              self:CountCache(self.db.profile.announcedSpells)))
+            self:CountCache(self.db.profile.announcedSpells)))
 
         local ordered_announcements = {}
         for k in pairs(self.db.profile.announcedSpells) do
@@ -101,7 +101,7 @@ function addon:SyncBroadcast(array, index)
             end
 
             self:SendCommMessage(addon._commPrefix,
-                                 fmt("%s|%s", 'SYNC', array[i]), "RAID", "BULK")
+                fmt("%s|%s", 'SYNC', array[i]), "RAID", "BULK")
         end
 
         C_Timer.After(3, function()

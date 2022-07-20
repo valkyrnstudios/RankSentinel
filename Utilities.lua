@@ -17,23 +17,23 @@ function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
 
     if sourceGUID == self.playerGUID then
         msg = fmt(self.notifications.Base, spellLink, abilityData.Rank, by,
-                  nextRankLevel)
+            nextRankLevel)
 
         msg = fmt("%s %s", self.notifications.Prefix.Self, msg)
 
     elseif self.db.profile.whisper and self.playerName == self.cluster.lead then
         msg = fmt(self.notifications.Base, spellLink, abilityData.Rank, by,
-                  nextRankLevel)
+            nextRankLevel)
 
         if self.session.PlayersNotified[sourceUID] == true or petOwner then
             msg = fmt("%s %s", self.notifications.Prefix.Whisper, msg)
         else
             msg = fmt("%s %s %s", self.notifications.Prefix.Whisper, msg,
-                      self.notifications.Suffix)
+                self.notifications.Suffix)
         end
     else
         msg = fmt(self.notifications.Base, sourceName, spellLink,
-                  abilityData.Rank, by, nextRankLevel)
+            abilityData.Rank, by, nextRankLevel)
 
         msg = fmt("%s %s", self.notifications.Prefix.Self, msg)
         msg = msg:gsub(addonName, self.cluster.lead)
@@ -118,7 +118,7 @@ function addon:IsPetOwnerInRaid(petGuid)
 
     if self.db.profile.petOwnerCache[petUID] ~= nil then
         local isInGroup, _ = self:InGroupWith(
-                                 self.db.profile.petOwnerCache[petUID].OwnerGUID)
+            self.db.profile.petOwnerCache[petUID].OwnerGUID)
 
         return isInGroup, self.db.profile.petOwnerCache[petUID];
     end
@@ -164,32 +164,32 @@ end
 function addon:PrintHelp(subHelp)
     if subHelp == 'advanced' then
         self:PrintMessage(fmt("%s (%s)", self.L['Help']['advanced'],
-                              self.Version))
+            self.Version))
 
         self:PrintMessage(fmt('- %s (%s)|cffffffff: %s|r', 'debug',
-                              tostring(self.db.profile.debug),
-                              self.L['Help']['debug']))
+            tostring(self.db.profile.debug),
+            self.L['Help']['debug']))
 
         self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'clear',
-                              self.L['Help']['clear']))
+            self.L['Help']['clear']))
 
         self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'ignore',
-                              self.L['Help']['ignore']))
+            self.L['Help']['ignore']))
 
         self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'queue',
-                              self.L['Help']['queue']))
+            self.L['Help']['queue']))
 
         self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'queue clear',
-                              self.L['Help']['queue clear']))
+            self.L['Help']['queue clear']))
 
         self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'queue process',
-                              self.L['Help']['queue process']))
+            self.L['Help']['queue process']))
 
         self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'reset',
-                              self.L['Help']['reset']))
+            self.L['Help']['reset']))
 
         self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'sync',
-                              self.L['Help']['sync']))
+            self.L['Help']['sync']))
 
         return
     end
@@ -197,47 +197,47 @@ function addon:PrintHelp(subHelp)
     self:PrintMessage(fmt("%s (%s)", self.L['Help']['title'], self.Version))
 
     self:PrintMessage(fmt('- %s (%s)|cffffffff: %s|r', 'enable',
-                          tostring(self.db.profile.enable),
-                          self.L['Help']['enable']))
+        tostring(self.db.profile.enable),
+        self.L['Help']['enable']))
 
     self:PrintMessage(fmt('- %s (%s)|cffffffff: %s|r', 'whisper',
-                          tostring(self.db.profile.whisper),
-                          self.L['Help']['whisper']))
+        tostring(self.db.profile.whisper),
+        self.L['Help']['whisper']))
 
     self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'report [channel]',
-                          self.L['Help']['report [channel]']))
+        self.L['Help']['report [channel]']))
 
     self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'count',
-                          self.L['Help']['count']))
+        self.L['Help']['count']))
 
     self:PrintMessage(fmt('- %s (%s)|cffffffff: %s|r', 'lead',
-                          self.cluster.lead, self.L['Help']['lead']))
+        self.cluster.lead, self.L['Help']['lead']))
 
     self:PrintMessage(fmt('- %s (%s)|cffffffff: %s |r', 'flavor',
-                          self.db.profile.notificationFlavor,
-                          self.L['Help']['flavor']))
+        self.db.profile.notificationFlavor,
+        self.L['Help']['flavor']))
 
     self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'flavor [option]',
-                          self.L['Help']['flavor [option]']))
+        self.L['Help']['flavor [option]']))
 
     self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'advanced',
-                          self.L['Help']['advanced']))
+        self.L['Help']['advanced']))
 end
 
 function addon:PrintMessage(msg)
     if (DEFAULT_CHAT_FRAME) then
         DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00" .. self.L[addonName] ..
-                                          "|r: " .. msg, 0.0, 1.0, 0.0, 1.0);
+            "|r: " .. msg, 0.0, 1.0, 0.0, 1.0);
     end
 end
 
 function addon:SetNotificationFlavor(flavor)
     if self.L["Notification"][flavor] ~= nil then
         self.notifications = self.L["Notification"][self.db.profile
-                                 .notificationFlavor]
+            .notificationFlavor]
     else
         self:PrintMessage(fmt(self.L["ChatCommand"].Flavor.Unavailable,
-                              flavor or ''))
+            flavor or ''))
         self.db.profile.notificationFlavor = "default"
         self.notifications = self.L["Notification"]["default"]
     end

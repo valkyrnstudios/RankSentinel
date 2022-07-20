@@ -12,7 +12,7 @@ function addon:UNIT_SPELLCAST_SUCCEEDED(_, sourceGUID, _, spellID)
     if addon.AbilityData[spellID] == nil then return end
 
     local PlayerSpellIndex = string.format("%s-%s-%s", sourceGUID,
-                                           self.playerLevel, spellID)
+        self.playerLevel, spellID)
 
     if self.db.profile.announcedSpells[PlayerSpellIndex] ~= nil and
         not self.db.profile.debug then return end
@@ -24,9 +24,9 @@ function addon:UNIT_SPELLCAST_SUCCEEDED(_, sourceGUID, _, spellID)
     local spellLink = GetSpellLink(spellID);
 
     local castStringMsg = string.format(self.db.profile.castString, "You",
-                                        spellLink, nextRankLevel)
+        spellLink, nextRankLevel)
     castStringMsg = string.format("%s %s", L["AnnouncePrefix"]["Self"],
-                                  castStringMsg);
+        castStringMsg);
 
     self:PrintMessage(castStringMsg);
 

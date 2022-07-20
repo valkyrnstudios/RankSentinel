@@ -9,11 +9,11 @@ local isVanilla = _G.WOW_PROJECT_ID == _G.WOW_PROJECT_CLASSIC
 
 if isTBC then
     addon = LibStub("AceAddon-3.0"):NewAddon(RankSentinel, addonName,
-                                             "AceEvent-3.0", "AceComm-3.0")
+        "AceEvent-3.0", "AceComm-3.0")
 elseif isVanilla then
     -- Clustering moot on classic, can only detect self spellIDs
     addon = LibStub("AceAddon-3.0"):NewAddon(RankSentinel, addonName,
-                                             "AceEvent-3.0")
+        "AceEvent-3.0")
 end
 
 addon.Version = GetAddOnMetadata(addonName, "Version")
@@ -49,8 +49,7 @@ function addon:OnInitialize()
     SLASH_RankSentinel1 = "/" .. string.lower(addonName);
     SLASH_RankSentinel2 = "/sentinel";
 
-    SlashCmdList[addonName] =
-        function(message, _) addon:ChatCommand(message) end;
+    SlashCmdList[addonName] = function(message, _) addon:ChatCommand(message) end;
 end
 
 function addon:OnEnable()
@@ -107,8 +106,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
         return
     end
 
-    local _, subevent, _, sourceGUID, sourceName, _, _, _, destName, _, _,
-          spellID, spellName = CombatLogGetCurrentEventInfo()
+    local _, subevent, _, sourceGUID, sourceName, _, _, _, destName, _, _, spellID, spellName = CombatLogGetCurrentEventInfo()
 
     if subevent ~= "SPELL_CAST_SUCCESS" or
         self.db.profile.ignoredPlayers[sourceGUID] ~= nil or
@@ -123,7 +121,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
     local castLevel = UnitLevel(sourceName)
 
     local playerSpellIndex = fmt("%s-%s-%s", self:GetUID(sourceGUID), castLevel,
-                                 spellID)
+        spellID)
 
     if self.db.profile.announcedSpells[playerSpellIndex] ~= nil and
         self.session.Report[playerSpellIndex] ~= nil and
@@ -141,18 +139,18 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
 
     if petOwner then
         self:UpdateSessionReport(playerSpellIndex, fmt("%s (%s)", sourceName,
-                                                       petOwner.OwnerName),
-                                 spellName, spellID)
+            petOwner.OwnerName),
+            spellName, spellID)
     else
         self:UpdateSessionReport(playerSpellIndex, sourceName, spellName,
-                                 spellID)
+            spellID)
     end
 
     if self.db.profile.announcedSpells[playerSpellIndex] ~= nil then return end
 
     local notification, target, ability =
-        self:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
-                               petOwner)
+    self:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
+        petOwner)
 
     self:QueueNotification(notification, target, ability)
 
@@ -167,15 +165,15 @@ function addon:ChatCommand(cmd)
         self:PrintMessage(self.L["ChatCommand"].Reset)
     elseif msg == "count" then
         self:PrintMessage(fmt(self.L["ChatCommand"].Count.Spells,
-                              self:CountCache(self.db.profile.announcedSpells)))
+            self:CountCache(self.db.profile.announcedSpells)))
         self:PrintMessage(fmt(self.L["ChatCommand"].Count.Ranks,
-                              self:CountCache(self.db.profile.isMaxRank)))
+            self:CountCache(self.db.profile.isMaxRank)))
     elseif msg == "clear" then
         self:ClearCache();
     elseif msg == "debug" then
         self.db.profile.debug = not self.db.profile.debug
         self:PrintMessage(fmt("%s = %s", self.L["Debug"],
-                              tostring(self.db.profile.debug)));
+            tostring(self.db.profile.debug)));
     elseif msg == "whisper" then
         if not isTBC then
             self:PrintMessage("Whisper only supported on TBC");
@@ -184,11 +182,11 @@ function addon:ChatCommand(cmd)
 
         self.db.profile.whisper = not self.db.profile.whisper
         self:PrintMessage(fmt("%s = %s", self.L["Whisper"],
-                              tostring(self.db.profile.whisper)));
+            tostring(self.db.profile.whisper)));
     elseif msg == "enable" then
         self.db.profile.enable = not self.db.profile.enable
         self:PrintMessage(fmt("%s = %s", self.L["Enable"],
-                              tostring(self.db.profile.enable)));
+            tostring(self.db.profile.enable)));
     elseif msg == "lead" then
         self.cluster.lead = self.playerName
         self:SetLead(self.playerName)
@@ -199,7 +197,7 @@ function addon:ChatCommand(cmd)
         else
             self:PrintMessage(self.L["ChatCommand"].Ignore.Target);
             self:PrintMessage(fmt(self.L["ChatCommand"].Ignore.Count,
-                                  self:CountCache(self.db.profile.ignoredPlayers)))
+                self:CountCache(self.db.profile.ignoredPlayers)))
         end
     elseif "queue" == string.sub(msg, 1, #"queue") then
         local _, sub = strsplit(' ', msg)
@@ -212,13 +210,13 @@ function addon:ChatCommand(cmd)
             self:ProcessQueuedNotifications()
         else
             self:PrintMessage(fmt(self.L["ChatCommand"].Queue.Count,
-                                  #self.session.Queue))
+                #self.session.Queue))
             local notification = nil
 
             for i = 1, #self.session.Queue do
                 notification = self.session.Queue[i];
                 self:PrintMessage(fmt("%s - %s", notification.target,
-                                      notification.ability))
+                    notification.ability))
             end
         end
     elseif msg == "sync" then
@@ -230,30 +228,30 @@ function addon:ChatCommand(cmd)
 
         if channel == nil or channel == "self" then
             self:PrintMessage(fmt(self.L["ChatCommand"].Report.Header, '',
-                                  reportSize))
+                reportSize))
 
             for _, reportEntry in pairs(self.session.Report) do
                 print(fmt(self.L["ChatCommand"].Report.Summary,
-                          reportEntry.PlayerName, reportEntry.SpellName,
-                          reportEntry.SpellRank))
+                    reportEntry.PlayerName, reportEntry.SpellName,
+                    reportEntry.SpellRank))
             end
         elseif channel == "say" or channel == "party" or channel == "raid" or
             channel == "guild" then
             SendChatMessage(fmt(self.L["ChatCommand"].Report.Header,
-                                self.L[addonName] .. ': ', reportSize), channel,
-                            nil)
+                self.L[addonName] .. ': ', reportSize), channel,
+                nil)
 
             for key, reportEntry in pairs(self.session.Report) do
                 SendChatMessage(fmt(self.L["ChatCommand"].Report.Summary,
-                                    reportEntry.PlayerName,
-                                    reportEntry.SpellName, reportEntry.SpellRank),
-                                channel, nil)
+                    reportEntry.PlayerName,
+                    reportEntry.SpellName, reportEntry.SpellRank),
+                    channel, nil)
                 -- Remove entry after announcing to channel
                 self.session.Report[key] = nil
             end
         else
             self:PrintMessage(fmt(self.L["ChatCommand"].Report.Unsupported,
-                                  channel))
+                channel))
         end
     elseif "flavor" == string.sub(msg, 1, #"flavor") then
         local _, sub = strsplit(' ', msg)
@@ -265,7 +263,7 @@ function addon:ChatCommand(cmd)
         else
             if sub ~= nil then
                 self:PrintMessage(fmt(self.L["ChatCommand"].Flavor.Unavailable,
-                                      sub))
+                    sub))
             end
             local flavorBaseExample = nil
 
@@ -275,9 +273,9 @@ function addon:ChatCommand(cmd)
                 if self.L["Notification"][flavor] and
                     self.L["Notification"][flavor].Base ~= nil then
                     flavorBaseExample = fmt("|cffffffff: " ..
-                                                self.L["Notification"][flavor]
-                                                    .Base, '[Spell]', '9', '',
-                                            '62') .. '|r'
+                        self.L["Notification"][flavor]
+                        .Base, '[Spell]', '9', '',
+                        '62') .. '|r'
                 else
                     flavorBaseExample = ''
                 end
@@ -328,8 +326,8 @@ function addon:IsMaxRank(spellID, casterLevel, targetLevel)
     if nextRankData == nil or nextRankData.Rank ~= abilityData.Rank + 1 then
         if self.db.profile.debug then
             self:PrintMessage(fmt(
-                                  "Mismatching indices next rank (%d), performing search",
-                                  abilityData["Rank"] + 1));
+                "Mismatching indices next rank (%d), performing search",
+                abilityData["Rank"] + 1));
         end
 
         for _, checkedSpellID in pairs(abilityGroupData) do
@@ -339,7 +337,7 @@ function addon:IsMaxRank(spellID, casterLevel, targetLevel)
             if abilityData.Rank + 1 == nextRankData.Rank then
                 if self.db.profile.debug then
                     self:PrintMessage(fmt("Found proper next rank (%d) for %s",
-                                          nextRankData.Rank, nextRankID));
+                        nextRankData.Rank, nextRankID));
                 end
                 break
             end
@@ -349,7 +347,7 @@ function addon:IsMaxRank(spellID, casterLevel, targetLevel)
     if nextRankData.Level == 0 then
         if self.db.profile.debug then
             self:PrintMessage(fmt("Failed to get next rank past %d, guessed %d",
-                                  spellID, nextRankID));
+                spellID, nextRankID));
         end
         return nil, -1
     end
@@ -358,9 +356,9 @@ function addon:IsMaxRank(spellID, casterLevel, targetLevel)
 
     if self.db.profile.debug then
         self:PrintMessage(fmt(
-                              "Casted %d, next rank (%d) available at %d, isMax %s",
-                              spellID, nextRankID, nextRankData.Level,
-                              tostring(isMax)));
+            "Casted %d, next rank (%d) available at %d, isMax %s",
+            spellID, nextRankID, nextRankData.Level,
+            tostring(isMax)));
     end
 
     self.db.profile.isMaxRank[lookup_key] = isMax;

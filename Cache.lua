@@ -40,11 +40,11 @@ function addon:ProcessQueuedNotifications()
                 retry[#retry + 1] = notification
             else
                 SendChatMessage(notification.message, "WHISPER", nil,
-                                notification.target)
+                    notification.target)
             end
         else
             self:PrintMessage(fmt("%s - %s", notification.target,
-                                  notification.ability))
+                notification.ability))
         end
     end
 
