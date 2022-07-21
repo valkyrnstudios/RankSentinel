@@ -4,16 +4,15 @@ local addon = nil
 
 local fmt = string.format
 
-local isTBC = _G.WOW_PROJECT_ID == _G.WOW_PROJECT_BURNING_CRUSADE_CLASSIC
 local isVanilla = _G.WOW_PROJECT_ID == _G.WOW_PROJECT_CLASSIC
 
-if isTBC then
-    addon = LibStub("AceAddon-3.0"):NewAddon(RankSentinel, addonName,
-        "AceEvent-3.0", "AceComm-3.0")
-elseif isVanilla then
+if isVanilla then
     -- Clustering moot on classic, can only detect self spellIDs
     addon = LibStub("AceAddon-3.0"):NewAddon(RankSentinel, addonName,
         "AceEvent-3.0")
+else
+    addon = LibStub("AceAddon-3.0"):NewAddon(RankSentinel, addonName,
+        "AceEvent-3.0", "AceComm-3.0")
 end
 
 addon.Version = GetAddOnMetadata(addonName, "Version")
@@ -53,7 +52,14 @@ function addon:OnInitialize()
 end
 
 function addon:OnEnable()
-    if isTBC then
+    if isVanilla then
+        -- SpellID not a parameter of COMBAT_LOG_EVENT_UNFILTERED in Classic era
+        -- Self casted UNIT_SPELLCAST_SUCCEEDED contains spellID
+        self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+        self:RegisterEvent("PLAYER_LEVEL_UP")
+
+        self.playerLevel = UnitLevel("Player")
+    else
         self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
         self:RegisterEvent("PLAYER_ENTERING_WORLD")
         self:RegisterEvent("PLAYER_REGEN_ENABLED", function(...)
@@ -79,13 +85,6 @@ function addon:OnEnable()
 
         self:RegisterComm(self._commPrefix)
         self:ResetLead();
-    elseif isVanilla then
-        -- SpellID not a parameter of COMBAT_LOG_EVENT_UNFILTERED in Classic era
-        -- Self casted UNIT_SPELLCAST_SUCCEEDED contains spellID
-        self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-        self:RegisterEvent("PLAYER_LEVEL_UP")
-
-        self.playerLevel = UnitLevel("Player")
     end
 
     self:PrintMessage("Loaded " .. self.Version)
@@ -175,7 +174,7 @@ function addon:ChatCommand(cmd)
         self:PrintMessage(fmt("%s = %s", self.L["Debug"],
             tostring(self.db.profile.debug)));
     elseif msg == "whisper" then
-        if not isTBC then
+        if isVanilla then
             self:PrintMessage("Whisper only supported on TBC");
             return
         end
