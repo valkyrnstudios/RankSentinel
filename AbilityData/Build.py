@@ -1,6 +1,6 @@
 # 1. Open https://docs.google.com/spreadsheets/d/1jtx1WyfChzACzh0WBWANtrqkRtS3D-zPWqs3eOnyVvY/edit#gid=0
 # 2. Download "TBC Abilities" as CSV to ".\AbilityData\tbc.csv"
-# 3. Download "Vanilla Abilities" as CSV to ".\AbilityData\vanilla.csv"
+# 3. Download "Wrath Abilities" as CSV to ".\AbilityData\wrath.csv"
 # 4. Execute this script from root, "python .\AbilityData\Build.py"
 
 from datetime import date
@@ -13,7 +13,6 @@ if not os.path.isdir('./AbilityData'):
 
 eras = {
   'TBC.lua': 'tbc.csv',
-  'Vanilla.lua': 'vanilla.csv',
   "Wrath.lua": 'wrath.csv'
 }
 

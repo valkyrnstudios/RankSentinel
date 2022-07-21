@@ -1,5 +1,4 @@
 ## Interface: 20504
-## Interface-Classic: 11402
 ## Interface-BCC: 20504
 ## Interface-Wrath: 30400
 ## Title: RankSentinel
@@ -23,17 +22,14 @@ libs\AceComm-3.0\AceComm-3.0.xml
 locale\enUS.lua
 
 RankSentinel.lua
+
 #@version-wrath@
 AbilityData\Wrath.lua
-Cluster.lua
 #@end-version-wrath@
 #@version-bcc@
 AbilityData\TBC.lua
-Cluster.lua
 #@end-version-bcc@
-#@version-classic@
-AbilityData\Vanilla.lua
-Vanilla.lua
-#@end-version-classic@
+
+Cluster.lua
 Cache.lua
 Utilities.lua

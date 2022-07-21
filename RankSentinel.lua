@@ -1,19 +1,9 @@
 local addonName, RankSentinel = ...
 
-local addon = nil
+local addon = LibStub("AceAddon-3.0"):NewAddon(RankSentinel, addonName,
+    "AceEvent-3.0", "AceComm-3.0")
 
 local fmt = string.format
-
-local isVanilla = _G.WOW_PROJECT_ID == _G.WOW_PROJECT_CLASSIC
-
-if isVanilla then
-    -- Clustering moot on classic, can only detect self spellIDs
-    addon = LibStub("AceAddon-3.0"):NewAddon(RankSentinel, addonName,
-        "AceEvent-3.0")
-else
-    addon = LibStub("AceAddon-3.0"):NewAddon(RankSentinel, addonName,
-        "AceEvent-3.0", "AceComm-3.0")
-end
 
 addon.Version = GetAddOnMetadata(addonName, "Version")
 
@@ -52,40 +42,31 @@ function addon:OnInitialize()
 end
 
 function addon:OnEnable()
-    if isVanilla then
-        -- SpellID not a parameter of COMBAT_LOG_EVENT_UNFILTERED in Classic era
-        -- Self casted UNIT_SPELLCAST_SUCCEEDED contains spellID
-        self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-        self:RegisterEvent("PLAYER_LEVEL_UP")
-
-        self.playerLevel = UnitLevel("Player")
-    else
-        self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-        self:RegisterEvent("PLAYER_ENTERING_WORLD")
-        self:RegisterEvent("PLAYER_REGEN_ENABLED", function(...)
-            C_Timer.After(5, function()
-                self:ProcessQueuedNotifications()
-            end)
+    self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+    self:RegisterEvent("PLAYER_ENTERING_WORLD")
+    self:RegisterEvent("PLAYER_REGEN_ENABLED", function(...)
+        C_Timer.After(5, function()
+            self:ProcessQueuedNotifications()
         end)
+    end)
 
-        self:RegisterEvent("PLAYER_UNGHOST", function(...)
-            C_Timer.After(5, function()
-                self:ProcessQueuedNotifications()
-            end)
+    self:RegisterEvent("PLAYER_UNGHOST", function(...)
+        C_Timer.After(5, function()
+            self:ProcessQueuedNotifications()
         end)
+    end)
 
-        self:RegisterEvent("PLAYER_ALIVE", function(...)
-            C_Timer.After(5, function()
-                self:ProcessQueuedNotifications()
-            end)
+    self:RegisterEvent("PLAYER_ALIVE", function(...)
+        C_Timer.After(5, function()
+            self:ProcessQueuedNotifications()
         end)
+    end)
 
-        self:RegisterEvent("GROUP_LEFT")
-        self:RegisterEvent("GROUP_JOINED")
+    self:RegisterEvent("GROUP_LEFT")
+    self:RegisterEvent("GROUP_JOINED")
 
-        self:RegisterComm(self._commPrefix)
-        self:ResetLead();
-    end
+    self:RegisterComm(self._commPrefix)
+    self:ResetLead()
 
     self:PrintMessage("Loaded " .. self.Version)
 
@@ -174,11 +155,6 @@ function addon:ChatCommand(cmd)
         self:PrintMessage(fmt("%s = %s", self.L["Debug"],
             tostring(self.db.profile.debug)));
     elseif msg == "whisper" then
-        if isVanilla then
-            self:PrintMessage("Whisper only supported on TBC");
-            return
-        end
-
         self.db.profile.whisper = not self.db.profile.whisper
         self:PrintMessage(fmt("%s = %s", self.L["Whisper"],
             tostring(self.db.profile.whisper)));
