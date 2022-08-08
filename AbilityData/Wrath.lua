@@ -1,4 +1,4 @@
--- Built on 2022-07-19
+-- Built on 2022-08-07
 
 local _, addon = ...
 
@@ -26,6 +26,7 @@ addon.AbilityData = {
   [62901] = { Rank = 2, Level = 62, AbilityGroup = 5 },
   [62902] = { Rank = 3, Level = 68, AbilityGroup = 5 },
   [62903] = { Rank = 4, Level = 76, AbilityGroup = 5 },
+  [62904] = { Rank = 5, Level = 80, AbilityGroup = 5 },
   [49998] = { Rank = 1, Level = 56, AbilityGroup = 6 },
   [49999] = { Rank = 2, Level = 63, AbilityGroup = 6 },
   [45463] = { Rank = 3, Level = 70, AbilityGroup = 6 },
@@ -48,7 +49,6 @@ addon.AbilityData = {
   [49919] = { Rank = 4, Level = 70, AbilityGroup = 10 },
   [49920] = { Rank = 5, Level = 75, AbilityGroup = 10 },
   [49921] = { Rank = 6, Level = 80, AbilityGroup = 10 },
-  [62904] = { Rank = 1, Level = 80, AbilityGroup = 10 },
   [5211] = { Rank = 1, Level = 14, AbilityGroup = 11 },
   [6798] = { Rank = 2, Level = 30, AbilityGroup = 11 },
   [8983] = { Rank = 3, Level = 46, AbilityGroup = 11 },
@@ -1592,12 +1592,12 @@ addon.AbilityGroups = {
   { 45902, 49926, 49927, 49928, 49929, 49930 },
   { 43265, 49936, 49937, 49938 },
   { 47541, 49892, 49893, 49894, 49895 },
-  { 62900, 62901, 62902, 62903 },
+  { 62900, 62901, 62902, 62903, 62904 },
   { 49998, 49999, 45463, 49923, 49924 },
   { 57330, 57623 },
   { 45477, 49896, 49903, 49904, 49909 },
   { 49020, 51423, 51424, 51425 },
-  { 45462, 49917, 49918, 49919, 49920, 49921, 62904 },
+  { 45462, 49917, 49918, 49919, 49920, 49921 },
   { 5211, 6798, 8983 },
   { 5487 },
   { 9634 },
