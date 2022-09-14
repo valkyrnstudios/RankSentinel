@@ -18,6 +18,7 @@ jobs:
       - name: Clone project
         uses: actions/checkout@v1
         with:
+          fetch-depth: 10
 
       - name: Package and release Wrath
         uses: BigWigsMods/packager@master
