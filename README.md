@@ -4,8 +4,8 @@ RankSentinel watches the combat log and detects when group members (and now thei
 
 We built this tool to help your raid group make small improvements so they can avoid those 1%-wipe situations. In testing it detected so many guildies, friends, and PUGs who had just forgotten to update their action bars or macros after training. Everyone has at least one ability they forgot to update. Everyone.
 
-- Legitimate low-rank Abilities have been excluded; including all heals, Frostbolt (Rank 1), Earth Shock (Rank 1), Blizzard (Rank 1), etc.
-  - Battlegrounds have also been excluded
+- Legitimate low-rank Abilities have been excluded
+- Battlegrounds are also excluded
 - Ability data comes from [Gogo's revised ability list](https://docs.google.com/spreadsheets/d/1jtx1WyfChzACzh0WBWANtrqkRtS3D-zPWqs3eOnyVvY/edit?usp=sharing), please leave a comment for any ability data changes you have in mind.
 - A large focus has been on delivering the most optimized code possible, memory usage is significantly less than Questie, your favorite damage meter, or inventory management add-on.
 - RankSentinel's [GitHub issues](https://github.com/valkyrnstudios/RankSentinel/issues) and [CurseForge comments](https://www.curseforge.com/wow/addons/ranksentinel) are great locations to report any issues you find.
