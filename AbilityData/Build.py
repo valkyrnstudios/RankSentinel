@@ -12,7 +12,6 @@ if not os.path.isdir('./AbilityData'):
   exit()
 
 eras = {
-  'TBC.lua': 'tbc.csv',
   "Wrath.lua": 'wrath.csv'
 }
 

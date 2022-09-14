@@ -1,6 +1,4 @@
-## Interface: 20504
-## Interface-BCC: 20504
-## Interface-Wrath: 30400
+## Interface: 30400
 ## Title: RankSentinel
 ## Version: @project-version@
 ## Author: SabreValkyrn
@@ -23,12 +21,7 @@ locale\enUS.lua
 
 RankSentinel.lua
 
-#@version-wrath@
 AbilityData\Wrath.lua
-#@end-version-wrath@
-#@version-bcc@
-AbilityData\TBC.lua
-#@end-version-bcc@
 
 Cluster.lua
 Cache.lua
