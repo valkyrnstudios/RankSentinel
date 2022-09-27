@@ -96,15 +96,15 @@ function addon:InitializeSession()
 end
 
 function addon:IsHighestAlertableRank(nextRankLevel, casterLevel)
-    if casterLevel == 70 then
+    if casterLevel == 80 then
         return nextRankLevel > casterLevel
     elseif casterLevel < 10 then
         return nextRankLevel > casterLevel
     elseif casterLevel < 20 then
         return nextRankLevel + 3 > casterLevel
-    elseif casterLevel < 60 then
-        return nextRankLevel + 2 > casterLevel
     elseif casterLevel < 70 then
+        return nextRankLevel + 2 > casterLevel
+    elseif casterLevel < 80 then
         return nextRankLevel + 1 > casterLevel
     end
 
