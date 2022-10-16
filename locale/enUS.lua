@@ -1,17 +1,18 @@
 ﻿local addonName, _ = ...
+local fmt = string.format
 local L = LibStub("AceLocale-3.0"):NewLocale(addonName, "enUS", true)
 
 L[addonName] = "Rank Sentinel"
-L["Enable"] = "Enable";
-L["Whisper"] = "Whisper";
-L["Debug"] = "Debug";
+L["Enable"] = "Enable"
+L["Whisper"] = "Whisper"
+L["Debug"] = "Debug"
 
 L["Notification"] = {
     ["random"] = false,
     ["default"] = {
         ["Prefix"] = {
             ["Self"] = '|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7.blp:0|t',
-            ["Whisper"] = string.format("{rt7} %s detected", addonName)
+            ["Whisper"] = fmt("{rt7} %s detected", addonName)
         },
         ["Base"] = "%s (Rank %d) was used%s, there's a newer rank at level %d.",
         ["Suffix"] = "Please check your keybinds next time you can or see if a trainer has something waiting for you.",
@@ -20,7 +21,7 @@ L["Notification"] = {
     ["troll"] = {
         ["Prefix"] = {
             ["Self"] = '|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_8.blp:0|t',
-            ["Whisper"] = string.format("{rt8} %s: Oi,", addonName)
+            ["Whisper"] = fmt("{rt8} %s: Oi,", addonName)
         },
         ["Base"] = "%s (Rank %d) be used%s, new at %d mon.",
         ["Suffix"] = "Ya may be missin' trainin' or usin' an old shortcut",
@@ -29,8 +30,7 @@ L["Notification"] = {
     ["gogowatch"] = {
         ["Prefix"] = {
             ["Self"] = '|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7.blp:0|t you',
-            ["Whisper"] = string.format("{rt7} %s: Friendly Reminder! You",
-                                        addonName)
+            ["Whisper"] = fmt("{rt7} %s: Friendly Reminder! You", addonName)
         },
         ["Base"] = "just used a low rank of %s (Rank %d)%s.",
         ["Suffix"] = "Please check your Action Bars or visit your Class Trainer to make sure you've got the right ability for your level.",

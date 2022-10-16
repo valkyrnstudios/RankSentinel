@@ -1,6 +1,10 @@
 local addonName, addon = ...
 
-local fmt = string.format
+local fmt, strsplit, ssub, print = string.format, strsplit, string.sub, print
+local pairs, tinsert = pairs, table.insert
+local GetSpellLink, UnitGUID, GetNumGroupMembers, GetPlayerInfoByGUID = GetSpellLink, UnitGUID, GetNumGroupMembers,
+    GetPlayerInfoByGUID
+local IsInRaid, IsInGroup = IsInRaid, IsInGroup
 
 function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
                                  petOwner)
@@ -47,7 +51,7 @@ end
 function addon:GetUID(guid)
     local unitType, _, _, _, _, _, spawnUID = strsplit("-", guid)
 
-    if unitType == "Pet" then return fmt("Pet-%s", string.sub(spawnUID, 3)) end
+    if unitType == "Pet" then return fmt("Pet-%s", ssub(spawnUID, 3)) end
 
     return guid
 end
@@ -62,10 +66,10 @@ function addon:IgnoreTarget()
     local name, _ = UnitName("target")
 
     if self.db.profile.ignoredPlayers[guid] ~= true then
-        self:PrintMessage(fmt(self.L["Utilities"].IgnorePlayer.Ignored, name))
+        self:PrintMessage(self.L["Utilities"].IgnorePlayer.Ignored, name)
         self.db.profile.ignoredPlayers[guid] = true
     else
-        self:PrintMessage(fmt(self.L["Utilities"].IgnorePlayer.Unignored, name))
+        self:PrintMessage(self.L["Utilities"].IgnorePlayer.Unignored, name)
         self.db.profile.ignoredPlayers[guid] = nil
     end
 end
@@ -120,7 +124,7 @@ function addon:IsPetOwnerInRaid(petGuid)
         local isInGroup, _ = self:InGroupWith(
             self.db.profile.petOwnerCache[petUID].OwnerGUID)
 
-        return isInGroup, self.db.profile.petOwnerCache[petUID];
+        return isInGroup, self.db.profile.petOwnerCache[petUID]
     end
 
     if petGuid == UnitGUID("pet") then
@@ -134,6 +138,7 @@ function addon:IsPetOwnerInRaid(petGuid)
         for i = 1, GetNumGroupMembers() do
             if petGuid == UnitGUID("RaidPet" .. i) then
                 ownerId = UnitGUID("Raid" .. i)
+                if not ownerId then break end
 
                 _, _, _, _, _, ownerName, _ = GetPlayerInfoByGUID(ownerId)
 
@@ -148,7 +153,7 @@ function addon:IsPetOwnerInRaid(petGuid)
         for i = 1, GetNumGroupMembers() do
             if petGuid == UnitGUID("PartyPet" .. i) then
                 ownerId = UnitGUID("Party" .. i)
-
+                if not ownerId then break end
                 _, _, _, _, _, ownerName, _ = GetPlayerInfoByGUID(ownerId)
 
                 self.db.profile.petOwnerCache[petUID] = {
@@ -163,72 +168,69 @@ end
 
 function addon:PrintHelp(subHelp)
     if subHelp == 'advanced' then
-        self:PrintMessage(fmt("%s (%s)", self.L['Help']['advanced'],
-            self.Version))
+        self:PrintMessage("%s (%s)", self.L['Help']['advanced'],
+            self.Version)
 
-        self:PrintMessage(fmt('- %s (%s)|cffffffff: %s|r', 'debug',
+        self:PrintMessage('- %s (%s)|cffffffff: %s|r', 'debug',
             tostring(self.db.profile.debug),
-            self.L['Help']['debug']))
+            self.L['Help']['debug'])
 
-        self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'clear',
-            self.L['Help']['clear']))
+        self:PrintMessage('- %s|cffffffff: %s|r', 'clear',
+            self.L['Help']['clear'])
 
-        self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'ignore',
-            self.L['Help']['ignore']))
+        self:PrintMessage('- %s|cffffffff: %s|r', 'ignore',
+            self.L['Help']['ignore'])
 
-        self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'queue',
-            self.L['Help']['queue']))
+        self:PrintMessage('- %s|cffffffff: %s|r', 'queue',
+            self.L['Help']['queue'])
 
-        self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'queue clear',
-            self.L['Help']['queue clear']))
+        self:PrintMessage('- %s|cffffffff: %s|r', 'queue clear',
+            self.L['Help']['queue clear'])
 
-        self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'queue process',
-            self.L['Help']['queue process']))
+        self:PrintMessage('- %s|cffffffff: %s|r', 'queue process',
+            self.L['Help']['queue process'])
 
-        self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'reset',
-            self.L['Help']['reset']))
+        self:PrintMessage('- %s|cffffffff: %s|r', 'reset',
+            self.L['Help']['reset'])
 
-        self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'sync',
-            self.L['Help']['sync']))
+        self:PrintMessage('- %s|cffffffff: %s|r', 'sync',
+            self.L['Help']['sync'])
 
         return
     end
 
-    self:PrintMessage(fmt("%s (%s)", self.L['Help']['title'], self.Version))
+    self:PrintMessage("%s (%s)", self.L['Help']['title'], self.Version)
 
-    self:PrintMessage(fmt('- %s (%s)|cffffffff: %s|r', 'enable',
+    self:PrintMessage('- %s (%s)|cffffffff: %s|r', 'enable',
         tostring(self.db.profile.enable),
-        self.L['Help']['enable']))
+        self.L['Help']['enable'])
 
-    self:PrintMessage(fmt('- %s (%s)|cffffffff: %s|r', 'whisper',
+    self:PrintMessage('- %s (%s)|cffffffff: %s|r', 'whisper',
         tostring(self.db.profile.whisper),
-        self.L['Help']['whisper']))
+        self.L['Help']['whisper'])
 
-    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'report [channel]',
-        self.L['Help']['report [channel]']))
+    self:PrintMessage('- %s|cffffffff: %s|r', 'report [channel]',
+        self.L['Help']['report [channel]'])
 
-    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'count',
-        self.L['Help']['count']))
+    self:PrintMessage('- %s|cffffffff: %s|r', 'count',
+        self.L['Help']['count'])
 
-    self:PrintMessage(fmt('- %s (%s)|cffffffff: %s|r', 'lead',
-        self.cluster.lead, self.L['Help']['lead']))
+    self:PrintMessage('- %s (%s)|cffffffff: %s|r', 'lead',
+        self.cluster.lead, self.L['Help']['lead'])
 
-    self:PrintMessage(fmt('- %s (%s)|cffffffff: %s |r', 'flavor',
+    self:PrintMessage('- %s (%s)|cffffffff: %s|r', 'flavor',
         self.db.profile.notificationFlavor,
-        self.L['Help']['flavor']))
+        self.L['Help']['flavor'])
 
-    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'flavor [option]',
-        self.L['Help']['flavor [option]']))
+    self:PrintMessage('- %s|cffffffff: %s|r', 'flavor [option]',
+        self.L['Help']['flavor [option]'])
 
-    self:PrintMessage(fmt('- %s|cffffffff: %s|r', 'advanced',
-        self.L['Help']['advanced']))
+    self:PrintMessage('- %s|cffffffff: %s|r', 'advanced',
+        self.L['Help']['advanced'])
 end
 
-function addon:PrintMessage(msg)
-    if (DEFAULT_CHAT_FRAME) then
-        DEFAULT_CHAT_FRAME:AddMessage("|cFFFFFF00" .. self.L[addonName] ..
-            "|r: " .. msg, 0.0, 1.0, 0.0, 1.0);
-    end
+function addon:PrintMessage(msg, ...)
+    print(fmt("|cFFFFFF00%s|r: |c0000FF00%s|r", self.L[addonName], fmt(msg, ...)))
 end
 
 function addon:SetNotificationFlavor(flavor)
@@ -236,8 +238,8 @@ function addon:SetNotificationFlavor(flavor)
         self.notifications = self.L["Notification"][self.db.profile
             .notificationFlavor]
     else
-        self:PrintMessage(fmt(self.L["ChatCommand"].Flavor.Unavailable,
-            flavor or ''))
+        self:PrintMessage(self.L["ChatCommand"].Flavor.Unavailable,
+            flavor or '')
         self.db.profile.notificationFlavor = "default"
         self.notifications = self.L["Notification"]["default"]
     end
@@ -247,7 +249,7 @@ function addon:GetRandomNotificationFlavor()
     local keyset = {}
 
     for k, v in pairs(self.L["Notification"]) do
-        if v and v.By ~= nil then table.insert(keyset, k) end
+        if v and v.By ~= nil then tinsert(keyset, k) end
     end
 
     return self.L["Notification"][keyset[math.random(#keyset)]]
@@ -264,7 +266,7 @@ function addon:UpgradeProfile()
         self.db:ResetDB()
     elseif self.db.profile.dbVersion ~= addon.Version and addon.Version ~=
         'v0.0.0' then
-        self:PrintMessage(self.L["Utilities"].Upgrade);
-        self:ClearCache();
+        self:PrintMessage(self.L["Utilities"].Upgrade)
+        self:ClearCache()
     end
 end

@@ -1,0 +1,17 @@
+{
+    "editor.wordWrapColumn": 80,
+    "Lua.telemetry.enable": false,
+    "Lua.runtime.version": "Lua 5.1",
+    "Lua.workspace.ignoreDir": [
+        ".vscode",
+        "libs"
+    ],
+    "[lua]": {
+        "editor.defaultFormatter": "sumneko.lua"
+    },
+    "Lua.diagnostics.disable": [
+        "undefined-field",
+        "redundant-parameter",
+        "missing-parameter"
+    ],
+}
