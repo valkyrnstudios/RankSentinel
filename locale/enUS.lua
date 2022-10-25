@@ -30,20 +30,11 @@ L["Notification"] = {
         ["Prefix"] = {
             ["Self"] = '|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7.blp:0|t you',
             ["Whisper"] = string.format("{rt7} %s: Friendly Reminder! You",
-                                        addonName)
+                addonName)
         },
         ["Base"] = "just used a low rank of %s (Rank %d)%s.",
         ["Suffix"] = "Please check your Action Bars or visit your Class Trainer to make sure you've got the right ability for your level.",
         ["By"] = " (on %s)"
-    },
-    ["bro"] = {
-        ["Prefix"] = {
-            ["Self"] = '|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_2.blp:0|t',
-            ["Whisper"] = "{rt2} Bruh,"
-        },
-        ["Base"] = "%s (Rank %d)%s y u even, l2train at %d.",
-        ["Suffix"] = "L2play scrub.",
-        ["By"] = " from %s"
     },
     ["ogre"] = {
         ["Prefix"] = {
