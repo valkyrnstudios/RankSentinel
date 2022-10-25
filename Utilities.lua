@@ -5,6 +5,7 @@ local pairs, tinsert = pairs, table.insert
 local GetSpellLink, UnitGUID, GetNumGroupMembers, GetPlayerInfoByGUID = GetSpellLink, UnitGUID, GetNumGroupMembers,
     GetPlayerInfoByGUID
 local IsInRaid, IsInGroup = IsInRaid, IsInGroup
+local _G = _G
 
 function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
                                  petOwner)
@@ -35,7 +36,7 @@ function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
             msg = fmt("%s %s %s", self.notifications.Prefix.Whisper, msg,
                 self.notifications.Suffix)
         end
-    else
+    else --TODO add leader name
         msg = fmt(self.notifications.Base, sourceName, spellLink,
             abilityData.Rank, by, nextRankLevel)
 
@@ -269,4 +270,66 @@ function addon:UpgradeProfile()
         self:PrintMessage(self.L["Utilities"].Upgrade)
         self:ClearCache()
     end
+end
+
+local function GetProfileOption(info)
+    return addon.db.profile[info[#info]]
+end
+
+local function SetProfileOption(info, value)
+    addon.db.profile[info[#info]] = value
+end
+
+function addon:BuildOptionsPanel()
+    local optionsWidth = 1.08
+    local profile = {
+        enable = true,
+        whisper = true,
+        debug = false,
+        announcedSpells = {},
+        ignoredPlayers = {},
+        isMaxRank = {},
+        petOwnerCache = {},
+        dbVersion = 'v0.0.0',
+        notificationFlavor = "default"
+    }
+
+    local optionsTable = {
+        type = "group",
+        name = fmt("%s - %s", self.L[addonName], addon.Version),
+        get = GetProfileOption,
+        set = SetProfileOption,
+        args = {
+            generalHeader = {
+                name = _G.GENERAL,
+                type = "header",
+                width = "full",
+                order = 1.0
+            },
+            enable = {
+                name = _G.ENABLE,
+                desc = self.L['Help']['enable'],
+                type = "toggle",
+                width = optionsWidth,
+                order = 1.1,
+            },
+            whisper = {
+                name = _G.WHISPER,
+                desc = self.L['Help']['whisper'],
+                type = "toggle",
+                width = optionsWidth,
+                order = 1.2,
+            },
+            debug = {
+                name = _G.BINDING_HEADER_DEBUG,
+                desc = self.L['Help']['debug'],
+                type = "toggle",
+                width = optionsWidth,
+                order = 1.2,
+            },
+        }
+    }
+
+    addon.options = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(self.L[addonName])
+    LibStub("AceConfig-3.0"):RegisterOptionsTable(self.L[addonName], optionsTable)
 end

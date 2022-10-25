@@ -74,6 +74,7 @@ function addon:OnEnable()
 
     self:UpgradeProfile()
     self:InitializeSession()
+    self:BuildOptionsPanel()
 
     self.db.profile.dbVersion = self.Version
 
@@ -263,8 +264,11 @@ function addon:ChatCommand(cmd)
                 self:PrintMessage("- %s%s", flavor, flavorBaseExample)
             end
         end
-    else
+    elseif msg == "help" then
         self:PrintHelp(msg)
+    else
+        _G.InterfaceOptionsFrame_OpenToCategory(addon.options)
+        _G.InterfaceOptionsFrame_OpenToCategory(addon.options)
     end
 end
 
