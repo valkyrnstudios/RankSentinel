@@ -1605,7 +1605,6 @@ addon.AbilityData = {
   [59161] = { Rank = 2, Level = 70, AbilityGroup = 241 },
   [59163] = { Rank = 3, Level = 75, AbilityGroup = 241 },
   [59164] = { Rank = 4, Level = 80, AbilityGroup = 241 },
-  [755] = { Rank = 1, Level = 12, AbilityGroup = 242 },
   [3698] = { Rank = 2, Level = 20, AbilityGroup = 242 },
   [3699] = { Rank = 3, Level = 28, AbilityGroup = 242 },
   [3700] = { Rank = 4, Level = 36, AbilityGroup = 242 },
