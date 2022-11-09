@@ -25,7 +25,6 @@ function addon:OnCommReceived(prefix, message, _, sender)
             self:PrintMessage("Lead taken by " .. data)
         end
     elseif command == 'JOIN' then
-        --TODO prevent lead if whisper disabled
         self:SendCommMessage(addon._commPrefix, 'LEAD|' .. self.cluster.lead,
             "WHISPER", sender)
     elseif command == 'SYNC' then

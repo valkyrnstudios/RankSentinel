@@ -26,7 +26,7 @@ function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
 
         msg = fmt("%s %s", self.notifications.Prefix.Self, msg)
 
-    elseif self.db.profile.whisper and self.playerName == self.cluster.lead then
+    elseif self.playerName == self.cluster.lead and self.db.profile.whisper then
         msg = fmt(self.notifications.Base, spellLink, abilityData.Rank, by,
             nextRankLevel)
 
@@ -36,12 +36,16 @@ function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
             msg = fmt("%s %s %s", self.notifications.Prefix.Whisper, msg,
                 self.notifications.Suffix)
         end
-    else --TODO add leader name
+    elseif self.playerName ~= self.cluster.lead then
+        msg = fmt(self.notifications.Base, sourceName, spellLink,
+            abilityData.Rank, by, nextRankLevel)
+
+        msg = fmt("%s (%s) %s", self.notifications.Prefix.Self, self.cluster.lead, msg)
+    else
         msg = fmt(self.notifications.Base, sourceName, spellLink,
             abilityData.Rank, by, nextRankLevel)
 
         msg = fmt("%s %s", self.notifications.Prefix.Self, msg)
-        msg = msg:gsub(addonName, self.cluster.lead)
     end
 
     self.session.PlayersNotified[sourceUID] = true
