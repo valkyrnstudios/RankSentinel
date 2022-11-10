@@ -15,7 +15,7 @@ L["Notification"] = {
             ["Whisper"] = fmt("{rt7} %s detected", addonName)
         },
         ["Base"] = "%s (Rank %d) was used%s, there's a newer rank at level %d.",
-        ["Suffix"] = "Please check your keybinds next time you can or see if a trainer has something waiting for you.",
+        ["Suffix"] = "Please check your action bars or see if a trainer has something waiting for you.",
         ["By"] = " by %s"
     },
     ["troll"] = {
