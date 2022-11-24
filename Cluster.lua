@@ -21,7 +21,7 @@ function addon:OnCommReceived(prefix, message, _, sender)
     elseif command == 'LEAD' then
         self.cluster.lead = data
 
-        if self.db.profile.debug then
+        if self.db.profile.debug or addon.Version == 'v9.9.9' then
             self:PrintMessage("Lead taken by " .. data)
         end
     elseif command == 'JOIN' then
