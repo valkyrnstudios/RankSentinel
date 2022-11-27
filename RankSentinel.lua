@@ -205,35 +205,7 @@ function addon:ChatCommand(cmd)
     elseif "report" == string.sub(msg, 1, #"report") then
         local _, channel = strsplit(' ', msg)
 
-        local reportSize = self:CountCache(self.session.Report)
-
-        if channel == nil or channel == "self" then
-            self:PrintMessage(self.L["ChatCommand"].Report.Header, '',
-                reportSize)
-
-            for _, reportEntry in pairs(self.session.Report) do
-                print(self.L["ChatCommand"].Report.Summary,
-                    reportEntry.PlayerName, reportEntry.SpellName,
-                    reportEntry.SpellRank)
-            end
-        elseif channel == "say" or channel == "party" or channel == "raid" or
-            channel == "guild" then
-            SendChatMessage(fmt(self.L["ChatCommand"].Report.Header,
-                self.L[addonName] .. ': ', reportSize), channel,
-                nil)
-
-            for key, reportEntry in pairs(self.session.Report) do
-                SendChatMessage(fmt(self.L["ChatCommand"].Report.Summary,
-                    reportEntry.PlayerName,
-                    reportEntry.SpellName, reportEntry.SpellRank),
-                    channel, nil)
-                -- Remove entry after announcing to channel
-                self.session.Report[key] = nil
-            end
-        else
-            self:PrintMessage(self.L["ChatCommand"].Report.Unsupported,
-                channel)
-        end
+        self:ReportToChannel(channel)
     elseif "flavor" == string.sub(msg, 1, #"flavor") then
         local _, sub = strsplit(' ', msg)
         if self.L["Notification"][sub] ~= nil then

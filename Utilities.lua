@@ -36,11 +36,6 @@ function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
             msg = fmt("%s %s %s", self.notifications.Prefix.Whisper, msg,
                 self.notifications.Suffix)
         end
-    elseif self.playerName ~= self.cluster.lead then
-        msg = fmt(self.notifications.Base, sourceName, spellLink,
-            abilityData.Rank, by, nextRankLevel)
-
-        msg = fmt("%s (%s) %s", self.notifications.Prefix.Self, self.cluster.lead, msg)
     else
         msg = fmt(self.notifications.Base, sourceName, spellLink,
             abilityData.Rank, by, nextRankLevel)
@@ -70,9 +65,9 @@ function addon:IgnoreTarget()
 
     local name, _ = UnitName("target")
 
-    if self.db.profile.ignoredPlayers[guid] ~= true then
+    if self.db.profile.ignoredPlayers[guid] == nil then
         self:PrintMessage(self.L["Utilities"].IgnorePlayer.Ignored, name)
-        self.db.profile.ignoredPlayers[guid] = true
+        self.db.profile.ignoredPlayers[guid] = name
     else
         self:PrintMessage(self.L["Utilities"].IgnorePlayer.Unignored, name)
         self.db.profile.ignoredPlayers[guid] = nil
@@ -100,8 +95,15 @@ function addon:InitializeSession()
         Queue = {},
         Report = {},
         UnsupportedComm = {},
-        PlayersNotified = {}
+        PlayersNotified = {},
+        announceTo = "self"
     }
+
+    if IsInRaid() then
+        self.session.announceTo = "raid"
+    elseif IsInGroup() then
+        self.session.announceTo = "party"
+    end
 end
 
 function addon:IsHighestAlertableRank(nextRankLevel, casterLevel)
@@ -274,6 +276,12 @@ function addon:UpgradeProfile()
         self:PrintMessage(self.L["Utilities"].Upgrade)
         self:ClearCache()
     end
+
+    for k, v in pairs(self.db.profile.ignoredPlayers) do
+        if v == true then
+            self.db.profile.ignoredPlayers[k] = nil
+        end
+    end
 end
 
 local function GetProfileOption(info)
@@ -286,17 +294,6 @@ end
 
 function addon:BuildOptionsPanel()
     local optionsWidth = 1.08
-    local profile = {
-        enable = true,
-        whisper = true,
-        debug = false,
-        announcedSpells = {},
-        ignoredPlayers = {},
-        isMaxRank = {},
-        petOwnerCache = {},
-        dbVersion = 'v0.0.0',
-        notificationFlavor = "default"
-    }
 
     local optionsTable = {
         type = "group",
@@ -304,6 +301,22 @@ function addon:BuildOptionsPanel()
         get = GetProfileOption,
         set = SetProfileOption,
         args = {
+            cacheCount = {
+                name = fmt(self.L["ChatCommand"].Count.Spells,
+                    self:CountCache(self.db.profile.announcedSpells)),
+                type = "description",
+                width = optionsWidth,
+                fontSize = "medium",
+                order = 0.1
+            },
+            ranksCached = {
+                name = fmt(self.L["ChatCommand"].Count.Ranks,
+                    self:CountCache(self.db.profile.isMaxRank)),
+                type = "description",
+                width = optionsWidth,
+                fontSize = "medium",
+                order = 0.2
+            },
             generalHeader = {
                 name = _G.GENERAL,
                 type = "header",
@@ -331,9 +344,190 @@ function addon:BuildOptionsPanel()
                 width = optionsWidth,
                 order = 1.2,
             },
+            announceHeader = {
+                name = "Announce",
+                type = "header",
+                width = "full",
+                order = 2.0
+            },
+            announce = {
+                name = _G.BNET_REPORT,
+                type = "execute",
+                width = optionsWidth,
+                order = 2.1,
+                func = function()
+                    self:ReportToChannel(self.session.announceTo)
+                end
+            },
+            announceTo = {
+                name = _G.CHANNEL,
+                type = "select",
+                width = optionsWidth,
+                order = 2.2,
+                values = { ["self"] = "self", ["say"] = "say", ["party"] = "party", ["raid"] = "raid",
+                    ["guild"] = "guild" },
+                get = function()
+                    return self.session.announceTo
+                end,
+                set = function(_, value)
+                    self.session.announceTo = value
+                end
+            },
+            clusterHeader = {
+                name = "Cluster",
+                type = "header",
+                width = "full",
+                order = 3.0
+            },
+            leader = {
+                name = function()
+                    return "Leader: " .. self.cluster.lead
+                end,
+                type = "description",
+                width = optionsWidth,
+                fontSize = "medium",
+                order = 3.1
+            },
+            takeLead = {
+                name = "Take lead",
+                type = "execute",
+                width = optionsWidth,
+                order = 3.2,
+                func = function()
+                    self.cluster.lead = self.playerName
+                    self:SetLead(self.playerName)
+                end,
+                disabled = function()
+                    return self.playerName == self.cluster.lead
+                end
+            },
+            flavorHeader = {
+                name = "Notification Flavor",
+                type = "header",
+                width = "full",
+                order = 4.0
+            },
+            notificationFlavor = {
+                name = "Notification flavors",
+                type = "select",
+                width = optionsWidth,
+                order = 4.1,
+                values = function()
+                    local p = {}
+                    for flavor, _ in pairs(self.L["Notification"]) do
+                        p[flavor] = flavor
+                    end
+                    return p
+                end,
+            },
+            notificationFlavorExample = {
+                name = function()
+                    local flavor = self.db.profile.notificationFlavor
+
+                    if self.L["Notification"][flavor] and
+                        self.L["Notification"][flavor].Base ~= nil then
+                        return fmt('  ' .. self.L["Notification"][flavor]
+                            .Base, '[Spell]', '9', '',
+                            '62')
+                    else
+                        return ''
+                    end
+                end,
+                type = "description",
+                width = optionsWidth * 2,
+                fontSize = "medium",
+                order = 4.2
+            },
+            ignoreHeader = {
+                name = "Ignore",
+                type = "header",
+                width = "full",
+                order = 5.0
+            },
+            ignore = {
+                name = _G.IGNORE_PLAYER,
+                type = "execute",
+                width = optionsWidth,
+                order = 5.1,
+                func = function()
+                    if UnitExists("target") then
+                        self:IgnoreTarget()
+                    end
+                end
+            },
+            ignoredPlayersList = {
+                name = "Ignored Players",
+                type = "select",
+                width = optionsWidth,
+                order = 5.2,
+                values = function()
+                    local p = {}
+                    for _, v in pairs(self.db.profile.ignoredPlayers) do
+                        p[v] = v
+                    end
+                    return p
+                end,
+                set = function(_, value)
+                    self.session.ignoredSelectedPlayer = value
+                end,
+                get = function()
+                    return self.session.ignoredSelectedPlayer
+                end,
+                disabled = function()
+                    return self:CountCache(self.db.profile.ignoredPlayers) == 0
+                end
+            },
+            removeIgnore = {
+                name = _G.IGNORE_REMOVE,
+                type = "execute",
+                width = optionsWidth,
+                order = 5.3,
+                func = function()
+                    for k, v in pairs(self.db.profile.ignoredPlayers) do
+                        if v == self.session.ignoredSelectedPlayer then
+                            self.db.profile.ignoredPlayers[k] = nil
+                            break
+                        end
+                    end
+                end,
+                disabled = function()
+                    return self:CountCache(self.db.profile.ignoredPlayers) == 0 or
+                        self.session.ignoredSelectedPlayer == nil
+                end
+            },
+
         }
     }
 
     addon.options = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(self.L[addonName])
     LibStub("AceConfig-3.0"):RegisterOptionsTable(self.L[addonName], optionsTable)
+end
+
+function addon:ReportToChannel(channel)
+    local reportSize = self:CountCache(self.session.Report)
+
+    if channel == nil or channel == "self" then
+        self:PrintMessage(self.L["ChatCommand"].Report.Header, '',
+            reportSize)
+
+        for _, reportEntry in pairs(self.session.Report) do
+            print(fmt(self.L["ChatCommand"].Report.Summary,
+                reportEntry.PlayerName, reportEntry.SpellName,
+                reportEntry.SpellRank))
+        end
+    elseif channel == "say" or channel == "party" or channel == "raid" or
+        channel == "guild" then
+        SendChatMessage(fmt(self.L["ChatCommand"].Report.Header,
+            self.L[addonName] .. ': ', reportSize), channel,
+            nil)
+
+        for key, reportEntry in pairs(self.session.Report) do
+            SendChatMessage(fmt(self.L["ChatCommand"].Report.Summary,
+                reportEntry.PlayerName,
+                reportEntry.SpellName, reportEntry.SpellRank),
+                channel, nil)
+            -- Remove entry after announcing to channel
+            self.session.Report[key] = nil
+        end
+    end
 end

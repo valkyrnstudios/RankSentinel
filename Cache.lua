@@ -26,7 +26,7 @@ end
 
 function addon:ProcessQueuedNotifications()
     if #self.session.Queue == 0 or InCombatLockdown() or
-        UnitIsDeadOrGhost("Player") then return end
+        UnitIsDeadOrGhost("player") then return end
 
     local notification = nil
     local retry = {}
@@ -43,6 +43,9 @@ function addon:ProcessQueuedNotifications()
                 SendChatMessage(notification.message, "WHISPER", nil,
                     notification.target)
             end
+        elseif self.playerName ~= self.cluster.lead then
+            self:PrintMessage("(%s) %s - %s", self.cluster.lead, notification.target,
+                notification.ability)
         else
             self:PrintMessage("%s - %s", notification.target,
                 notification.ability)
