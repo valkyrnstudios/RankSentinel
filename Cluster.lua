@@ -6,8 +6,6 @@ local UnitInBattleground = UnitInBattleground
 function addon:OnCommReceived(prefix, message, _, sender)
     if prefix ~= addon._commPrefix or sender == self.playerName then return end
 
-    --TODO if sender not in party, reset lead
-
     local command, data = strsplit("|", message)
     if not command then return end
 
@@ -123,4 +121,15 @@ end
 function addon:GROUP_JOINED()
     self:Broadcast("JOIN", self.playerName)
     self:InitializeSession()
+end
+
+function addon:GROUP_ROSTER_UPDATE()
+    if not self:IsLeaderInGroup() then
+        if self.db.profile.debug or addon.Version == 'v9.9.9' then
+            self:PrintMessage('Leader not in group, resetting')
+        end
+
+        self.cluster.lead = self.playerName
+        self:SetLead(self.playerName)
+    end
 end

@@ -90,6 +90,21 @@ function addon:InGroupWith(guid)
     end
 end
 
+function addon:IsLeaderInGroup()
+    local leader = self.cluster.lead
+    if self.playerName == leader then
+        return true
+    elseif IsInRaid() then
+        for i = 1, GetNumGroupMembers() do
+            if leader == UnitName("Raid" .. i) then return true end
+        end
+    elseif IsInGroup() then
+        for i = 1, GetNumGroupMembers() do
+            if leader == UnitName("Party" .. i) then return true end
+        end
+    end
+end
+
 function addon:InitializeSession()
     self.session = {
         Queue = {},
@@ -244,6 +259,7 @@ function addon:SetNotificationFlavor(flavor)
     if self.L["Notification"][flavor] ~= nil then
         self.notifications = self.L["Notification"][self.db.profile
             .notificationFlavor]
+        self.db.profile.notificationFlavor = flavor
     else
         self:PrintMessage(self.L["ChatCommand"].Flavor.Unavailable,
             flavor or '')
@@ -337,12 +353,12 @@ function addon:BuildOptionsPanel()
                 width = optionsWidth,
                 order = 1.2,
             },
-            debug = {
-                name = _G.BINDING_HEADER_DEBUG,
-                desc = self.L['Help']['debug'],
+            onlyMaxLevel = {
+                name = "Max level only",
+                desc = fmt("Only notify level %d characters", addon.MaxLevel),
                 type = "toggle",
                 width = optionsWidth,
-                order = 1.2,
+                order = 1.3,
             },
             announceHeader = {
                 name = "Announce",
@@ -352,6 +368,7 @@ function addon:BuildOptionsPanel()
             },
             announce = {
                 name = _G.BNET_REPORT,
+                desc = self.L['Help']['report [channel]'],
                 type = "execute",
                 width = optionsWidth,
                 order = 2.1,
@@ -390,6 +407,7 @@ function addon:BuildOptionsPanel()
             },
             takeLead = {
                 name = "Take lead",
+                desc = self.L['Help']['lead'],
                 type = "execute",
                 width = optionsWidth,
                 order = 3.2,
@@ -408,10 +426,14 @@ function addon:BuildOptionsPanel()
                 order = 4.0
             },
             notificationFlavor = {
-                name = "Notification flavors",
+                name = "Flavors",
+                desc = self.L['Help']['flavor [option]'],
                 type = "select",
                 width = optionsWidth,
                 order = 4.1,
+                set = function(_, value)
+                    self:SetNotificationFlavor(value)
+                end,
                 values = function()
                     local p = {}
                     for flavor, _ in pairs(self.L["Notification"]) do
@@ -447,6 +469,7 @@ function addon:BuildOptionsPanel()
             ignore = {
                 name = _G.IGNORE_PLAYER,
                 type = "execute",
+                desc = self.L['Help']['ignore'],
                 width = optionsWidth,
                 order = 5.1,
                 func = function()

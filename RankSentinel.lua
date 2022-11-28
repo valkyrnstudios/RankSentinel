@@ -11,6 +11,7 @@ local HasFullControl, UnitIsPossessed, UnitIsCharmed, UnitIsEnemy = HasFullContr
 local UnitPowerType, UnitPower, UnitPowerMax, UnitLevel = UnitPowerType, UnitPower, UnitPowerMax, UnitLevel
 
 addon.Version = GetAddOnMetadata(addonName, "Version")
+addon.MaxLevel = _G.GetMaxPlayerLevel()
 
 if string.match(addon.Version, 'project') then addon.Version = 'v9.9.9' end
 
@@ -63,9 +64,9 @@ function addon:OnEnable()
         after(5, function() self:ProcessQueuedNotifications() end)
     end)
 
-    -- TODO if group member leaves, recalculate lead
     self:RegisterEvent("GROUP_LEFT")
     self:RegisterEvent("GROUP_JOINED")
+    self:RegisterEvent("GROUP_ROSTER_UPDATE")
 
     self:RegisterComm(self._commPrefix)
     self:ResetLead()
@@ -105,6 +106,10 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
     if not isInGroup then return end
 
     local castLevel = UnitLevel(sourceName)
+
+    if self.db.profile.onlyMaxLevel and castLevel < addon.MaxLevel then
+        return true
+    end
 
     local playerSpellIndex = fmt("%s-%s-%s", self:GetUID(sourceGUID), castLevel,
         spellID)
@@ -209,8 +214,7 @@ function addon:ChatCommand(cmd)
     elseif "flavor" == string.sub(msg, 1, #"flavor") then
         local _, sub = strsplit(' ', msg)
         if self.L["Notification"][sub] ~= nil then
-            self.db.profile.notificationFlavor = sub
-            self.notifications = self.L["Notification"][sub]
+            self:SetNotificationFlavor(sub)
 
             self:PrintMessage(self.L["ChatCommand"].Flavor.Set, sub)
         else
