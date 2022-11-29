@@ -1,26 +1,27 @@
 ﻿local addonName, _ = ...
+local fmt = string.format
 local L = LibStub("AceLocale-3.0"):NewLocale(addonName, "enUS", true)
 
 L[addonName] = "Rank Sentinel"
-L["Enable"] = "Enable";
-L["Whisper"] = "Whisper";
-L["Debug"] = "Debug";
+L["Enable"] = "Enable"
+L["Whisper"] = "Whisper"
+L["Debug"] = "Debug"
 
 L["Notification"] = {
     ["random"] = false,
     ["default"] = {
         ["Prefix"] = {
             ["Self"] = '|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7.blp:0|t',
-            ["Whisper"] = string.format("{rt7} %s detected", addonName)
+            ["Whisper"] = fmt("{rt7} %s detected", addonName)
         },
         ["Base"] = "%s (Rank %d) was used%s, there's a newer rank at level %d.",
-        ["Suffix"] = "Please check your keybinds next time you can or see if a trainer has something waiting for you.",
+        ["Suffix"] = "Your action bars may be outdated.",
         ["By"] = " by %s"
     },
     ["troll"] = {
         ["Prefix"] = {
             ["Self"] = '|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_8.blp:0|t',
-            ["Whisper"] = string.format("{rt8} %s: Oi,", addonName)
+            ["Whisper"] = fmt("{rt8} %s: Oi,", addonName)
         },
         ["Base"] = "%s (Rank %d) be used%s, new at %d mon.",
         ["Suffix"] = "Ya may be missin' trainin' or usin' an old shortcut",
@@ -29,8 +30,7 @@ L["Notification"] = {
     ["gogowatch"] = {
         ["Prefix"] = {
             ["Self"] = '|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7.blp:0|t you',
-            ["Whisper"] = string.format("{rt7} %s: Friendly Reminder! You",
-                addonName)
+            ["Whisper"] = fmt("{rt7} %s: Friendly Reminder! You", addonName)
         },
         ["Base"] = "just used a low rank of %s (Rank %d)%s.",
         ["Suffix"] = "Please check your Action Bars or visit your Class Trainer to make sure you've got the right ability for your level.",
@@ -118,19 +118,19 @@ L["ChatCommand"] = {
 L["Help"] = {
     ["title"] = 'Command-line options',
     ["advanced"] = 'Advanced command-line options',
-    ["enable"] = 'toggles combat log parsing',
-    ["whisper"] = 'toggles whispers to players',
-    ["reset"] = 'resets profile to defaults',
-    ["count"] = 'prints current statistics',
-    ["debug"] = 'toggles debug output for testing',
-    ["clear"] = 'clears local ability caches',
-    ["lead"] = 'sets yourself as lead',
-    ["ignore"] = 'adds current target to addon ignore list, will not report rank errors',
-    ["queue"] = 'prints queued notifications',
-    ["queue clear"] = 'clears queued notifications',
-    ["queue process"] = 'processes queued notifications',
-    ["sync"] = 'broadcast announcement cache',
-    ["report [channel]"] = 'report session data [self, say, party, raid, guild]',
-    ["flavor"] = 'list available notification flavors',
-    ["flavor [option]"] = 'set notification flavor to option'
+    ["enable"] = 'Toggles combat log parsing',
+    ["whisper"] = 'Toggles whispers to players',
+    ["reset"] = 'Resets profile to defaults',
+    ["count"] = 'Prints current statistics',
+    ["debug"] = 'Toggles debug output for testing',
+    ["clear"] = 'Clears local ability caches',
+    ["lead"] = 'Sets yourself as lead',
+    ["ignore"] = 'Adds current target to addon ignore list, will not report rank errors',
+    ["queue"] = 'Prints queued notifications',
+    ["queue clear"] = 'Clears queued notifications',
+    ["queue process"] = 'Processes queued notifications',
+    ["sync"] = 'Broadcast announcement cache',
+    ["report [channel]"] = 'Report session data [self, say, party, raid, guild]',
+    ["flavor"] = 'List available notification flavors',
+    ["flavor [option]"] = 'Set notification flavor to option'
 }
