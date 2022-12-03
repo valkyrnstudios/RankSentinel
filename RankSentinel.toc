@@ -18,6 +18,7 @@ libs\AceDB-3.0\AceDB-3.0.xml
 libs\AceComm-3.0\AceComm-3.0.xml
 
 locale\enUS.lua
+locale\frFR.lua
 
 RankSentinel.lua
 

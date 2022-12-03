@@ -3,9 +3,6 @@ local fmt = string.format
 local L = LibStub("AceLocale-3.0"):NewLocale(addonName, "enUS", true)
 
 L[addonName] = "Rank Sentinel"
-L["Enable"] = "Enable"
-L["Whisper"] = "Whisper"
-L["Debug"] = "Debug"
 
 L["Notification"] = {
     ["random"] = false,

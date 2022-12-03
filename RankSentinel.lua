@@ -163,15 +163,15 @@ function addon:ChatCommand(cmd)
         self:ClearCache()
     elseif msg == "debug" then
         self.db.profile.debug = not self.db.profile.debug
-        self:PrintMessage("%s = %s", self.L["Debug"],
+        self:PrintMessage("%s = %s", _G.BINDING_HEADER_DEBUG,
             tostring(self.db.profile.debug))
     elseif msg == "whisper" then
         self.db.profile.whisper = not self.db.profile.whisper
-        self:PrintMessage("%s = %s", self.L["Whisper"],
+        self:PrintMessage("%s = %s", _G.WHISPER,
             tostring(self.db.profile.whisper))
     elseif msg == "enable" then
         self.db.profile.enable = not self.db.profile.enable
-        self:PrintMessage("%s = %s", self.L["Enable"],
+        self:PrintMessage("%s = %s", _G.ENABLE,
             tostring(self.db.profile.enable))
     elseif msg == "lead" then
         self.cluster.lead = self.playerName
