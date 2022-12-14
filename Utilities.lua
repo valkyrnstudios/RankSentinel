@@ -97,7 +97,7 @@ function addon:InGroupWith(guid)
             end
         else
             for i = 1, GetNumGroupMembers() do
-                if guid == UnitGUID(partyUnit[i]) then return true, nil end
+                if guid == UnitGUID(raidUnit[i]) then return true, nil end
             end
         end
     end
@@ -110,11 +110,11 @@ function addon:IsLeaderInGroup()
     elseif IsInGroup() then
         if not IsInRaid() then
             for i = 1, GetNumSubgroupMembers() do
-                if leader == UnitName(raidUnit[i]) then return true end
+                if leader == UnitName(partyUnit[i]) then return true end
             end
         else
             for i = 1, GetNumGroupMembers() do
-                if leader == UnitName(partyUnit[i]) then return true end
+                if leader == UnitName(raidUnit[i]) then return true end
             end
         end
     end
