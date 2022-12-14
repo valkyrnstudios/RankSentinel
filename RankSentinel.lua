@@ -50,7 +50,12 @@ function addon:OnInitialize()
 end
 
 function addon:OnEnable()
-    self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+    addon.cleuParser = CreateFrame("Frame")
+    addon.cleuParser:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+    addon.cleuParser:SetScript("OnEvent", function()
+        addon:COMBAT_LOG_EVENT_UNFILTERED()
+    end)
+
     self:RegisterEvent("PLAYER_ENTERING_WORLD")
     self:RegisterEvent("PLAYER_REGEN_ENABLED", function()
         after(5, function() self:ProcessQueuedNotifications() end)
