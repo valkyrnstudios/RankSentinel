@@ -2,10 +2,21 @@ local addonName, addon = ...
 
 local fmt, strsplit, ssub, print = string.format, strsplit, string.sub, print
 local pairs, tinsert = pairs, table.insert
-local GetSpellLink, UnitGUID, GetNumGroupMembers, GetPlayerInfoByGUID = GetSpellLink, UnitGUID, GetNumGroupMembers,
-    GetPlayerInfoByGUID
+local GetSpellLink, UnitGUID, GetNumGroupMembers, GetNumSubgroupMembers, GetPlayerInfoByGUID = GetSpellLink, UnitGUID, GetNumGroupMembers, GetNumSubgroupMembers, GetPlayerInfoByGUID
 local IsInRaid, IsInGroup = IsInRaid, IsInGroup
 local _G = _G
+
+-- cache relevant unitids once so we don't do concat every call
+local raidUnit, raidUnitPet = {}, {}
+local partyUnit, partyUnitPet = {}, {}
+for i=1, MAX_RAID_MEMBERS do
+    raidUnit[i] = "raid" .. i
+    raidUnitPet[i] = "raidpet" .. i
+end
+for i=1, MAX_PARTY_MEMBERS do
+    partyUnit[i] = "party" .. i
+    partyUnitPet[i] = "partypet" .. i
+end
 
 function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
                                  petOwner)
@@ -79,13 +90,15 @@ function addon:InGroupWith(guid)
         return true, nil
     elseif strsplit("-", guid) == 'Pet' then
         return self:IsPetOwnerInRaid(guid)
-    elseif IsInRaid() then
-        for i = 1, GetNumGroupMembers() do
-            if guid == UnitGUID("Raid" .. i) then return true, nil end
-        end
     elseif IsInGroup() then
-        for i = 1, GetNumGroupMembers() do
-            if guid == UnitGUID("Party" .. i) then return true, nil end
+        if not IsInRaid() then
+            for i = 1, GetNumSubgroupMembers() do
+                if guid == UnitGUID(partyUnit[i]) then return true, nil end
+            end
+        else
+            for i = 1, GetNumGroupMembers() do
+                if guid == UnitGUID(partyUnit[i]) then return true, nil end
+            end
         end
     end
 end
@@ -94,13 +107,15 @@ function addon:IsLeaderInGroup()
     local leader = self.cluster.lead
     if self.playerName == leader then
         return true
-    elseif IsInRaid() then
-        for i = 1, GetNumGroupMembers() do
-            if leader == UnitName("Raid" .. i) then return true end
-        end
     elseif IsInGroup() then
-        for i = 1, GetNumGroupMembers() do
-            if leader == UnitName("Party" .. i) then return true end
+        if not IsInRaid() then
+            for i = 1, GetNumSubgroupMembers() do
+                if leader == UnitName(raidUnit[i]) then return true end
+            end
+        else
+            for i = 1, GetNumGroupMembers() do
+                if leader == UnitName(partyUnit[i]) then return true end
+            end
         end
     end
 end
@@ -140,49 +155,57 @@ end
 function addon:IsPetOwnerInRaid(petGuid)
     local petUID = self:GetUID(petGuid)
 
-    local ownerId, ownerName = nil, nil
+    if petGuid == UnitGUID("pet") then
+        self.db.profile.petOwnerCache[petUID] = self.db.profile.petOwnerCache[petUID] or {
+            OwnerName = self.playerName,
+            OwnerGUID = self.playerGUID
+        }
+        return true, self.db.profile.petOwnerCache[petUID]
+    end
+    local _, ownerId, ownerName, groupPetId
 
     if self.db.profile.petOwnerCache[petUID] ~= nil then
+        -- :InGroupWith() calls :IsPetOwnerInRaid make sure we never infinite recurse?
         local isInGroup, _ = self:InGroupWith(
             self.db.profile.petOwnerCache[petUID].OwnerGUID)
 
         return isInGroup, self.db.profile.petOwnerCache[petUID]
     end
 
-    if petGuid == UnitGUID("pet") then
-        self.db.profile.petOwnerCache[petUID] = {
-            OwnerName = self.playerName,
-            OwnerGUID = self.playerGUID
-        }
-
-        return true, self.db.profile.petOwnerCache[petUID]
-    elseif IsInRaid() then
-        for i = 1, GetNumGroupMembers() do
-            if petGuid == UnitGUID("RaidPet" .. i) then
-                ownerId = UnitGUID("Raid" .. i)
+    if IsInGroup() then
+        if not IsInRaid() then
+            for i = 1, GetNumSubgroupMembers() do
+                groupPetId = UnitGUID(partyUnitPet[i])
+                if not groupPetId then break end
+                if petGuid ~= groupPetId then break end
+                ownerId = UnitGUID(partyUnit[i])
                 if not ownerId then break end
+                if petGuid == groupPetId then
+                    _, _, _, _, _, ownerName, _ = GetPlayerInfoByGUID(ownerId)
 
-                _, _, _, _, _, ownerName, _ = GetPlayerInfoByGUID(ownerId)
-
-                self.db.profile.petOwnerCache[petUID] = {
-                    OwnerName = ownerName,
-                    OwnerGUID = ownerId
-                }
-                return true, self.db.profile.petOwnerCache[petUID]
+                    self.db.profile.petOwnerCache[petUID] = {
+                        OwnerName = ownerName,
+                        OwnerGUID = ownerId
+                    }
+                    return true, self.db.profile.petOwnerCache[petUID]
+                end
             end
-        end
-    elseif IsInGroup() then
-        for i = 1, GetNumGroupMembers() do
-            if petGuid == UnitGUID("PartyPet" .. i) then
-                ownerId = UnitGUID("Party" .. i)
+        else
+            for i = 1, GetNumGroupMembers() do
+                groupPetId = UnitGUID(raidUnitPet[i])
+                if not groupPetId then break end
+                if petGuid ~= groupPetId then break end
+                ownerId = UnitGUID(raidUnit[i])
                 if not ownerId then break end
-                _, _, _, _, _, ownerName, _ = GetPlayerInfoByGUID(ownerId)
+                if petGuid == groupPetId then
+                    _, _, _, _, _, ownerName, _ = GetPlayerInfoByGUID(ownerId)
 
-                self.db.profile.petOwnerCache[petUID] = {
-                    OwnerName = ownerName,
-                    OwnerGUID = ownerId
-                }
-                return true, self.db.profile.petOwnerCache[petUID]
+                    self.db.profile.petOwnerCache[petUID] = {
+                        OwnerName = ownerName,
+                        OwnerGUID = ownerId
+                    }
+                    return true, self.db.profile.petOwnerCache[petUID]
+                end
             end
         end
     end
