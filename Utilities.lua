@@ -90,16 +90,8 @@ function addon:InGroupWith(guid)
         return true, nil
     elseif strsplit("-", guid) == 'Pet' then
         return self:IsPetOwnerInRaid(guid)
-    elseif IsInGroup() then
-        if not IsInRaid() then
-            for i = 1, GetNumSubgroupMembers() do
-                if guid == UnitGUID(partyUnit[i]) then return true, nil end
-            end
-        else
-            for i = 1, GetNumGroupMembers() do
-                if guid == UnitGUID(raidUnit[i]) then return true, nil end
-            end
-        end
+    elseif IsInRaid() or IsInGroup() then
+        return IsGUIDInGroup(guid)
     end
 end
 
