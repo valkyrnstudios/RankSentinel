@@ -3,7 +3,7 @@ local addonName, RankSentinel = ...
 local addon = LibStub("AceAddon-3.0"):NewAddon(RankSentinel, addonName,
     "AceEvent-3.0", "AceComm-3.0")
 
-local fmt, after = string.format, C_Timer.After
+local fmt, after, unpack = string.format, C_Timer.After, unpack
 local UnitInBattleground, CombatLogGetCurrentEventInfo, SendChatMessage = UnitInBattleground,
     CombatLogGetCurrentEventInfo, SendChatMessage
 local HasFullControl, UnitIsPossessed, UnitIsCharmed, UnitIsEnemy = HasFullControl, UnitIsPossessed, UnitIsCharmed,
@@ -50,12 +50,14 @@ function addon:OnInitialize()
 end
 
 function addon:OnEnable()
-    addon.cleuParser = CreateFrame("Frame")
+    if not addon.cleuParser then  -- re-use if someone did /disable /enable
+        addon.cleuParser = CreateFrame("Frame")
+        addon.cleuParser.OnEvent = function(frame, event, ...)
+            addon.COMBAT_LOG_EVENT_UNFILTERED(addon,event,...) -- make sure we get a proper 'self'
+        end
+        addon.cleuParser:SetScript("OnEvent", addon.cleuParser.OnEvent)
+    end
     addon.cleuParser:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-    addon.cleuParser:SetScript("OnEvent", function()
-        addon:COMBAT_LOG_EVENT_UNFILTERED()
-    end)
-
     self:RegisterEvent("PLAYER_ENTERING_WORLD")
     self:RegisterEvent("PLAYER_REGEN_ENABLED", function()
         after(5, function() self:ProcessQueuedNotifications() end)
@@ -90,48 +92,43 @@ function addon:OnEnable()
     end
 end
 
-function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
-    if not self.db.profile.enable or UnitInBattleground("player") ~= nil then
-        return
-    end
+function addon:COMBAT_LOG_EVENT_UNFILTERED(event,...)
+    if not self.db.profile.enable then return end
+    if UnitInBattleground("player") ~= nil then return end
 
     local _, subevent, _, sourceGUID, sourceName, _, _, _, destName, _, _,
     spellID, spellName = CombatLogGetCurrentEventInfo()
-
+    -- bail out early for trivial cases (lookups before function calls, wide checks to narrow)
+    if subevent ~= "SPELL_CAST_SUCCESS" then return end
     if sourceName == nil then return end
-
-    if subevent ~= "SPELL_CAST_SUCCESS" or
-        self.db.profile.ignoredPlayers[sourceGUID] ~= nil or
-        self.AbilityData[spellID] == nil or not HasFullControl() or
-        UnitIsPossessed(sourceName) or UnitIsCharmed(sourceName) or
-        UnitIsEnemy("Player", sourceName) then return end
+    if self.AbilityData[spellID] == nil then return end
+    if self.db.profile.ignoredPlayers[sourceGUID] ~= nil then return end
+    if UnitIsPossessed(sourceName) then return end
+    if UnitIsCharmed(sourceName) then return end
+    if sourceGUID == self.playerGUID and not HasFullControl() then return end
+    if UnitIsEnemy("player", sourceName) then return end
 
     local isInGroup, petOwner = self:InGroupWith(sourceGUID)
-
     if not isInGroup then return end
 
     local castLevel = UnitLevel(sourceName)
-
     if self.db.profile.onlyMaxLevel and castLevel < addon.MaxLevel then
-        return true
+        return
     end
-
-    local playerSpellIndex = fmt("%s-%s-%s", self:GetUID(sourceGUID), castLevel,
-        spellID)
-
-    if self.db.profile.announcedSpells[playerSpellIndex] ~= nil and
-        self.session.Report[playerSpellIndex] ~= nil and
-        not self.db.profile.debug then return end
 
     -- Ignore ranks when mana < 25%
     if UnitPowerType(sourceName) == Enum.PowerType.Mana and
         UnitPower(sourceName) / UnitPowerMax(sourceName) < 0.25 then return end
 
     local targetLevel = destName and UnitLevel(destName) or 0
-
     local isMax, nextRankLevel = self:IsMaxRank(spellID, castLevel, targetLevel)
-
     if isMax or not nextRankLevel or nextRankLevel <= 0 then return end
+
+    local playerSpellIndex = fmt("%s-%s-%s", self:GetUID(sourceGUID), castLevel,
+        spellID)
+    if self.db.profile.announcedSpells[playerSpellIndex] ~= nil and not self.db.profile.debug then
+        return
+    end
 
     if petOwner then
         self:UpdateSessionReport(playerSpellIndex, fmt("%s (%s)", sourceName,
@@ -141,8 +138,6 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(...)
         self:UpdateSessionReport(playerSpellIndex, sourceName, spellName,
             spellID)
     end
-
-    if self.db.profile.announcedSpells[playerSpellIndex] ~= nil then return end
 
     local notification, target, ability =
     self:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
@@ -168,15 +163,15 @@ function addon:ChatCommand(cmd)
         self:ClearCache()
     elseif msg == "debug" then
         self.db.profile.debug = not self.db.profile.debug
-        self:PrintMessage("%s = %s", _G.BINDING_HEADER_DEBUG,
+        self:PrintMessage("%s = %s", self.L["Debug"],
             tostring(self.db.profile.debug))
     elseif msg == "whisper" then
         self.db.profile.whisper = not self.db.profile.whisper
-        self:PrintMessage("%s = %s", _G.WHISPER,
+        self:PrintMessage("%s = %s", self.L["Whisper"],
             tostring(self.db.profile.whisper))
     elseif msg == "enable" then
         self.db.profile.enable = not self.db.profile.enable
-        self:PrintMessage("%s = %s", _G.ENABLE,
+        self:PrintMessage("%s = %s", self.L["Enable"],
             tostring(self.db.profile.enable))
     elseif msg == "lead" then
         self.cluster.lead = self.playerName
@@ -262,8 +257,10 @@ function addon:IsMaxRank(spellID, casterLevel, targetLevel)
 
     if self.db.profile.isMaxRank[lookup_key] ~= nil and
         not self.db.profile.debug then
-
-        return self.db.profile.isMaxRank[lookup_key]
+        -- this as a boolean would only work for isMax == true where the 2nd argument is discarded
+        -- it fails for isMax == false in the caller because `nextRankLevel` would show up as nil
+        -- ClearCache should take care of old boolean entries if we up the version.
+        return unpack(self.db.profile.isMaxRank[lookup_key])
     end
 
     local abilityData = addon.AbilityData[spellID]
@@ -276,7 +273,7 @@ function addon:IsMaxRank(spellID, casterLevel, targetLevel)
             self:PrintMessage("Caching max rank %s", lookup_key)
         end
 
-        self.db.profile.isMaxRank[lookup_key] = true
+        self.db.profile.isMaxRank[lookup_key] = {true}
 
         return true
     end
@@ -288,7 +285,7 @@ function addon:IsMaxRank(spellID, casterLevel, targetLevel)
 
     -- Above logic assumes no ranks are excluded, breaks for Arcane Explosion at least
     -- If rank not the index, find proper rank
-    if nextRankData == nil or nextRankData.Rank ~= abilityData.Rank + 1 then
+    if nextRankData == nil or (nextRankData.Rank ~= (abilityData.Rank + 1)) then
         if self.db.profile.debug then
             self:PrintMessage("Mismatching indices next rank (%d), performing search",
                 abilityData["Rank"] + 1)
@@ -298,7 +295,7 @@ function addon:IsMaxRank(spellID, casterLevel, targetLevel)
             nextRankID = checkedSpellID
             nextRankData = addon.AbilityData[checkedSpellID]
 
-            if abilityData.Rank + 1 == nextRankData.Rank then
+            if (abilityData.Rank + 1) == nextRankData.Rank then
                 if self.db.profile.debug then
                     self:PrintMessage("Found proper next rank (%d) for %s",
                         nextRankData.Rank, nextRankID)
@@ -325,7 +322,7 @@ function addon:IsMaxRank(spellID, casterLevel, targetLevel)
             tostring(isMax))
     end
 
-    self.db.profile.isMaxRank[lookup_key] = isMax
+    self.db.profile.isMaxRank[lookup_key] = {isMax, nextRankData.Level}
 
     return isMax, nextRankData.Level
 end
