@@ -2,18 +2,19 @@ local addonName, addon = ...
 
 local fmt, strsplit, ssub, print = string.format, strsplit, string.sub, print
 local pairs, tinsert = pairs, table.insert
-local GetSpellLink, UnitGUID, GetNumGroupMembers, GetNumSubgroupMembers, GetPlayerInfoByGUID = GetSpellLink, UnitGUID, GetNumGroupMembers, GetNumSubgroupMembers, GetPlayerInfoByGUID
+local GetSpellLink, UnitGUID, GetNumGroupMembers, GetNumSubgroupMembers, GetPlayerInfoByGUID = GetSpellLink, UnitGUID,
+    GetNumGroupMembers, GetNumSubgroupMembers, GetPlayerInfoByGUID
 local IsInRaid, IsInGroup = IsInRaid, IsInGroup
 local _G = _G
 
 -- cache relevant unitids once so we don't do concat every call
 local raidUnit, raidUnitPet = {}, {}
 local partyUnit, partyUnitPet = {}, {}
-for i=1, MAX_RAID_MEMBERS do
+for i = 1, _G.MAX_RAID_MEMBERS do
     raidUnit[i] = "raid" .. i
     raidUnitPet[i] = "raidpet" .. i
 end
-for i=1, MAX_PARTY_MEMBERS do
+for i = 1, _G.MAX_PARTY_MEMBERS do
     partyUnit[i] = "party" .. i
     partyUnitPet[i] = "partypet" .. i
 end
