@@ -38,8 +38,8 @@ function addon:OnInitialize()
 
     self:SetNotificationFlavor(self.db.profile.notificationFlavor)
 
-    self.playerGUID = UnitGUID("Player")
-    self.playerName = UnitName("Player")
+    self.playerGUID = UnitGUID("player")
+    self.playerName = UnitName("player")
 
     SLASH_RankSentinel1 = "/" .. string.lower(addonName)
     SLASH_RankSentinel2 = "/sentinel"
@@ -50,10 +50,10 @@ function addon:OnInitialize()
 end
 
 function addon:OnEnable()
-    if not addon.cleuParser then  -- re-use if someone did /disable /enable
+    if not addon.cleuParser then -- re-use if someone did /disable /enable
         addon.cleuParser = CreateFrame("Frame")
         addon.cleuParser.OnEvent = function(frame, event, ...)
-            addon.COMBAT_LOG_EVENT_UNFILTERED(addon,event,...) -- make sure we get a proper 'self'
+            addon.COMBAT_LOG_EVENT_UNFILTERED(addon, event, ...) -- make sure we get a proper 'self'
         end
         addon.cleuParser:SetScript("OnEvent", addon.cleuParser.OnEvent)
     end
@@ -92,7 +92,7 @@ function addon:OnEnable()
     end
 end
 
-function addon:COMBAT_LOG_EVENT_UNFILTERED(event,...)
+function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
     if not self.db.profile.enable then return end
     if UnitInBattleground("player") ~= nil then return end
 
@@ -273,7 +273,7 @@ function addon:IsMaxRank(spellID, casterLevel, targetLevel)
             self:PrintMessage("Caching max rank %s", lookup_key)
         end
 
-        self.db.profile.isMaxRank[lookup_key] = {true}
+        self.db.profile.isMaxRank[lookup_key] = { true }
 
         return true
     end
@@ -322,7 +322,7 @@ function addon:IsMaxRank(spellID, casterLevel, targetLevel)
             tostring(isMax))
     end
 
-    self.db.profile.isMaxRank[lookup_key] = {isMax, nextRankData.Level}
+    self.db.profile.isMaxRank[lookup_key] = { isMax, nextRankData.Level }
 
     return isMax, nextRankData.Level
 end
