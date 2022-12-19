@@ -4,7 +4,7 @@ local fmt, strsplit, ssub, print = string.format, strsplit, string.sub, print
 local pairs, tinsert = pairs, table.insert
 local GetSpellLink, UnitGUID, GetNumGroupMembers, GetNumSubgroupMembers, GetPlayerInfoByGUID = GetSpellLink, UnitGUID,
     GetNumGroupMembers, GetNumSubgroupMembers, GetPlayerInfoByGUID
-local IsInRaid, IsInGroup = IsInRaid, IsInGroup
+local IsInRaid, IsInGroup, IsGUIDInGroup = IsInRaid, IsInGroup, IsGUIDInGroup
 local _G = _G
 
 -- cache relevant unitids once so we don't do concat every call
@@ -91,7 +91,7 @@ function addon:InGroupWith(guid)
         return true, nil
     elseif strsplit("-", guid) == 'Pet' then
         return self:IsPetOwnerInRaid(guid)
-    elseif IsInRaid() or IsInGroup() then
+    elseif GetNumGroupMembers() > 1 then
         return IsGUIDInGroup(guid)
     end
 end
