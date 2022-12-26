@@ -306,6 +306,11 @@ function addon:UpgradeProfile()
     elseif self.db.profile.dbVersion ~= addon.Version and addon.Version ~=
         'v0.0.0' then
         self:PrintMessage(self.L["Utilities"].Upgrade)
+        if not self.db.profile.latestVersion then
+            -- Re-enable automatically disabled version
+            self.db.profile.enabled = true
+        end
+        self.db.profile.latestVersion = true
         self:ClearCache()
     end
 

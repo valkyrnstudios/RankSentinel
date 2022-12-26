@@ -30,7 +30,8 @@ function addon:OnInitialize()
             isMaxRank = {},
             petOwnerCache = {},
             dbVersion = 'v0.0.0',
-            notificationFlavor = "default"
+            notificationFlavor = "default",
+            latestVersion = true
         }
     }
 
@@ -50,6 +51,18 @@ function addon:OnInitialize()
 end
 
 function addon:OnEnable()
+    self:UpgradeProfile()
+    self:InitializeSession()
+    self:BuildOptionsPanel()
+
+    self:RegisterComm(self._commPrefix)
+
+    if not self.db.profile.latestVersion then
+        self:PrintMessage("Outdated version, functionality disabled") -- TODO locale
+        self.db.profile.enabled = false
+        return
+    end
+
     if not addon.cleuParser then -- re-use if someone did /disable /enable
         addon.cleuParser = CreateFrame("Frame")
         addon.cleuParser.OnEvent = function(frame, event, ...)
@@ -75,14 +88,9 @@ function addon:OnEnable()
     self:RegisterEvent("GROUP_JOINED")
     self:RegisterEvent("GROUP_ROSTER_UPDATE")
 
-    self:RegisterComm(self._commPrefix)
     self:ResetLead()
 
     self:PrintMessage("Loaded %s", self.Version)
-
-    self:UpgradeProfile()
-    self:InitializeSession()
-    self:BuildOptionsPanel()
 
     self.db.profile.dbVersion = self.Version
 
