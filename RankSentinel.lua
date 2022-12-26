@@ -31,7 +31,7 @@ function addon:OnInitialize()
             petOwnerCache = {},
             dbVersion = 'v0.0.0',
             notificationFlavor = "default",
-            latestVersion = true
+            isLatestVersion = true
         }
     }
 
@@ -57,7 +57,7 @@ function addon:OnEnable()
 
     self:RegisterComm(self._commPrefix)
 
-    if not self.db.profile.latestVersion then
+    if not self.db.profile.isLatestVersion then
         self:PrintMessage("Outdated version, functionality disabled") -- TODO locale
         self.db.profile.enabled = false
         return

@@ -26,7 +26,7 @@ function addon:OnCommReceived(prefix, message, _, sender)
         self:IsNewRelease(intVersion, name)
 
         if self.db.profile.debug or addon.Version == 'v9.9.9' then
-            self:PrintMessage("Lead taken by " .. data)
+            self:PrintMessage("Lead taken by " .. name)
         end
     elseif command == 'JOIN' then
         self:SendCommMessage(addon._commPrefix,
@@ -75,7 +75,7 @@ function addon:ResetLead() self.cluster = { lead = self.playerName } end
 
 function addon:SetLead(playerName)
     if not self.db.profile.enable or not self.db.profile.whisper or playerName ==
-        nil or UnitInBattleground("player") ~= nil or not self.db.profile.latestVersion then
+        nil or UnitInBattleground("player") ~= nil or not self.db.profile.isLatestVersion then
         return
     end
 
@@ -130,7 +130,6 @@ function addon:PLAYER_ENTERING_WORLD(_, isInitialLogin, isReloadingUi)
     }
 
     self:SetLead(self.playerName)
-
 end
 
 function addon:GROUP_LEFT()
@@ -155,12 +154,13 @@ function addon:GROUP_ROSTER_UPDATE()
 end
 
 function addon:IsNewRelease(theirIntRelease, name)
+    theirIntRelease = tonumber(theirIntRelease)
     -- Treat Development announcements as equal to current
-    if theirIntRelease == '999' then
+    if theirIntRelease == 999 then
         return false
-    elseif addon.Version == 'v9.9.9' then
+    elseif addon.Version == 'v9.9.9' or not theirIntRelease then
         if self.db.profile.debug then
-            self.PrintMessage("%s:theirIntRelease = %s", name, theirIntRelease)
+            self.PrintMessage("%s:theirIntRelease = %s", name, theirIntRelease or 'nil')
         end
         return false
     end
