@@ -165,7 +165,7 @@ function addon:IsNewRelease(theirIntRelease, name)
         return false
     end
 
-    -- Failed to parse version
+    -- Failed to parse version or older version
     if addon.release.int == 0 or theirIntRelease == 0 then return false end
 
     return addon.release.int < theirIntRelease
