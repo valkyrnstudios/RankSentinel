@@ -86,7 +86,8 @@ L["Utilities"] = {
         ["Error"] = "Must target a unit",
         ["Ignored"] = "Ignored: %s",
         ["Unignored"] = "Unignored: %s"
-    }
+    },
+    ["Outdated"] = "Outdated version, functionality disabled"
 }
 
 L["ChatCommand"] = {

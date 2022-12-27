@@ -13,6 +13,9 @@ local UnitPowerType, UnitPower, UnitPowerMax, UnitLevel = UnitPowerType, UnitPow
 addon.Version = GetAddOnMetadata(addonName, "Version")
 addon.MaxLevel = _G.GetMaxPlayerLevel()
 
+addon.playerGUID = UnitGUID("player")
+addon.playerName = UnitName("player")
+
 if string.match(addon.Version, 'project') then addon.Version = 'v9.9.9' end
 
 addon._commPrefix = string.upper(addonName)
@@ -39,9 +42,6 @@ function addon:OnInitialize()
 
     self:SetNotificationFlavor(self.db.profile.notificationFlavor)
 
-    self.playerGUID = UnitGUID("player")
-    self.playerName = UnitName("player")
-
     SLASH_RankSentinel1 = "/" .. string.lower(addonName)
     SLASH_RankSentinel2 = "/sentinel"
 
@@ -58,7 +58,7 @@ function addon:OnEnable()
     self:RegisterComm(self._commPrefix)
 
     if not self.db.profile.isLatestVersion then
-        self:PrintMessage("Outdated version, functionality disabled") -- TODO locale
+        self:PrintMessage(self.L["Utilities"]["Outdated"])
         self.db.profile.enabled = false
         return
     end

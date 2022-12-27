@@ -1,10 +1,10 @@
 local _, addon = ...
 
-local fmt, smatch, strsplit, tsort, tinsert, sbyte = string.format, string.match, strsplit, table.sort, table.insert,
-    string.byte
+local fmt, smatch, strsplit, tsort, tinsert = string.format, string.match, strsplit, table.sort, table.insert
 local UnitInBattleground = UnitInBattleground
 
 addon.release = nil
+addon.cluster = { lead = addon.playerName }
 
 function addon:OnCommReceived(prefix, message, _, sender)
     if prefix ~= addon._commPrefix or sender == self.playerName then return end
