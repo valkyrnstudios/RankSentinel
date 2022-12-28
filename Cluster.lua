@@ -159,8 +159,8 @@ function addon:IsNewRelease(theirIntRelease, name)
     if theirIntRelease == 999 then
         return false
     elseif addon.Version == 'v9.9.9' or not theirIntRelease then
-        if self.db.profile.debug then
-            self.PrintMessage("%s:theirIntRelease = %s", name, theirIntRelease or 'nil')
+        if self.db.profile.debug or addon.Version == 'v9.9.9' then
+            self:PrintMessage("%s:theirIntRelease = %s", name, theirIntRelease or 'nil')
         end
         return false
     end
