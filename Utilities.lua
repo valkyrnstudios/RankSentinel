@@ -306,6 +306,11 @@ function addon:UpgradeProfile()
     elseif self.db.profile.dbVersion ~= addon.Version and addon.Version ~=
         'v0.0.0' then
         self:PrintMessage(self.L["Utilities"].Upgrade)
+        if not self.db.profile.isLatestVersion then
+            -- Re-enable automatically disabled version
+            self.db.profile.enabled = true
+        end
+        self.db.profile.isLatestVersion = true
         self:ClearCache()
     end
 
@@ -329,7 +334,10 @@ function addon:BuildOptionsPanel()
 
     local optionsTable = {
         type = "group",
-        name = fmt("%s - %s", self.L[addonName], addon.Version),
+        name = function()
+            return fmt("%s - %s%s", self.L[addonName], addon.Version,
+                self.db.profile.isLatestVersion and '' or (' - ' .. self.L["Utilities"]["Outdated"]))
+        end,
         get = GetProfileOption,
         set = SetProfileOption,
         args = {
@@ -361,6 +369,9 @@ function addon:BuildOptionsPanel()
                 type = "toggle",
                 width = optionsWidth,
                 order = 1.1,
+                disabled = function()
+                    return not self.db.profile.isLatestVersion
+                end
             },
             whisper = {
                 name = _G.WHISPER,

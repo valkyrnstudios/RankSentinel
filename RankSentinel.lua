@@ -13,6 +13,9 @@ local UnitPowerType, UnitPower, UnitPowerMax, UnitLevel = UnitPowerType, UnitPow
 addon.Version = GetAddOnMetadata(addonName, "Version")
 addon.MaxLevel = _G.GetMaxPlayerLevel()
 
+addon.playerGUID = UnitGUID("player")
+addon.playerName = UnitName("player")
+
 if string.match(addon.Version, 'project') then addon.Version = 'v9.9.9' end
 
 addon._commPrefix = string.upper(addonName)
@@ -30,16 +33,14 @@ function addon:OnInitialize()
             isMaxRank = {},
             petOwnerCache = {},
             dbVersion = 'v0.0.0',
-            notificationFlavor = "default"
+            notificationFlavor = "default",
+            isLatestVersion = true
         }
     }
 
     self.db = LibStub("AceDB-3.0"):New("RankSentinelDB", defaults)
 
     self:SetNotificationFlavor(self.db.profile.notificationFlavor)
-
-    self.playerGUID = UnitGUID("player")
-    self.playerName = UnitName("player")
 
     SLASH_RankSentinel1 = "/" .. string.lower(addonName)
     SLASH_RankSentinel2 = "/sentinel"
@@ -50,6 +51,18 @@ function addon:OnInitialize()
 end
 
 function addon:OnEnable()
+    self:UpgradeProfile()
+    self:InitializeSession()
+    self:BuildOptionsPanel()
+
+    self:RegisterComm(self._commPrefix)
+
+    if not self.db.profile.isLatestVersion then
+        self:PrintMessage(self.L["Utilities"]["Outdated"])
+        self.db.profile.enabled = false
+        return
+    end
+
     if not addon.cleuParser then -- re-use if someone did /disable /enable
         addon.cleuParser = CreateFrame("Frame")
         addon.cleuParser.OnEvent = function(frame, event, ...)
@@ -75,14 +88,9 @@ function addon:OnEnable()
     self:RegisterEvent("GROUP_JOINED")
     self:RegisterEvent("GROUP_ROSTER_UPDATE")
 
-    self:RegisterComm(self._commPrefix)
     self:ResetLead()
 
     self:PrintMessage("Loaded %s", self.Version)
-
-    self:UpgradeProfile()
-    self:InitializeSession()
-    self:BuildOptionsPanel()
 
     self.db.profile.dbVersion = self.Version
 
