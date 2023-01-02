@@ -440,7 +440,7 @@ function addon:BuildOptionsPanel()
                 order = 3.2,
                 func = function()
                     self.cluster.lead = self.playerName
-                    self:SetLead(self.playerName)
+                    self:BroadcastLead(self.playerName)
                 end,
                 disabled = function()
                     return self.playerName == self.cluster.lead

@@ -183,7 +183,7 @@ function addon:ChatCommand(cmd)
             tostring(self.db.profile.enable))
     elseif msg == "lead" then
         self.cluster.lead = self.playerName
-        self:SetLead(self.playerName)
+        self:BroadcastLead(self.playerName)
         self:PrintLead()
     elseif msg == "ignore" then
         if UnitExists("target") then

@@ -23,12 +23,16 @@ function addon:OnCommReceived(prefix, message, _, sender)
         local name, intVersion = strsplit(",", data)
         self.cluster.lead = name
 
-        self:IsNewRelease(intVersion, name)
+        self:CheckRelease(intVersion, name)
 
         if self.db.profile.debug or addon.Version == 'v9.9.9' then
             self:PrintMessage("Lead taken by " .. name)
         end
     elseif command == 'JOIN' then
+        local name, intVersion = strsplit(",", data)
+
+        self:CheckRelease(intVersion, name)
+
         self:SendCommMessage(addon._commPrefix,
             fmt('LEAD|%s,%d', self.cluster.lead, addon.release.int),
             "WHISPER", sender)
@@ -73,13 +77,13 @@ end
 
 function addon:ResetLead() self.cluster = { lead = self.playerName } end
 
-function addon:SetLead(playerName)
-    if not self.db.profile.enable or not self.db.profile.whisper or playerName ==
-        nil or UnitInBattleground("player") ~= nil or not self.db.profile.isLatestVersion then
+function addon:BroadcastLead(playerName)
+    if not self.db.profile.enable or not self.db.profile.whisper or not playerName or UnitInBattleground("player") ~= nil
+        or not self.db.profile.isLatestVersion then
         return
     end
 
-    self:Broadcast("LEAD", playerName)
+    self:Broadcast('LEAD', fmt('%s,%d', playerName, addon.release.int))
 end
 
 function addon:SyncBroadcast(array, index)
@@ -129,16 +133,17 @@ function addon:PLAYER_ENTERING_WORLD(_, isInitialLogin, isReloadingUi)
         int = tonumber(fmt('%d%d%d', major, minor, patch))
     }
 
-    self:SetLead(self.playerName)
+    self:BroadcastLead(self.playerName)
 end
 
 function addon:GROUP_LEFT()
-    self:SetLead(self.playerName)
+    self:BroadcastLead(self.playerName)
     self:InitializeSession()
 end
 
 function addon:GROUP_JOINED()
-    self:Broadcast("JOIN", fmt("%s,%s", self.playerName, addon.release.int))
+    --TODO delay, happens too early
+    self:Broadcast("JOIN", fmt("%s,%d", self.playerName, addon.release.int))
     self:InitializeSession()
 end
 
@@ -149,24 +154,26 @@ function addon:GROUP_ROSTER_UPDATE()
         end
 
         self.cluster.lead = self.playerName
-        self:SetLead(self.playerName)
+        self:BroadcastLead(self.playerName)
     end
 end
 
-function addon:IsNewRelease(theirIntRelease, name)
+function addon:CheckRelease(theirIntRelease, name)
     theirIntRelease = tonumber(theirIntRelease)
+    if self.db.profile.debug or addon.Version == 'v9.9.9' then
+        self:PrintMessage("%s:theirIntRelease = %s", name, theirIntRelease or 'nil')
+    end
+
     -- Treat Development announcements as equal to current
-    if theirIntRelease == 999 then
-        return false
-    elseif addon.Version == 'v9.9.9' or not theirIntRelease then
-        if self.db.profile.debug or addon.Version == 'v9.9.9' then
-            self:PrintMessage("%s:theirIntRelease = %s", name, theirIntRelease or 'nil')
-        end
-        return false
+    if theirIntRelease == 999 or addon.Version == 'v9.9.9' or not theirIntRelease then
+        return
     end
 
     -- Failed to parse version or older version
-    if addon.release.int == 0 or theirIntRelease == 0 then return false end
+    if addon.release.int == 0 or theirIntRelease == 0 then return end
 
-    return addon.release.int < theirIntRelease
+    if addon.release.int < theirIntRelease then
+        self:PrintMessage(self.L["Utilities"]["NewVersion"])
+        return true
+    end
 end
