@@ -370,7 +370,7 @@ function addon:BuildOptionsPanel()
                 width = optionsWidth,
                 order = 1.1,
                 set = function(_, value)
-                    self.session.enable = value
+                    self.db.profile.enable = value
 
                     if value then
                         self:Broadcast("JOIN", fmt("%s,%d", self.playerName, addon.release.int))
