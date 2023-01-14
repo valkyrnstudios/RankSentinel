@@ -369,6 +369,13 @@ function addon:BuildOptionsPanel()
                 type = "toggle",
                 width = optionsWidth,
                 order = 1.1,
+                set = function(_, value)
+                    self.session.enable = value
+
+                    if value then
+                        self:Broadcast("JOIN", fmt("%s,%d", self.playerName, addon.release.int))
+                    end
+                end,
                 disabled = function()
                     return not self.db.profile.isLatestVersion
                 end

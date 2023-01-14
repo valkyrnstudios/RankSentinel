@@ -181,6 +181,9 @@ function addon:ChatCommand(cmd)
         self.db.profile.enable = not self.db.profile.enable
         self:PrintMessage("%s = %s", self.L["Enable"],
             tostring(self.db.profile.enable))
+        if self.db.profile.enable then
+            self:Broadcast("JOIN", fmt("%s,%d", self.playerName, addon.release.int))
+        end
     elseif msg == "lead" then
         self.cluster.lead = self.playerName
         self:BroadcastLead(self.playerName)
