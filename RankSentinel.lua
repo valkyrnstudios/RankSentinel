@@ -124,6 +124,14 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
         return
     end
 
+    local uid = self:GetUID(sourceGUID)
+
+    -- Only notify once per ability group
+    local abilityGroupIndex = fmt("%s-%d", uid, addon.AbilityData[spellID].AbilityGroup)
+    if self.session.PlayerGroupsNotified[abilityGroupIndex] ~= nil and not self.db.profile.debug then
+        return
+    end
+
     -- Ignore ranks when mana < 25%
     if UnitPowerType(sourceName) == Enum.PowerType.Mana and
         UnitPower(sourceName) / UnitPowerMax(sourceName) < 0.25 then return end
@@ -132,8 +140,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
     local isMax, nextRankLevel = self:IsMaxRank(spellID, castLevel, targetLevel)
     if isMax or not nextRankLevel or nextRankLevel <= 0 then return end
 
-    local playerSpellIndex = fmt("%s-%s-%s", self:GetUID(sourceGUID), castLevel,
-        spellID)
+    local playerSpellIndex = fmt("%s-%s-%s", uid, castLevel, spellID)
     if self.db.profile.announcedSpells[playerSpellIndex] ~= nil and not self.db.profile.debug then
         return
     end
@@ -154,6 +161,8 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
     self:QueueNotification(notification, target, ability)
 
     self:RecordNotification(self.playerName, playerSpellIndex)
+
+    self.session.PlayerGroupsNotified[abilityGroupIndex] = true
 end
 
 function addon:ChatCommand(cmd)

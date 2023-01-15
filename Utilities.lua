@@ -119,6 +119,7 @@ function addon:InitializeSession()
         Report = {},
         UnsupportedComm = {},
         PlayersNotified = {},
+        PlayerGroupsNotified = {},
         announceTo = "self"
     }
 
