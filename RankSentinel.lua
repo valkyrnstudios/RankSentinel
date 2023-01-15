@@ -4,11 +4,11 @@ local addon = LibStub("AceAddon-3.0"):NewAddon(RankSentinel, addonName,
     "AceEvent-3.0", "AceComm-3.0")
 
 local fmt, after, unpack = string.format, C_Timer.After, unpack
-local UnitInBattleground, CombatLogGetCurrentEventInfo, SendChatMessage = UnitInBattleground,
-    CombatLogGetCurrentEventInfo, SendChatMessage
-local HasFullControl, UnitIsPossessed, UnitIsCharmed, UnitIsEnemy = HasFullControl, UnitIsPossessed, UnitIsCharmed,
-    UnitIsEnemy
-local UnitPowerType, UnitPower, UnitPowerMax, UnitLevel = UnitPowerType, UnitPower, UnitPowerMax, UnitLevel
+local UnitInBattleground, CombatLogGetCurrentEventInfo = UnitInBattleground,
+    CombatLogGetCurrentEventInfo
+local HasFullControl, UnitIsPossessed, UnitIsCharmed, UnitIsEnemy, UnitLevel = HasFullControl, UnitIsPossessed,
+    UnitIsCharmed,
+    UnitIsEnemy, UnitLevel
 
 addon.Version = GetAddOnMetadata(addonName, "Version")
 addon.MaxLevel = _G.GetMaxPlayerLevel()
@@ -131,10 +131,6 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
     if self.session.PlayerGroupsNotified[abilityGroupIndex] ~= nil and not self.db.profile.debug then
         return
     end
-
-    -- Ignore ranks when mana < 25%
-    if UnitPowerType(sourceName) == Enum.PowerType.Mana and
-        UnitPower(sourceName) / UnitPowerMax(sourceName) < 0.25 then return end
 
     local targetLevel = destName and UnitLevel(destName) or 0
     local isMax, nextRankLevel = self:IsMaxRank(spellID, castLevel, targetLevel)
