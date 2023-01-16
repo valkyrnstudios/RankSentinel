@@ -136,6 +136,13 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
     local isMax, nextRankLevel = self:IsMaxRank(spellID, castLevel, targetLevel)
     if isMax or not nextRankLevel or nextRankLevel <= 0 then return end
 
+    if not self.session.PlayerLevelCache[uid] then
+        self.session.PlayerLevelCache[uid] = castLevel
+    elseif castLevel > self.session.PlayerLevelCache[uid] then
+        -- If downrank, don't notify on a new level up this session
+        return
+    end
+
     local playerSpellIndex = fmt("%s-%s-%s", uid, castLevel, spellID)
     if self.db.profile.announcedSpells[playerSpellIndex] ~= nil and not self.db.profile.debug then
         return

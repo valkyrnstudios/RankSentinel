@@ -120,7 +120,8 @@ function addon:InitializeSession()
         UnsupportedComm = {},
         PlayersNotified = {},
         PlayerGroupsNotified = {},
-        announceTo = "self"
+        announceTo = "self",
+        PlayerLevelCache = {}
     }
 
     if IsInRaid() then
