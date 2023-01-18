@@ -274,7 +274,7 @@ end
 function addon:IsMaxRank(spellID, casterLevel, targetLevel)
     -- UnitLevel(destName) returns 0 for non-party members
     -- Ignore casts with larger than 10 level differences
-    if targetLevel >= 1 and targetLevel < casterLevel - 10 then return true end
+    if targetLevel >= 1 and targetLevel < casterLevel - 8 then return true end
 
     local lookup_key = fmt('%s-%s', spellID, casterLevel)
 
