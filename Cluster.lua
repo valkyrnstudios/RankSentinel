@@ -23,6 +23,8 @@ function addon:OnCommReceived(prefix, message, _, sender)
         local name, intVersion = strsplit(",", data)
         self.cluster.lead = name
 
+        if name == self.playerName then return end
+
         self:CheckRelease(intVersion, name)
 
         if self.db.profile.debug or addon.Version == 'v9.9.9' then
