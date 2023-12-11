@@ -1,5 +1,4 @@
-## Interface: 30403
-## Interface-Wrath: 30403
+## Interface: 11500
 ## Interface-Classic: 11500
 ## Title: RankSentinel
 ## Version: @project-version@
@@ -26,7 +25,7 @@ locale\frFR.lua
 
 RankSentinel.lua
 
-AbilityData\Wrath.lua
+AbilityData\Classic.lua
 
 Cluster.lua
 Cache.lua
