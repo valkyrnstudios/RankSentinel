@@ -1,5 +1,4 @@
-## Interface: 11504
-## Interface-Classic: 11504
+## Interface: 11505
 ## Title: RankSentinel
 ## Version: @project-version@
 ## Author: SabreValkyrn
