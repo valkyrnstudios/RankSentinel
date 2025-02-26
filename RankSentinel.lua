@@ -4,19 +4,17 @@ local addon = LibStub("AceAddon-3.0"):NewAddon(RankSentinel, addonName,
     "AceEvent-3.0", "AceComm-3.0")
 
 local fmt, after, unpack = string.format, C_Timer.After, unpack
-local UnitInBattleground, CombatLogGetCurrentEventInfo = UnitInBattleground,
-    CombatLogGetCurrentEventInfo
+local UnitInBattleground, CombatLogGetCurrentEventInfo = UnitInBattleground, CombatLogGetCurrentEventInfo
 local HasFullControl, UnitIsPossessed, UnitIsCharmed, UnitIsEnemy, UnitLevel = HasFullControl, UnitIsPossessed,
-    UnitIsCharmed,
-    UnitIsEnemy, UnitLevel
+    UnitIsCharmed, UnitIsEnemy, UnitLevel
 
-addon.Version = GetAddOnMetadata(addonName, "Version")
+addon.Version = C_AddOns.GetAddOnMetadata(addonName, "Version")
 addon.MaxLevel = _G.GetMaxPlayerLevel()
 
 addon.playerGUID = UnitGUID("player")
 addon.playerName = UnitName("player")
 
-if string.match(addon.Version, 'project') then addon.Version = 'v9.9.9' end
+if not addon.Version or string.match(addon.Version, 'project') then addon.Version = 'v9.9.9' end
 
 addon._commPrefix = string.upper(addonName)
 
@@ -266,8 +264,9 @@ function addon:ChatCommand(cmd)
     elseif msg == "help" then
         self:PrintHelp(msg)
     else
-        _G.InterfaceOptionsFrame_OpenToCategory(addon.options)
-        _G.InterfaceOptionsFrame_OpenToCategory(addon.options)
+        local category = _G.Settings.GetCategory(addon.options.name)
+
+        _G.Settings.OpenToCategory(category.ID)
     end
 end
 
