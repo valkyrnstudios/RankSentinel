@@ -10,6 +10,7 @@ local _G = _G
 -- cache relevant unitids once so we don't do concat every call
 local raidUnit, raidUnitPet = {}, {}
 local partyUnit, partyUnitPet = {}, {}
+
 for i = 1, _G.MAX_RAID_MEMBERS do
     raidUnit[i] = "raid" .. i
     raidUnitPet[i] = "raidpet" .. i

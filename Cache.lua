@@ -1,8 +1,9 @@
 local _, addon = ...
 
 local pairs, InCombatLockdown, UnitIsDeadOrGhost, UnitAffectingCombat, SendChatMessage = pairs, InCombatLockdown,
-    UnitIsDeadOrGhost,
-    UnitAffectingCombat, SendChatMessage
+                                                                                         UnitIsDeadOrGhost,
+                                                                                         UnitAffectingCombat,
+                                                                                         SendChatMessage
 
 function addon:ClearCache()
     local count = self:CountCache(self.db.profile.announcedSpells)
@@ -25,8 +26,7 @@ function addon:CountCache(cache)
 end
 
 function addon:ProcessQueuedNotifications()
-    if #self.session.Queue == 0 or InCombatLockdown() or
-        UnitIsDeadOrGhost("player") then return end
+    if #self.session.Queue == 0 or InCombatLockdown() or UnitIsDeadOrGhost("player") then return end
 
     local notification = nil
     local retry = {}
@@ -40,15 +40,12 @@ function addon:ProcessQueuedNotifications()
             if UnitAffectingCombat(notification.target) then
                 retry[#retry + 1] = notification
             else
-                SendChatMessage(notification.message, "WHISPER", nil,
-                    notification.target)
+                SendChatMessage(notification.message, "WHISPER", nil, notification.target)
             end
         elseif self.playerName ~= self.cluster.lead then
-            self:PrintMessage("(%s) %s - %s", self.cluster.lead, notification.target,
-                notification.ability)
+            self:PrintMessage("(%s) %s - %s", self.cluster.lead, notification.target, notification.ability)
         else
-            self:PrintMessage("%s - %s", notification.target,
-                notification.ability)
+            self:PrintMessage("%s - %s", notification.target, notification.ability)
         end
     end
 
@@ -56,11 +53,7 @@ function addon:ProcessQueuedNotifications()
 end
 
 function addon:QueueNotification(message, target, ability)
-    self.session.Queue[#self.session.Queue + 1] = {
-        message = message,
-        target = target,
-        ability = ability
-    }
+    self.session.Queue[#self.session.Queue + 1] = {message = message, target = target, ability = ability}
 
     if InCombatLockdown() and self.playerName == self.cluster.lead then
         self:PrintMessage(self.L["Cache"].Queue, target, ability)
@@ -69,9 +62,7 @@ function addon:QueueNotification(message, target, ability)
     end
 end
 
-function addon:UpdateSessionReport(playerSpellIndex, playerName, spellName,
-                                   spellID)
-
+function addon:UpdateSessionReport(playerSpellIndex, playerName, spellName, spellID)
     if self.session.Report[playerSpellIndex] ~= nil then return end
 
     local spellRank = addon.AbilityData[spellID].Rank
