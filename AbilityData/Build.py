@@ -10,8 +10,7 @@ import csv, os
 if not os.path.isdir('./AbilityData'):
   print('Must be run from Addon root')
   exit()
-
-# Updated to include TBC
+  
 eras = {
   'Classic.lua': 'classic.csv',
   'Wrath.lua': 'wrath.csv',
@@ -29,17 +28,6 @@ for eraLua, eraCsv in eras.items():
 
   with open('./AbilityData/{0}'.format(eraCsv), 'r', newline='') as csvfile:
     csvreader = csv.DictReader(csvfile)
-
-    # Note: next() consumes the header row if using reader, 
-    # but DictReader uses the first row as keys automatically. 
-    # However, your original script calls next(csvreader) to print headers.
-    # Depending on your CSV format, this might skip the first data row if headers were already consumed by DictReader.
-    # Standard DictReader does not need next() to skip headers, but you used it to get fieldnames.
-    # We will stick to your original logic structure to be safe.
-    
-    # Actually, csvreader.fieldnames provides headers without consuming a row. 
-    # But if your original script worked, we will assume headers match logic.
-    # To be safe against the provided TBC.csv, we rely on standard DictReader behavior.
     
     print('Parsing file...') 
 
