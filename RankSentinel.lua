@@ -6,6 +6,14 @@ local fmt, after, unpack = string.format, C_Timer.After, unpack
 local UnitInBattleground, CombatLogGetCurrentEventInfo = UnitInBattleground, CombatLogGetCurrentEventInfo
 local HasFullControl, UnitIsPossessed, UnitIsCharmed, UnitIsEnemy, UnitLevel = HasFullControl, UnitIsPossessed,
                                                                                UnitIsCharmed, UnitIsEnemy, UnitLevel
+local bit_band = bit.band
+local COMBATLOG_OBJECT_AFFILIATION_MINE = COMBATLOG_OBJECT_AFFILIATION_MINE or 0x00000001
+local COMBATLOG_OBJECT_AFFILIATION_PARTY = COMBATLOG_OBJECT_AFFILIATION_PARTY or 0x00000002
+local COMBATLOG_OBJECT_AFFILIATION_RAID = COMBATLOG_OBJECT_AFFILIATION_RAID or 0x00000004
+local COMBATLOG_FILTER_GROUP = bit.bor(COMBATLOG_OBJECT_AFFILIATION_MINE, COMBATLOG_OBJECT_AFFILIATION_PARTY, COMBATLOG_OBJECT_AFFILIATION_RAID)
+
+-- Local cache to prevent SavedVariables bloat
+local maxRankCache = {}
 
 addon.Version = C_AddOns.GetAddOnMetadata(addonName, "Version")
 addon.MaxLevel = _G.GetMaxPlayerLevel()
@@ -27,11 +35,12 @@ function addon:OnInitialize()
             debug = false,
             announcedSpells = {},
             ignoredPlayers = {},
-            isMaxRank = {},
+            isMaxRank = {}, -- Kept for DB compatibility, but unused in logic now
             petOwnerCache = {},
             dbVersion = 'v0.0.0',
             notificationFlavor = "default",
-            isLatestVersion = true
+            isLatestVersion = true,
+            onlyMaxLevel = false -- Added default safety
         }
     }
 
@@ -86,59 +95,76 @@ function addon:OnEnable()
     if self.db.profile.debug then
         self:PrintMessage("Debug enabled, clearing cache on reload")
         self:ClearCache()
+        maxRankCache = {} -- Clear local cache
     end
 end
 
 function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
     if not self.db.profile.enable then return end
+    
+    -- Optimization: Check BG status (Ideally this should be cached on zone change, but kept here for safety)
     if UnitInBattleground("player") ~= nil then return end
 
-    local _, subevent, _, sourceGUID, sourceName, _, _, _, destName, _, _, spellID, spellName =
-        CombatLogGetCurrentEventInfo()
-    -- bail out early for trivial cases (lookups before function calls, wide checks to narrow)
+    local _, subevent, _, sourceGUID, sourceName, sourceFlags, _, _, destName, _, _, spellID, spellName = CombatLogGetCurrentEventInfo()
+    
+    -- bail out early for trivial cases
     if subevent ~= "SPELL_CAST_SUCCESS" then return end
-    if sourceName == nil then return end
-    if self.AbilityData[spellID] == nil then return end
-    if self.db.profile.ignoredPlayers[sourceGUID] ~= nil then return end
-    if UnitIsPossessed(sourceName) then return end
-    if UnitIsCharmed(sourceName) then return end
+    
+    -- 1. Fast Bitwise Checks first (approx 100x faster than function calls)
+    -- Check if source is in party/raid/mine
+    if bit_band(sourceFlags, COMBATLOG_FILTER_GROUP) == 0 then return end
+
+    -- 2. Data Existence Check
+    if not self.AbilityData[spellID] then return end
+    if self.db.profile.ignoredPlayers[sourceGUID] then return end
+    
+    -- 3. Control Checks
+    if UnitIsPossessed(sourceName) or UnitIsCharmed(sourceName) then return end
     if sourceGUID == self.playerGUID and not HasFullControl() then return end
     if UnitIsEnemy("player", sourceName) then return end
 
-    local isInGroup, petOwner = self:InGroupWith(sourceGUID)
-    if not isInGroup then return end
-
-    local castLevel = UnitLevel(sourceName)
+    -- 4. Level Checks
+    -- Only query UnitLevel if we passed previous checks
+    local castLevel = UnitLevel(sourceName) 
+    if not castLevel or castLevel < 1 then castLevel = addon.MaxLevel end -- Fallback
+    
     if self.db.profile.onlyMaxLevel and castLevel < addon.MaxLevel then return end
 
-    local uid = self:GetUID(sourceGUID)
-
-    -- Only notify once per ability group
-    local abilityGroupIndex = fmt("%s-%d", uid, addon.AbilityData[spellID].AbilityGroup)
-    if self.session.PlayerGroupsNotified[abilityGroupIndex] ~= nil and not self.db.profile.debug then return end
-
+    -- 5. Calculate Max Rank
     local targetLevel = destName and UnitLevel(destName) or 0
     local isMax, nextRankLevel = self:IsMaxRank(spellID, castLevel, targetLevel)
+    
+    -- If it IS max rank, stop here. Don't format strings yet.
     if isMax or not nextRankLevel or nextRankLevel <= 0 then return end
+
+    -- 6. String Formatting (The expensive part, do this last)
+    local uid = self:GetUID(sourceGUID)
+    local abilityGroupIndex = fmt("%s-%d", uid, addon.AbilityData[spellID].AbilityGroup)
+
+    -- Check Session Cache
+    if self.session.PlayerGroupsNotified[abilityGroupIndex] and not self.db.profile.debug then return end
 
     if not self.session.PlayerLevelCache[uid] then
         self.session.PlayerLevelCache[uid] = castLevel
     elseif castLevel > self.session.PlayerLevelCache[uid] then
         -- If downrank, don't notify on a new level up this session
-        return
+        return 
     end
 
     local playerSpellIndex = fmt("%s-%s-%s", uid, castLevel, spellID)
-    if self.db.profile.announcedSpells[playerSpellIndex] ~= nil and not self.db.profile.debug then return end
+    if self.db.profile.announcedSpells[playerSpellIndex] and not self.db.profile.debug then return end
 
+    -- 7. Notification Execution
+    -- We need to check pet ownership here for the report name
+    local _, petOwner = self:InGroupWith(sourceGUID)
+    
     if petOwner then
         self:UpdateSessionReport(playerSpellIndex, fmt("%s (%s)", sourceName, petOwner.OwnerName), spellName, spellID)
     else
         self:UpdateSessionReport(playerSpellIndex, sourceName, spellName, spellID)
     end
 
-    local notification, target, ability = self:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
-                                                                 petOwner)
+    local notification, target, ability = self:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel, petOwner)
 
     self:QueueNotification(notification, target, ability)
 
@@ -155,9 +181,13 @@ function addon:ChatCommand(cmd)
         self:PrintMessage(self.L["ChatCommand"].Reset)
     elseif msg == "count" then
         self:PrintMessage(self.L["ChatCommand"].Count.Spells, self:CountCache(self.db.profile.announcedSpells))
-        self:PrintMessage(self.L["ChatCommand"].Count.Ranks, self:CountCache(self.db.profile.isMaxRank))
+        -- Changed to report local cache count
+        local cacheCount = 0
+        for _ in pairs(maxRankCache) do cacheCount = cacheCount + 1 end
+        self:PrintMessage(self.L["ChatCommand"].Count.Ranks, cacheCount)
     elseif msg == "clear" then
         self:ClearCache()
+        maxRankCache = {}
     elseif msg == "debug" then
         self.db.profile.debug = not self.db.profile.debug
         self:PrintMessage("%s = %s", self.L["Debug"], tostring(self.db.profile.debug))
@@ -229,9 +259,9 @@ function addon:ChatCommand(cmd)
     elseif msg == "help" then
         self:PrintHelp(msg)
     else
-        local category = _G.Settings.GetCategory(addon.options.name)
-
-        _G.Settings.OpenToCategory(category.ID)
+        -- FIX: Use legacy InterfaceOptions for TBC 2.5.5
+        InterfaceOptionsFrame_OpenToCategory(addon.options.name)
+        InterfaceOptionsFrame_OpenToCategory(addon.options.name) -- Known bug fix: call twice
     end
 end
 
@@ -242,11 +272,9 @@ function addon:IsMaxRank(spellID, casterLevel, targetLevel)
 
     local lookup_key = fmt('%s-%s', spellID, casterLevel)
 
-    if self.db.profile.isMaxRank[lookup_key] ~= nil and not self.db.profile.debug then
-        -- this as a boolean would only work for isMax == true where the 2nd argument is discarded
-        -- it fails for isMax == false in the caller because `nextRankLevel` would show up as nil
-        -- ClearCache should take care of old boolean entries if we up the version.
-        return unpack(self.db.profile.isMaxRank[lookup_key])
+    -- FIX: Use local variable instead of SavedVariables
+    if maxRankCache[lookup_key] ~= nil and not self.db.profile.debug then
+        return unpack(maxRankCache[lookup_key])
     end
 
     local abilityData = addon.AbilityData[spellID]
@@ -257,7 +285,7 @@ function addon:IsMaxRank(spellID, casterLevel, targetLevel)
     if spellID == abilityGroupData[#abilityGroupData] then
         if self.db.profile.debug then self:PrintMessage("Caching max rank %s", lookup_key) end
 
-        self.db.profile.isMaxRank[lookup_key] = {true}
+        maxRankCache[lookup_key] = {true}
 
         return true
     end
@@ -267,7 +295,7 @@ function addon:IsMaxRank(spellID, casterLevel, targetLevel)
 
     local nextRankData = addon.AbilityData[nextRankID]
 
-    -- Above logic assumes no ranks are excluded, breaks for Arcane Explosion at least
+    -- Above logic assumes no ranks are excluded
     -- If rank not the index, find proper rank
     if nextRankData == nil or (nextRankData.Rank ~= (abilityData.Rank + 1)) then
         if self.db.profile.debug then
@@ -301,7 +329,7 @@ function addon:IsMaxRank(spellID, casterLevel, targetLevel)
                           nextRankData.Level, tostring(isMax))
     end
 
-    self.db.profile.isMaxRank[lookup_key] = {isMax, nextRankData.Level}
+    maxRankCache[lookup_key] = {isMax, nextRankData.Level}
 
     return isMax, nextRankData.Level
 end
