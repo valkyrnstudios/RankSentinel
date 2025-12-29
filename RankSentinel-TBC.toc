@@ -11,7 +11,7 @@
 
 ## Version: @project-version@
 ## Interface: 20505
-## Interface-Classic: 20505
+## Interface-TBC: 20505
 
 ## X-Embeds: Ace3
 
