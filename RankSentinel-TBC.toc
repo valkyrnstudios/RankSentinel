@@ -1,14 +1,20 @@
+## Title: RankSentinel
+## Author: SabreValkyrn
+## X-Credits: Gogo, Splendiferus, Aevala, Fathom
+## Notes: Detect players using lower ranked abilities and notifies them.
+## IconTexture: 136037
+## Category: Combat
+
 ## Interface: 20505
 ## Interface-Classic: 20505
-## Title: RankSentinel
 ## Version: @project-version@
-## Author: SabreValkyrn
-## Notes: Detect players using lower ranked abilities and notifies them.
-## SavedVariables: RankSentinelDB
-## X-Credits: Gogo, Splendiferus, Aevala, Fathom
+
 ## X-Curse-Project-ID: 560210
 ## X-Wago-ID: RqGY3R6g
+
 ## X-Embeds: Ace3
+
+## SavedVariables: RankSentinelDB
 
 libs\LibStub\LibStub.lua
 libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
