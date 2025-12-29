@@ -1,16 +1,17 @@
 ## Title: RankSentinel
+## Notes: Detect players using lower ranked abilities and notifies them.
 ## Author: SabreValkyrn
 ## X-Credits: Gogo, Splendiferus, Aevala, Fathom
-## Notes: Detect players using lower ranked abilities and notifies them.
+
 ## IconTexture: 136037
 ## Category: Combat
 
-## Interface: 20505
-## Interface-Classic: 20505
-## Version: @project-version@
-
 ## X-Curse-Project-ID: 560210
 ## X-Wago-ID: RqGY3R6g
+
+## Version: @project-version@
+## Interface: 20505
+## Interface-Classic: 20505
 
 ## X-Embeds: Ace3
 
