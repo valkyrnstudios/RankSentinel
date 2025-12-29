@@ -1,0 +1,32 @@
+## Interface: 20505
+## Interface-Classic: 20505
+## Title: RankSentinel
+## Version: @project-version@
+## Author: SabreValkyrn
+## Notes: Detect players using lower ranked abilities and notifies them.
+## SavedVariables: RankSentinelDB
+## X-Credits: Gogo, Splendiferus, Aevala, Fathom
+## X-Curse-Project-ID: 560210
+## X-Wago-ID: RqGY3R6g
+## X-Embeds: Ace3
+
+libs\LibStub\LibStub.lua
+libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
+libs\AceAddon-3.0\AceAddon-3.0.xml
+libs\AceLocale-3.0\AceLocale-3.0.xml
+libs\AceEvent-3.0\AceEvent-3.0.xml
+libs\AceDB-3.0\AceDB-3.0.xml
+libs\AceComm-3.0\AceComm-3.0.xml
+libs\AceGUI-3.0\AceGUI-3.0.xml
+libs\AceConfig-3.0\AceConfig-3.0.xml
+
+locale\enUS.lua
+locale\frFR.lua
+
+RankSentinel.lua
+
+AbilityData\TBC.lua
+
+Cluster.lua
+Cache.lua
+Utilities.lua
