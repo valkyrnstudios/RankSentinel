@@ -1,4 +1,4 @@
--- Built on 2025-02-22
+-- Built on 2026-01-20
 
 local _, addon = ...
 

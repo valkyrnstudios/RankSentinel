@@ -1,9 +1,11 @@
-## Interface: 11506
-## Interface-Classic: 11506
+## Interface: 20505
+## Interface-Classic: 11508
 ## Title: RankSentinel
 ## Version: @project-version@
 ## Author: SabreValkyrn
 ## Notes: Detect players using lower ranked abilities and notifies them.
+## IconTexture: 136037
+## Category: Combat
 ## SavedVariables: RankSentinelDB
 ## X-Credits: Gogo, Splendiferus, Aevala, Fathom
 ## X-Curse-Project-ID: 560210
@@ -25,7 +27,8 @@ locale\frFR.lua
 
 RankSentinel.lua
 
-AbilityData\Wrath.lua
+AbilityData\TBC.lua [AllowLoadGameType tbc]
+AbilityData\Classic.lua [AllowLoadGameType vanilla]
 
 Cluster.lua
 Cache.lua
