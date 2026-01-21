@@ -1,4 +1,4 @@
-## Interface: 20505
+## Interface: 20505, 11508
 ## Interface-Classic: 11508
 ## Title: RankSentinel
 ## Version: @project-version@
