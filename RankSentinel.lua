@@ -3,10 +3,16 @@ local addonName, RankSentinel = ...
 local addon = LibStub("AceAddon-3.0"):NewAddon(RankSentinel, addonName, "AceEvent-3.0", "AceComm-3.0")
 
 local fmt, after, unpack = string.format, C_Timer.After, unpack
-local UnitInBattleground, CombatLogGetCurrentEventInfo = UnitInBattleground, CombatLogGetCurrentEventInfo
-local HasFullControl, UnitIsPossessed, UnitIsCharmed, UnitIsEnemy, UnitLevel = HasFullControl, UnitIsPossessed,
-                                                                               UnitIsCharmed, UnitIsEnemy, UnitLevel
+local UnitInBattleground, CombatLogGetCurrentEventInfo = _G.UnitInBattleground, _G.CombatLogGetCurrentEventInfo
+local HasFullControl, UnitIsPossessed, UnitIsCharmed, UnitLevel = _G.HasFullControl, _G.UnitIsPossessed,
+                                                                               _G.UnitIsCharmed, _G.UnitLevel
 local GetAddOnMetadata = C_AddOns and C_AddOns.GetAddOnMetadata or _G.GetAddOnMetadata
+
+local bit_band = _G.bit.band
+local COMBATLOG_OBJECT_AFFILIATION_MINE = _G.COMBATLOG_OBJECT_AFFILIATION_MINE or 0x00000001
+local COMBATLOG_OBJECT_AFFILIATION_PARTY = _G.COMBATLOG_OBJECT_AFFILIATION_PARTY or 0x00000002
+local COMBATLOG_OBJECT_AFFILIATION_RAID = _G.COMBATLOG_OBJECT_AFFILIATION_RAID or 0x00000004
+local COMBATLOG_FILTER_GROUP = _G.bit.bor(COMBATLOG_OBJECT_AFFILIATION_MINE, COMBATLOG_OBJECT_AFFILIATION_PARTY, COMBATLOG_OBJECT_AFFILIATION_RAID)
 
 addon.Version = GetAddOnMetadata(addonName, "Version")
 addon.MaxLevel = _G.GetMaxPlayerLevel()
@@ -94,20 +100,23 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
     if not self.db.profile.enable then return end
     if UnitInBattleground("player") ~= nil then return end
 
-    local _, subevent, _, sourceGUID, sourceName, _, _, _, destName, _, _, spellID, spellName =
+    local _, subevent, _, sourceGUID, sourceName, sourceFlags, _, _, destName, _, _, spellID, spellName =
         CombatLogGetCurrentEventInfo()
+
     -- bail out early for trivial cases (lookups before function calls, wide checks to narrow)
     if subevent ~= "SPELL_CAST_SUCCESS" then return end
-    if sourceName == nil then return end
-    if self.AbilityData[spellID] == nil then return end
-    if self.db.profile.ignoredPlayers[sourceGUID] ~= nil then return end
+    if not sourceName then return end
+
+    if bit_band(sourceFlags, COMBATLOG_FILTER_GROUP) == 0 then return end
+
+    if not self.AbilityData[spellID] then return end
+    if self.db.profile.ignoredPlayers[sourceGUID] then return end
     if UnitIsPossessed(sourceName) then return end
     if UnitIsCharmed(sourceName) then return end
     if sourceGUID == self.playerGUID and not HasFullControl() then return end
-    if UnitIsEnemy("player", sourceName) then return end
 
-    local isInGroup, petOwner = self:InGroupWith(sourceGUID)
-    if not isInGroup then return end
+    -- local isInGroup, petOwner = self.InGroupWith(sourceGUID)
+    -- if not isInGroup then return end
 
     local castLevel = UnitLevel(sourceName)
     if self.db.profile.onlyMaxLevel and castLevel < addon.MaxLevel then return end
@@ -132,11 +141,12 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
     local playerSpellIndex = fmt("%s-%s-%s", uid, castLevel, spellID)
     if self.db.profile.announcedSpells[playerSpellIndex] ~= nil and not self.db.profile.debug then return end
 
-    if petOwner then
-        self:UpdateSessionReport(playerSpellIndex, fmt("%s (%s)", sourceName, petOwner.OwnerName), spellName, spellID)
-    else
-        self:UpdateSessionReport(playerSpellIndex, sourceName, spellName, spellID)
-    end
+    -- Disabled for Classic/TBC, restore for Wrath
+    -- if petOwner then
+    --     self:UpdateSessionReport(playerSpellIndex, fmt("%s (%s)", sourceName, petOwner.OwnerName), spellName, spellID)
+    -- else
+    self:UpdateSessionReport(playerSpellIndex, sourceName, spellName, spellID)
+    -- end
 
     local notification, target, ability = self:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
                                                                  petOwner)
