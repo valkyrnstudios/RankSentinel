@@ -24,6 +24,7 @@ libs\AceConfig-3.0\AceConfig-3.0.xml
 
 locale\enUS.lua
 locale\frFR.lua
+locale\ruRU.lua
 
 RankSentinel.lua
 

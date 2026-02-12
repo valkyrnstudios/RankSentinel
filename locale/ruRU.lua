@@ -1,4 +1,5 @@
 local addonName, _ = ...
+local fmt = string.format
 local L = LibStub("AceLocale-3.0"):NewLocale(addonName, "ruRU")
 if not L then return end
 -- Translator ZamestoTV
