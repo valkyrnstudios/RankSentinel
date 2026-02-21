@@ -86,7 +86,9 @@ function addon:OnEnable()
 
     self:ResetLead()
 
-    self:PrintMessage("Loaded %s", self.Version)
+    if not self.db.profile.quietMode then
+        self:PrintMessage("Loaded %s", self.Version)
+    end
 
     self.db.profile.dbVersion = self.Version
 

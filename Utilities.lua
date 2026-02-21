@@ -343,6 +343,13 @@ function addon:BuildOptionsPanel()
                 width = optionsWidth,
                 order = 1.3
             },
+            quietMode = {
+                name = "Quiet Mode",
+                desc = "Reduce output to minimum",
+                type = "toggle",
+                width = optionsWidth,
+                order = 1.4
+            },
             announceHeader = {name = "Announce", type = "header", width = "full", order = 2.0},
             announce = {
                 name = _G.BNET_REPORT,
