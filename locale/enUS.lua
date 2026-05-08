@@ -117,6 +117,10 @@ L["ChatCommand"] = {
     }
 }
 
+_G.RankSentinel_enUS_Notifications = L["Notification"]
+
+L["Send messages in English"] = "Send messages in English"
+
 L["Help"] = {
     ["title"] = 'Command-line options',
     ["advanced"] = 'Advanced command-line options',

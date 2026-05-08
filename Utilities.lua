@@ -242,23 +242,32 @@ end
 
 function addon:PrintMessage(msg, ...) print(fmt("|cFFFFFF00%s|r: |c0000FF00%s|r", self.L[addonName], fmt(msg, ...))) end
 
+function addon:GetActiveNotificationLocale()
+    if self.db.profile.useEnglishMessages then
+        return _G.RankSentinel_enUS_Notifications or self.L["Notification"]
+    end
+    return self.L["Notification"]
+end
+
 function addon:SetNotificationFlavor(flavor)
-    if self.L["Notification"][flavor] ~= nil then
-        self.notifications = self.L["Notification"][self.db.profile.notificationFlavor]
+    local notifications = self:GetActiveNotificationLocale()
+    if notifications[flavor] ~= nil then
+        self.notifications = notifications[flavor]
         self.db.profile.notificationFlavor = flavor
     else
         self:PrintMessage(self.L["ChatCommand"].Flavor.Unavailable, flavor or '')
         self.db.profile.notificationFlavor = "default"
-        self.notifications = self.L["Notification"]["default"]
+        self.notifications = notifications["default"]
     end
 end
 
 function addon:GetRandomNotificationFlavor()
     local keyset = {}
+    local notifications = self:GetActiveNotificationLocale()
 
-    for k, v in pairs(self.L["Notification"]) do if v and v.By ~= nil then tinsert(keyset, k) end end
+    for k, v in pairs(notifications) do if v and v.By ~= nil then tinsert(keyset, k) end end
 
-    return self.L["Notification"][keyset[math.random(#keyset)]]
+    return notifications[keyset[math.random(#keyset)]]
 end
 
 function addon:UpgradeProfile()
@@ -350,6 +359,17 @@ function addon:BuildOptionsPanel()
                 width = optionsWidth,
                 order = 1.4
             },
+            useEnglishMessages = {
+                name = self.L["Send messages in English"],
+                desc = "Send spell notifications in English regardless of client language",
+                type = "toggle",
+                width = optionsWidth,
+                order = 1.5,
+                set = function(_, value)
+                    self.db.profile.useEnglishMessages = value
+                    self:SetNotificationFlavor(self.db.profile.notificationFlavor)
+                end
+            },
             announceHeader = {name = "Announce", type = "header", width = "full", order = 2.0},
             announce = {
                 name = _G.BNET_REPORT,
@@ -404,16 +424,17 @@ function addon:BuildOptionsPanel()
                 set = function(_, value) self:SetNotificationFlavor(value) end,
                 values = function()
                     local p = {}
-                    for flavor, _ in pairs(self.L["Notification"]) do p[flavor] = flavor end
+                    for flavor, _ in pairs(self:GetActiveNotificationLocale()) do p[flavor] = flavor end
                     return p
                 end
             },
             notificationFlavorExample = {
                 name = function()
                     local flavor = self.db.profile.notificationFlavor
+                    local notifications = self:GetActiveNotificationLocale()
 
-                    if self.L["Notification"][flavor] and self.L["Notification"][flavor].Base ~= nil then
-                        return fmt('  ' .. self.L["Notification"][flavor].Base, '[Spell]', '9', '', '62')
+                    if notifications[flavor] and notifications[flavor].Base ~= nil then
+                        return fmt('  ' .. notifications[flavor].Base, '[Spell]', '9', '', '62')
                     else
                         return ''
                     end

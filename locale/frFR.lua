@@ -79,6 +79,8 @@ L["ChatCommand"] = {
   }
 }
 
+L["Send messages in English"] = "Envoyer les messages en anglais"
+
 L["Help"] = {
   ["title"] = "Options de ligne de commande",
   ["advanced"] = "Options de ligne de commande avanc\195\169es",

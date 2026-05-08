@@ -38,6 +38,7 @@ function addon:OnInitialize()
             petOwnerCache = {},
             dbVersion = 'v0.0.0',
             notificationFlavor = "default",
+            useEnglishMessages = false,
             isLatestVersion = true
         }
     }
