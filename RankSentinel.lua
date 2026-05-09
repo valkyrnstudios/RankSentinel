@@ -38,7 +38,8 @@ function addon:OnInitialize()
             petOwnerCache = {},
             dbVersion = 'v0.0.0',
             notificationFlavor = "default",
-            useEnglishMessages = false,
+            useEnglishMessages = true,
+            initializedEnglishMessages = false,
             isLatestVersion = true
         }
     }
@@ -55,6 +56,7 @@ end
 
 function addon:OnEnable()
     self:UpgradeProfile()
+    self:SetNotificationFlavor(self.db.profile.notificationFlavor)
     self:InitializeSession()
     self:BuildOptionsPanel()
 

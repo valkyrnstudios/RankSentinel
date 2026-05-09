@@ -118,7 +118,10 @@ L["ChatCommand"] = {
     }
 }
 
-L["Send messages in English"] = "Отправлять сообщения на английском"
+L["Send outgoing whispers in English"] = "Отправлять исходящие сообщения шепотом на английском"
+L["Test whisper to self"] = "Проверить шепот себе"
+L["Test whisper description"] = "Отправить себе тестовый шепот через тот же исходящий поток уведомлений"
+L["Local notification"] = "%s использовал %s (%d ранг)%s, новый ранг доступен на %d уровне."
 
 L["Help"] = {
     ["title"]    = "Команды управления",
