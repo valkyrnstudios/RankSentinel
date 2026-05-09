@@ -26,29 +26,30 @@ function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
     local spellLink = GetSpellLink(spellID)
     local abilityData = self.AbilityData[spellID]
     local contactName = petOwner and petOwner.OwnerName or sourceName
-    local by = petOwner and fmt(self.notifications.By, sourceName) or ''
     local msg = nil
     local sourceUID = self:GetUID(sourceGUID)
-
-    if self.db.profile.notificationFlavor == 'random' then self.notifications = self:GetRandomNotificationFlavor() end
+    local notifications = self:GetNotificationForContext(sourceGUID == self.playerGUID or
+        not (self.playerName == self.cluster.lead and self.db.profile.whisper))
+    local by = petOwner and fmt(notifications.By, sourceName) or ''
+    local localNotificationFormat = self:GetLocalNotificationFormat()
 
     if sourceGUID == self.playerGUID then
-        msg = fmt(self.notifications.Base, spellLink, abilityData.Rank, by, nextRankLevel)
+        msg = fmt(notifications.Base, spellLink, abilityData.Rank, by, nextRankLevel)
 
-        msg = fmt("%s %s", self.notifications.Prefix.Self, msg)
+        msg = fmt("%s %s", notifications.Prefix.Self, msg)
 
     elseif self.playerName == self.cluster.lead and self.db.profile.whisper then
-        msg = fmt(self.notifications.Base, spellLink, abilityData.Rank, by, nextRankLevel)
+        msg = fmt(notifications.Base, spellLink, abilityData.Rank, by, nextRankLevel)
 
         if self.session.PlayersNotified[sourceUID] == true or petOwner then
-            msg = fmt("%s %s", self.notifications.Prefix.Whisper, msg)
+            msg = fmt("%s %s", notifications.Prefix.Whisper, msg)
         else
-            msg = fmt("%s %s %s", self.notifications.Prefix.Whisper, msg, self.notifications.Suffix)
+            msg = fmt("%s %s %s", notifications.Prefix.Whisper, msg, notifications.Suffix)
         end
     else
-        msg = fmt(self.notifications.Base, sourceName, spellLink, abilityData.Rank, by, nextRankLevel)
+        msg = fmt(localNotificationFormat, sourceName, spellLink, abilityData.Rank, by, nextRankLevel)
 
-        msg = fmt("%s %s", self.notifications.Prefix.Self, msg)
+        msg = fmt("%s %s", notifications.Prefix.Self, msg)
     end
 
     self.session.PlayersNotified[sourceUID] = true
@@ -242,28 +243,94 @@ end
 
 function addon:PrintMessage(msg, ...) print(fmt("|cFFFFFF00%s|r: |c0000FF00%s|r", self.L[addonName], fmt(msg, ...))) end
 
+function addon:GetActiveNotificationLocale()
+    if self.db.profile.useEnglishMessages then
+        return addon.NotificationTemplates.enUS or self.L["Notification"]
+    end
+    return self.L["Notification"]
+end
+
+function addon:GetClientNotificationLocale()
+    return self.L["Notification"]
+end
+
+function addon:GetNotificationFlavorForLocale(notifications)
+    local flavor = self.db.profile.notificationFlavor
+
+    if flavor == 'random' then
+        return self:GetRandomNotificationFlavor(notifications)
+    end
+
+    return notifications[flavor] or notifications["default"]
+end
+
+function addon:GetNotificationForContext(useClientLocale)
+    if useClientLocale then
+        return self:GetNotificationFlavorForLocale(self:GetClientNotificationLocale())
+    end
+
+    return self:GetNotificationFlavorForLocale(self:GetActiveNotificationLocale())
+end
+
+function addon:GetLocalNotificationFormat()
+    return self.L["Local notification"] or self.L["Notification"]["default"].Base
+end
+
+function addon:BuildOutgoingWhisperMessage(spellLink, spellRank, nextRankLevel, by, includeSuffix)
+    local notifications = self:GetNotificationForContext(false)
+    local msg = fmt(notifications.Base, spellLink, spellRank, by or '', nextRankLevel)
+
+    if includeSuffix then
+        return fmt("%s %s %s", notifications.Prefix.Whisper, msg, notifications.Suffix)
+    end
+
+    return fmt("%s %s", notifications.Prefix.Whisper, msg)
+end
+
+function addon:SendTestWhisperToSelf()
+    local testNotification = {
+        message = self:BuildTestWhisperMessage(),
+        target = self.playerName,
+        forceWhisper = true
+    }
+
+    self:SendNotification(testNotification)
+end
+
+function addon:BuildTestWhisperMessage()
+    local spellName = _G.GetSpellLink(168) or "[Frost Armor]"
+    local rank = 1
+    local nextRankLevel = 4
+
+    return self:BuildOutgoingWhisperMessage(spellName, rank, nextRankLevel, '', true)
+end
+
 function addon:SetNotificationFlavor(flavor)
-    if self.L["Notification"][flavor] ~= nil then
-        self.notifications = self.L["Notification"][self.db.profile.notificationFlavor]
+    local notifications = self:GetActiveNotificationLocale()
+    if notifications[flavor] ~= nil then
         self.db.profile.notificationFlavor = flavor
     else
         self:PrintMessage(self.L["ChatCommand"].Flavor.Unavailable, flavor or '')
         self.db.profile.notificationFlavor = "default"
-        self.notifications = self.L["Notification"]["default"]
     end
 end
 
-function addon:GetRandomNotificationFlavor()
+function addon:GetRandomNotificationFlavor(notifications)
     local keyset = {}
 
-    for k, v in pairs(self.L["Notification"]) do if v and v.By ~= nil then tinsert(keyset, k) end end
+    notifications = notifications or self:GetActiveNotificationLocale()
 
-    return self.L["Notification"][keyset[math.random(#keyset)]]
+    for k, v in pairs(notifications) do if v and v.By ~= nil then tinsert(keyset, k) end end
+
+    return notifications[keyset[math.random(#keyset)]]
 end
 
 function addon:UpgradeProfile()
     if not self.db.profile.isMaxRank then self.db.profile.isMaxRank = {} end
     if not self.db.profile.petOwnerCache then self.db.profile.petOwnerCache = {} end
+    if self.db.profile.initializedEnglishMessages == nil then
+        self.db.profile.initializedEnglishMessages = false
+    end
 
     if self.db:GetCurrentProfile() == "Default" then
         self:PrintMessage("Old profile detected, resetting database")
@@ -276,6 +343,11 @@ function addon:UpgradeProfile()
         end
         self.db.profile.isLatestVersion = true
         self:ClearCache()
+    end
+
+    if not self.db.profile.initializedEnglishMessages then
+        self.db.profile.useEnglishMessages = true
+        self.db.profile.initializedEnglishMessages = true
     end
 
     for k, v in pairs(self.db.profile.ignoredPlayers) do
@@ -336,6 +408,13 @@ function addon:BuildOptionsPanel()
                 width = optionsWidth,
                 order = 1.2
             },
+            whisperSelf = {
+                name = self.L["Whisper me about my own low ranks"],
+                desc = self.L["Whisper self description"],
+                type = "toggle",
+                width = optionsWidth,
+                order = 1.25
+            },
             onlyMaxLevel = {
                 name = "Max level only",
                 desc = fmt("Only notify level %d characters", addon.MaxLevel),
@@ -349,6 +428,25 @@ function addon:BuildOptionsPanel()
                 type = "toggle",
                 width = optionsWidth,
                 order = 1.4
+            },
+            useEnglishMessages = {
+                name = self.L["Send outgoing whispers in English"],
+                desc = "Send outgoing whisper notifications in English regardless of client language",
+                type = "toggle",
+                width = optionsWidth,
+                order = 1.5,
+                set = function(_, value)
+                    self.db.profile.useEnglishMessages = value
+                    self:SetNotificationFlavor(self.db.profile.notificationFlavor)
+                end
+            },
+            testWhisperToSelf = {
+                name = self.L["Test whisper to self"],
+                desc = self.L["Test whisper description"],
+                type = "execute",
+                width = optionsWidth,
+                order = 1.6,
+                func = function() self:SendTestWhisperToSelf() end
             },
             announceHeader = {name = "Announce", type = "header", width = "full", order = 2.0},
             announce = {
@@ -404,16 +502,17 @@ function addon:BuildOptionsPanel()
                 set = function(_, value) self:SetNotificationFlavor(value) end,
                 values = function()
                     local p = {}
-                    for flavor, _ in pairs(self.L["Notification"]) do p[flavor] = flavor end
+                    for flavor, _ in pairs(self:GetActiveNotificationLocale()) do p[flavor] = flavor end
                     return p
                 end
             },
             notificationFlavorExample = {
                 name = function()
                     local flavor = self.db.profile.notificationFlavor
+                    local notifications = self:GetActiveNotificationLocale()
 
-                    if self.L["Notification"][flavor] and self.L["Notification"][flavor].Base ~= nil then
-                        return fmt('  ' .. self.L["Notification"][flavor].Base, '[Spell]', '9', '', '62')
+                    if notifications[flavor] and notifications[flavor].Base ~= nil then
+                        return fmt('  ' .. notifications[flavor].Base, '[Spell]', '9', '', '62')
                     else
                         return ''
                     end

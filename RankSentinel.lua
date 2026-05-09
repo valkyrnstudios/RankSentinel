@@ -31,6 +31,7 @@ function addon:OnInitialize()
         profile = {
             enable = true,
             whisper = true,
+            whisperSelf = false,
             debug = false,
             announcedSpells = {},
             ignoredPlayers = {},
@@ -38,6 +39,8 @@ function addon:OnInitialize()
             petOwnerCache = {},
             dbVersion = 'v0.0.0',
             notificationFlavor = "default",
+            useEnglishMessages = true,
+            initializedEnglishMessages = false,
             isLatestVersion = true
         }
     }
@@ -54,6 +57,7 @@ end
 
 function addon:OnEnable()
     self:UpgradeProfile()
+    self:SetNotificationFlavor(self.db.profile.notificationFlavor)
     self:InitializeSession()
     self:BuildOptionsPanel()
 
@@ -155,6 +159,14 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 
     self:QueueNotification(notification, target, ability)
 
+    if sourceGUID == self.playerGUID and self.db.profile.whisperSelf then
+        local whisperBy = petOwner and fmt(self:GetNotificationForContext(false).By, sourceName) or ''
+        local whisperMessage = self:BuildOutgoingWhisperMessage(GetSpellLink(spellID), addon.AbilityData[spellID].Rank,
+            nextRankLevel, whisperBy, true)
+
+        self:QueueNotification(whisperMessage, self.playerName, ability, true)
+    end
+
     self:RecordNotification(self.playerName, playerSpellIndex)
 
     self.session.PlayerGroupsNotified[abilityGroupIndex] = true
@@ -177,6 +189,9 @@ function addon:ChatCommand(cmd)
     elseif msg == "whisper" then
         self.db.profile.whisper = not self.db.profile.whisper
         self:PrintMessage("%s = %s", self.L["Whisper"], tostring(self.db.profile.whisper))
+    elseif msg == "whisperself" then
+        self.db.profile.whisperSelf = not self.db.profile.whisperSelf
+        self:PrintMessage("%s = %s", self.L["Whisper me about my own low ranks"], tostring(self.db.profile.whisperSelf))
     elseif msg == "enable" then
         self.db.profile.enable = not self.db.profile.enable
         self:PrintMessage("%s = %s", self.L["Enable"], tostring(self.db.profile.enable))

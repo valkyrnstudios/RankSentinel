@@ -79,6 +79,13 @@ L["ChatCommand"] = {
   }
 }
 
+L["Send outgoing whispers in English"] = "Envoyer les chuchotements sortants en anglais"
+L["Whisper me about my own low ranks"] = "M'envoyer un chuchotement pour mes propres ranks bas"
+L["Whisper self description"] = "M'envoyer aussi un chuchotement quand mes propres sorts de rang bas sont detectes"
+L["Test whisper to self"] = "Tester un chuchotement sur soi"
+L["Test whisper description"] = "S'envoyer un chuchotement de test en utilisant le meme flux que les notifications sortantes"
+L["Local notification"] = "%s a utilise %s (Rang %d)%s, il y a un nouveau rang au niveau %d."
+
 L["Help"] = {
   ["title"] = "Options de ligne de commande",
   ["advanced"] = "Options de ligne de commande avanc\195\169es",
