@@ -62,8 +62,13 @@ function addon:ProcessQueuedNotifications()
     self.session.Queue = retry
 end
 
-function addon:QueueNotification(message, target, ability)
-    self.session.Queue[#self.session.Queue + 1] = {message = message, target = target, ability = ability}
+function addon:QueueNotification(message, target, ability, forceWhisper)
+    self.session.Queue[#self.session.Queue + 1] = {
+        message = message,
+        target = target,
+        ability = ability,
+        forceWhisper = forceWhisper
+    }
 
     if InCombatLockdown() and self.playerName == self.cluster.lead then
         if not self.db.profile.quietMode then

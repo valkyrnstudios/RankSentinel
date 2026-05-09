@@ -61,6 +61,8 @@ L["ChatCommand"] = {
 }
 
 L["Send outgoing whispers in English"] = "Send outgoing whispers in English"
+L["Whisper me about my own low ranks"] = "Whisper me about my own low ranks"
+L["Whisper self description"] = "Also whisper you when your own low-rank spells are detected"
 L["Test whisper to self"] = "Test whisper to self"
 L["Test whisper description"] = "Send yourself a test whisper using the same outgoing notification flow"
 L["Local notification"] = "%s used %s (Rank %d)%s, there's a newer rank at level %d."

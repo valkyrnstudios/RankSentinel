@@ -276,6 +276,17 @@ function addon:GetLocalNotificationFormat()
     return self.L["Local notification"] or self.L["Notification"]["default"].Base
 end
 
+function addon:BuildOutgoingWhisperMessage(spellLink, spellRank, nextRankLevel, by, includeSuffix)
+    local notifications = self:GetNotificationForContext(false)
+    local msg = fmt(notifications.Base, spellLink, spellRank, by or '', nextRankLevel)
+
+    if includeSuffix then
+        return fmt("%s %s %s", notifications.Prefix.Whisper, msg, notifications.Suffix)
+    end
+
+    return fmt("%s %s", notifications.Prefix.Whisper, msg)
+end
+
 function addon:SendTestWhisperToSelf()
     local testNotification = {
         message = self:BuildTestWhisperMessage(),
@@ -287,14 +298,11 @@ function addon:SendTestWhisperToSelf()
 end
 
 function addon:BuildTestWhisperMessage()
-    local notifications = self:GetNotificationForContext(false)
-    local by = ''
     local spellName = _G.GetSpellLink(168) or "[Frost Armor]"
     local rank = 1
     local nextRankLevel = 4
-    local msg = fmt(notifications.Base, spellName, rank, by, nextRankLevel)
 
-    return fmt("%s %s %s", notifications.Prefix.Whisper, msg, notifications.Suffix)
+    return self:BuildOutgoingWhisperMessage(spellName, rank, nextRankLevel, '', true)
 end
 
 function addon:SetNotificationFlavor(flavor)
@@ -399,6 +407,13 @@ function addon:BuildOptionsPanel()
                 type = "toggle",
                 width = optionsWidth,
                 order = 1.2
+            },
+            whisperSelf = {
+                name = self.L["Whisper me about my own low ranks"],
+                desc = self.L["Whisper self description"],
+                type = "toggle",
+                width = optionsWidth,
+                order = 1.25
             },
             onlyMaxLevel = {
                 name = "Max level only",
