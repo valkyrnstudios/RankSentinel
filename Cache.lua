@@ -1,9 +1,29 @@
 local _, addon = ...
 
 local pairs, InCombatLockdown, UnitIsDeadOrGhost, UnitAffectingCombat, SendChatMessage = pairs, InCombatLockdown,
-                                                                                         UnitIsDeadOrGhost,
-                                                                                         UnitAffectingCombat,
-                                                                                         SendChatMessage
+                                                                                          UnitIsDeadOrGhost,
+                                                                                          UnitAffectingCombat,
+                                                                                          SendChatMessage
+
+function addon:SendNotification(notification)
+    if notification.forceWhisper then
+        SendChatMessage(notification.message, "WHISPER", nil, notification.target)
+        return
+    end
+
+    if notification.target == self.playerName then
+        self:PrintMessage(notification.message)
+    elseif self.playerName == self.cluster.lead and self.db.profile.whisper then
+        if UnitAffectingCombat(notification.target) then
+            return false
+        end
+        SendChatMessage(notification.message, "WHISPER", nil, notification.target)
+    elseif not self.db.profile.quietMode then
+        self:PrintMessage(notification.message)
+    end
+
+    return true
+end
 
 function addon:ClearCache()
     local count = self:CountCache(self.db.profile.announcedSpells)
@@ -34,30 +54,21 @@ function addon:ProcessQueuedNotifications()
     for i = 1, #self.session.Queue do
         notification = self.session.Queue[i]
 
-        if notification.target == self.playerName then
-            self:PrintMessage(notification.message)
-        elseif self.playerName == self.cluster.lead and self.db.profile.whisper then
-            if UnitAffectingCombat(notification.target) then
-                retry[#retry + 1] = notification
-            else
-                SendChatMessage(notification.message, "WHISPER", nil, notification.target)
-            end
-        elseif self.playerName ~= self.cluster.lead then
-            if not self.db.profile.quietMode then
-                self:PrintMessage("(%s) %s - %s", self.cluster.lead, notification.target, notification.ability)
-            end
-        else
-            if not self.db.profile.quietMode then
-                self:PrintMessage("%s - %s", notification.target, notification.ability)
-            end
+        if self:SendNotification(notification) == false then
+            retry[#retry + 1] = notification
         end
     end
 
     self.session.Queue = retry
 end
 
-function addon:QueueNotification(message, target, ability)
-    self.session.Queue[#self.session.Queue + 1] = {message = message, target = target, ability = ability}
+function addon:QueueNotification(message, target, ability, forceWhisper)
+    self.session.Queue[#self.session.Queue + 1] = {
+        message = message,
+        target = target,
+        ability = ability,
+        forceWhisper = forceWhisper
+    }
 
     if InCombatLockdown() and self.playerName == self.cluster.lead then
         if not self.db.profile.quietMode then
