@@ -1,4 +1,4 @@
--- Built on 2026-01-20
+-- Built on 2026-09-25
 
 local _, addon = ...
 
@@ -232,7 +232,6 @@ addon.AbilityData = {
   [14275] = { Rank = 2, Level = 32, AbilityGroup = 50 },
   [14276] = { Rank = 3, Level = 42, AbilityGroup = 50 },
   [14277] = { Rank = 4, Level = 52, AbilityGroup = 50 },
-  [1978] = { Rank = 1, Level = 4, AbilityGroup = 51 },
   [13549] = { Rank = 2, Level = 10, AbilityGroup = 51 },
   [13550] = { Rank = 3, Level = 18, AbilityGroup = 51 },
   [13551] = { Rank = 4, Level = 26, AbilityGroup = 51 },
@@ -1076,7 +1075,7 @@ addon.AbilityGroups = {
   { 2973, 14260, 14261, 14262, 14263, 14264, 14265, 14266 },
   { 1513, 14326, 14327 },
   { 3043, 14275, 14276, 14277 },
-  { 1978, 13549, 13550, 13551, 13552, 13553, 13554, 13555 },
+  { 13549, 13550, 13551, 13552, 13553, 13554, 13555 },
   { 3034, 14279, 14280 },
   { 1510, 14294, 14295 },
   { 14267, 14268 },
