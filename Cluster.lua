@@ -22,6 +22,11 @@ function addon:OnCommReceived(prefix, message, _, sender)
         local name, intVersion = strsplit(",", data)
         self.cluster.lead = name
 
+        if self.clusterJoinPending then
+            self.clusterJoinPending = nil
+            self:PrintLead()
+        end
+
         if name == self.playerName then return end
 
         self:CheckRelease(intVersion, name)
@@ -62,7 +67,10 @@ function addon:RecordNotification(sender, playerSpellIndex)
     if sender == self.playerName then self:Broadcast("NOTIFY", playerSpellIndex) end
 end
 
-function addon:ResetLead() self.cluster = {lead = self.playerName} end
+function addon:ResetLead()
+    self.cluster = {lead = self.playerName}
+    self.clusterJoinPending = nil
+end
 
 function addon:BroadcastLead(playerName)
     if not self.db.profile.enable or not self.db.profile.whisper or not playerName or UnitInBattleground("player") ~=
@@ -105,7 +113,12 @@ function addon:PLAYER_ENTERING_WORLD(_, isInitialLogin, isReloadingUi)
 
     addon.release = {major = major, minor = minor, patch = patch, int = tonumber(fmt('%d%d%d', major, minor, patch))}
 
-    self:BroadcastLead(self.playerName)
+    if isReloadingUi then
+        self.clusterJoinPending = true
+        self:Broadcast("JOIN", fmt("%s,%d", self.playerName, addon.release.int))
+    else
+        self:BroadcastLead(self.playerName)
+    end
 end
 
 function addon:GROUP_LEFT()
