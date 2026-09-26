@@ -75,7 +75,17 @@ function addon:OnEnable()
     end
     addon.cleuParser:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
     self:RegisterEvent("PLAYER_ENTERING_WORLD")
-    self:RegisterEvent("PLAYER_REGEN_ENABLED", function() after(5, function() self:ProcessQueuedNotifications() end) end)
+
+    self:RegisterEvent("PLAYER_REGEN_ENABLED", function()
+        if self.settingsPending then
+            self.settingsPending = nil
+
+            local category = _G.Settings.GetCategory(self.options.name)
+            _G.Settings.OpenToCategory(category.ID)
+        end
+
+        after(5, function() self:ProcessQueuedNotifications() end)
+    end)
 
     self:RegisterEvent("PLAYER_UNGHOST", function(...) after(5, function() self:ProcessQueuedNotifications() end) end)
 
@@ -244,8 +254,13 @@ function addon:ChatCommand(cmd)
     elseif msg == "help" then
         self:PrintHelp(msg)
     else
-        local category = _G.Settings.GetCategory(addon.options.name)
+        if InCombatLockdown() then
+            self.settingsPending = true
 
+            return
+        end
+
+        local category = _G.Settings.GetCategory(self.options.name)
         _G.Settings.OpenToCategory(category.ID)
     end
 end
