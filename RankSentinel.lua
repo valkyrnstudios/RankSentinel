@@ -4,8 +4,9 @@ local addon = LibStub("AceAddon-3.0"):NewAddon(RankSentinel, addonName, "AceEven
 
 local fmt, after, unpack = string.format, C_Timer.After, unpack
 local UnitInBattleground, CombatLogGetCurrentEventInfo = _G.UnitInBattleground, _G.CombatLogGetCurrentEventInfo
-local HasFullControl, UnitIsPossessed, UnitIsCharmed, UnitLevel = _G.HasFullControl, _G.UnitIsPossessed,
-                                                                               _G.UnitIsCharmed, _G.UnitLevel
+local HasFullControl, UnitIsPossessed, UnitIsCharmed, UnitIsEnemy, UnitLevel = _G.HasFullControl, _G.UnitIsPossessed,
+                                                                               _G.UnitIsCharmed, _G.UnitIsEnemy,
+                                                                               _G.UnitLevel
 local GetAddOnMetadata = C_AddOns and C_AddOns.GetAddOnMetadata or _G.GetAddOnMetadata
 
 local bit_band = _G.bit.band
@@ -116,6 +117,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
     if UnitIsPossessed(sourceName) then return end
     if UnitIsCharmed(sourceName) then return end
     if sourceGUID == self.playerGUID and not HasFullControl() then return end
+    if UnitIsEnemy("player", sourceName) then return end
 
     -- local isInGroup, petOwner = self.InGroupWith(sourceGUID)
     -- if not isInGroup then return end
