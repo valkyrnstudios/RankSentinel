@@ -13,6 +13,8 @@ We built this tool to help your raid group make small improvements so they can a
 
 ## Commands
 
+Open `/ranksentinel` and enable **Use raid chat** to send short player/spell/rank notifications to raid chat. This is off by default and independent of **Whisper**: enable both to send both. Outside raids, only enabled whispers are sent. Only the addon notification leader sends messages; your own spell alerts remain local.
+
 Use `/ranksentinel` to get the latest commands.
 
 - `/ranksentinel enable`: toggles combat log parsing

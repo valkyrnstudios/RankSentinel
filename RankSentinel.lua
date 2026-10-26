@@ -32,6 +32,7 @@ function addon:OnInitialize()
         profile = {
             enable = true,
             whisper = true,
+            raid = false,
             debug = false,
             announcedSpells = {},
             ignoredPlayers = {},

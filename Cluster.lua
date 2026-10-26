@@ -73,7 +73,7 @@ function addon:ResetLead()
 end
 
 function addon:BroadcastLead(playerName)
-    if not self.db.profile.enable or not self.db.profile.whisper or not playerName or UnitInBattleground("player") ~=
+    if not self.db.profile.enable or (not self.db.profile.whisper and not self.db.profile.raid) or not playerName or UnitInBattleground("player") ~=
         nil or not self.db.profile.isLatestVersion then return end
 
     self:Broadcast('LEAD', fmt('%s,%d', playerName, addon.release.int))

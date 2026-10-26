@@ -37,7 +37,7 @@ function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
 
         msg = fmt("%s %s", self.notifications.Prefix.Self, msg)
 
-    elseif self.playerName == self.cluster.lead and self.db.profile.whisper then
+    elseif self.playerName == self.cluster.lead and (self.db.profile.whisper or self.db.profile.raid) then
         msg = fmt(self.notifications.Base, spellLink, abilityData.Rank, by, nextRankLevel)
 
         if self.session.PlayersNotified[sourceUID] == true or petOwner then
@@ -46,7 +46,7 @@ function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
             msg = fmt("%s %s %s", self.notifications.Prefix.Whisper, msg, self.notifications.Suffix)
         end
     else
-        msg = fmt(self.notifications.Base, sourceName, spellLink, abilityData.Rank, by, nextRankLevel)
+        msg = fmt(self.notifications.Base, spellLink, abilityData.Rank, by, nextRankLevel)
 
         msg = fmt("%s %s", self.notifications.Prefix.Self, msg)
     end
@@ -335,6 +335,13 @@ function addon:BuildOptionsPanel()
                 type = "toggle",
                 width = optionsWidth,
                 order = 1.2
+            },
+            raid = {
+                name = "Use raid chat",
+                desc = "Send short notifications to raid chat. Enable Whisper as well to send both. Off by default.",
+                type = "toggle",
+                width = optionsWidth,
+                order = 1.25
             },
             onlyMaxLevel = {
                 name = "Max level only",

@@ -36,11 +36,16 @@ function addon:ProcessQueuedNotifications()
 
         if notification.target == self.playerName then
             self:PrintMessage(notification.message)
-        elseif self.playerName == self.cluster.lead and self.db.profile.whisper then
+        elseif self.playerName == self.cluster.lead and (self.db.profile.whisper or (self.db.profile.raid and IsInRaid())) then
             if UnitAffectingCombat(notification.target) then
                 retry[#retry + 1] = notification
             else
-                SendChatMessage(notification.message, "WHISPER", nil, notification.target)
+                if self.db.profile.whisper then
+                    SendChatMessage(notification.message, "WHISPER", nil, notification.target)
+                end
+                if self.db.profile.raid and IsInRaid() then
+                    SendChatMessage(string.format("RankSentinel: %s - %s", notification.target, notification.ability), "RAID")
+                end
             end
         elseif self.playerName ~= self.cluster.lead then
             if not self.db.profile.quietMode then
