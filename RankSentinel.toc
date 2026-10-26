@@ -22,6 +22,7 @@ libs\AceComm-3.0\AceComm-3.0.xml
 libs\AceGUI-3.0\AceGUI-3.0.xml
 libs\AceConfig-3.0\AceConfig-3.0.xml
 
+NotificationTemplates.lua
 locale\enUS.lua
 locale\frFR.lua
 locale\ruRU.lua
