@@ -1,4 +1,4 @@
-## Interface: 20506, 11509
+## Interface: 20506, 11509, 16001
 ## Interface-Classic: 11509
 ## Title: RankSentinel
 ## Version: @project-version@
@@ -29,7 +29,7 @@ locale\ruRU.lua
 RankSentinel.lua
 
 AbilityData\TBC.lua [AllowLoadGameType tbc]
-AbilityData\Classic.lua [AllowLoadGameType vanilla]
+AbilityData\Classic.lua [AllowLoadGameType vanilla, camelot]
 
 Cluster.lua
 Cache.lua

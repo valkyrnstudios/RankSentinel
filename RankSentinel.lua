@@ -4,9 +4,18 @@ local addon = LibStub("AceAddon-3.0"):NewAddon(RankSentinel, addonName, "AceEven
 
 local fmt, after, unpack = string.format, C_Timer.After, unpack
 local UnitInBattleground, CombatLogGetCurrentEventInfo = _G.UnitInBattleground, _G.CombatLogGetCurrentEventInfo
-local HasFullControl, UnitIsPossessed, UnitIsCharmed, UnitIsEnemy, UnitLevel = _G.HasFullControl, _G.UnitIsPossessed,
-                                                                               _G.UnitIsCharmed, _G.UnitIsEnemy,
-                                                                               _G.UnitLevel
+local UnitIsEnemy, UnitLevel, UnitIsUnit = _G.UnitIsEnemy, _G.UnitLevel, _G.UnitIsUnit
+-- These may be missing on newer clients (WoW Forever), so fall back to harmless stubs
+local HasFullControl = _G.HasFullControl or function() return true end
+local UnitIsPossessed = _G.UnitIsPossessed or function() return false end
+local UnitIsCharmed = _G.UnitIsCharmed or function() return false end
+local issecretvalue = _G.issecretvalue or function() return false end
+local strmatch = string.match
+local tinsert = table.insert
+
+-- WoW Forever (Interface 16001) does not expose the combat log to addons
+-- (CombatLogGetCurrentEventInfo is nil), so casts are detected via UNIT_SPELLCAST_SUCCEEDED instead.
+addon.UseUnitEvents = CombatLogGetCurrentEventInfo == nil
 local GetAddOnMetadata = C_AddOns and C_AddOns.GetAddOnMetadata or _G.GetAddOnMetadata
 
 local bit_band = _G.bit.band
@@ -73,7 +82,12 @@ function addon:OnEnable()
         end
         addon.cleuParser:SetScript("OnEvent", addon.cleuParser.OnEvent)
     end
-    addon.cleuParser:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+    if addon.UseUnitEvents then
+        self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+        self:RegisterEvent("UNIT_AURA")
+    else
+        addon.cleuParser:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+    end
     self:RegisterEvent("PLAYER_ENTERING_WORLD")
 
     self:RegisterEvent("PLAYER_REGEN_ENABLED", function()
@@ -122,20 +136,111 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 
     if bit_band(sourceFlags, COMBATLOG_FILTER_GROUP) == 0 then return end
 
+    self:ProcessCast(sourceGUID, sourceName, sourceName, destName, spellID, spellName)
+end
+
+-- Matches the unit tokens of the player, group members and their pets
+local function IsGroupUnit(unit)
+    if unit == "player" or unit == "pet" then return true end
+    return strmatch(unit, "^party%d+$") or strmatch(unit, "^partypet%d+$") or strmatch(unit, "^raid%d+$") or
+               strmatch(unit, "^raidpet%d+$")
+end
+
+-- Used when the combat log isn't available to addons (WoW Forever)
+function addon:UNIT_SPELLCAST_SUCCEEDED(event, unit, castGUID, spellID)
+    if not self.db.profile.enable then return end
+
+    local debug = self.db.profile.debug
+    local unitIsString = type(unit) == "string" and not issecretvalue(unit)
+
+    if not unitIsString then return end
+    if not spellID or issecretvalue(spellID) then return end
+    if not self.AbilityData[spellID] then return end
+    if not IsGroupUnit(unit) then return end
+    if UnitInBattleground("player") ~= nil then return end
+
+    local sourceGUID, sourceName = UnitGUID(unit), UnitName(unit)
+    if not sourceGUID or not sourceName or issecretvalue(sourceGUID) or issecretvalue(sourceName) then
+        if debug then self:PrintMessage("Dropped %s cast: GUID/name unavailable or secret", unit) end
+        return
+    end
+
+    local spellName = C_Spell and C_Spell.GetSpellName and C_Spell.GetSpellName(spellID) or tostring(spellID)
+
+    -- the target of the cast is not provided by this event
+    self:ProcessCast(sourceGUID, sourceName, unit, nil, spellID, spellName)
+end
+
+-- Forever hides other players' cast spell IDs (secret values), but the IDs of the auras they
+-- receive stay readable. Buff/debuff ranks are therefore detected through UNIT_AURA.
+function addon:UNIT_AURA(event, unit, updateInfo)
+    if not self.db.profile.enable then return end
+    if type(unit) ~= "string" or issecretvalue(unit) then return end
+    -- check the unit first: nameplate/enemy updates carry secret fields that error when read
+    if not IsGroupUnit(unit) then return end
+    if type(updateInfo) ~= "table" or issecretvalue(updateInfo) then return end
+
+    local isFull = updateInfo.isFullUpdate
+    if issecretvalue(isFull) or isFull then return end
+
+    local added, updated = updateInfo.addedAuras, updateInfo.updatedAuraInstanceIDs
+    if issecretvalue(added) then added = nil end
+    if issecretvalue(updated) then updated = nil end
+
+    local getByInstance = C_UnitAuras and C_UnitAuras.GetAuraDataByAuraInstanceID
+
+    local function check(aura)
+        if type(aura) ~= "table" then return end
+
+        local spellID, casterUnit = aura.spellId, aura.sourceUnit
+        if not spellID or issecretvalue(spellID) or not self.AbilityData[spellID] then return end
+        if not casterUnit or issecretvalue(casterUnit) or type(casterUnit) ~= "string" then return end
+        if not IsGroupUnit(casterUnit) then return end
+
+        -- own casts are handled by UNIT_SPELLCAST_SUCCEEDED, where the spell ID is readable
+        if UnitIsUnit(casterUnit, "player") then return end
+
+        local sourceGUID, sourceName = UnitGUID(casterUnit), UnitName(casterUnit)
+        if not sourceGUID or not sourceName or issecretvalue(sourceGUID) or issecretvalue(sourceName) then return end
+
+        if self.db.profile.debug then
+            self:PrintMessage("Aura %d on %s from %s", spellID, unit, sourceName)
+        end
+
+        local spellName = C_Spell and C_Spell.GetSpellName and C_Spell.GetSpellName(spellID) or tostring(spellID)
+
+        self:ProcessCast(sourceGUID, sourceName, casterUnit, nil, spellID, spellName)
+    end
+
+    if added then for _, aura in ipairs(added) do check(aura) end end
+
+    if getByInstance and updated then
+        for _, id in ipairs(updated) do check(getByInstance(unit, id)) end
+    end
+end
+
+-- `unit` is anything UnitLevel & co accept (unit token or name)
+function addon:ProcessCast(sourceGUID, sourceName, unit, destName, spellID, spellName)
     if not self.AbilityData[spellID] then return end
     if self.db.profile.ignoredPlayers[sourceGUID] then return end
-    if UnitIsPossessed(sourceName) then return end
-    if UnitIsCharmed(sourceName) then return end
+    if UnitIsPossessed(unit) then return end
+    if UnitIsCharmed(unit) then return end
     if sourceGUID == self.playerGUID and not HasFullControl() then return end
-    if UnitIsEnemy("player", sourceName) then return end
+    if UnitIsEnemy("player", unit) then return end
 
-    -- local isInGroup, petOwner = self.InGroupWith(sourceGUID)
-    -- if not isInGroup then return end
-
-    local castLevel = UnitLevel(sourceName)
+    local castLevel = UnitLevel(unit)
+    if not castLevel or issecretvalue(castLevel) or castLevel <= 0 then return end
     if self.db.profile.onlyMaxLevel and castLevel < addon.MaxLevel then return end
 
     local uid = self:GetUID(sourceGUID)
+
+    -- Remember the whisperable (full) name for this player
+    if sourceGUID ~= self.playerGUID then
+        self.session.FullNames = self.session.FullNames or {}
+        if not self.session.FullNames[sourceName] or self.session.FullNames[sourceName] == sourceName then
+            self.session.FullNames[sourceName] = self:ResolveFullName(unit, sourceGUID, sourceName)
+        end
+    end
 
     -- Only notify once per ability group
     local abilityGroupIndex = fmt("%s-%d", uid, addon.AbilityData[spellID].AbilityGroup)

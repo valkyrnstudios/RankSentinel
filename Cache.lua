@@ -26,7 +26,16 @@ function addon:CountCache(cache)
 end
 
 function addon:ProcessQueuedNotifications()
-    if #self.session.Queue == 0 or InCombatLockdown() or UnitIsDeadOrGhost("player") then return end
+    local debug = self.db.profile.debug
+
+    if #self.session.Queue == 0 then return end
+    if InCombatLockdown() or UnitIsDeadOrGhost("player") then
+        if debug then
+            self:PrintMessage("Notifications held (%d queued): %s", #self.session.Queue,
+                              InCombatLockdown() and "you are in combat" or "you are dead")
+        end
+        return
+    end
 
     local notification = nil
     local retry = {}
@@ -35,18 +44,35 @@ function addon:ProcessQueuedNotifications()
         notification = self.session.Queue[i]
 
         if notification.target == self.playerName then
+            if debug then self:PrintMessage("Notify %s: self (print to chat)", notification.target) end
             self:PrintMessage(notification.message)
         elseif self.playerName == self.cluster.lead and self.db.profile.whisper then
             if UnitAffectingCombat(notification.target) then
+                if debug then self:PrintMessage("Whisper to %s delayed: target is in combat, retrying", notification.target) end
                 retry[#retry + 1] = notification
             else
-                SendChatMessage(notification.message, "WHISPER", nil, notification.target)
+                if debug then
+                    self:PrintMessage("Whispering %s (%s): %s", (self.session.FullNames and self.session.FullNames[notification.target]) or notification.target, notification.ability,
+                                      notification.message)
+                end
+                local whisperTarget = self.session.FullNames and self.session.FullNames[notification.target] or
+                                          notification.target
+                local ok, err = pcall(SendChatMessage, notification.message, "WHISPER", nil, whisperTarget)
+                if debug then
+                    self:PrintMessage("Whisper to %s %s%s", whisperTarget, ok and "sent" or "FAILED: ",
+                                      ok and "" or tostring(err))
+                end
             end
         elseif self.playerName ~= self.cluster.lead then
+            if debug then
+                self:PrintMessage("No whisper to %s: you are not the lead (lead is %s)", notification.target,
+                                  tostring(self.cluster.lead))
+            end
             if not self.db.profile.quietMode then
                 self:PrintMessage("(%s) %s - %s", self.cluster.lead, notification.target, notification.ability)
             end
         else
+            if debug then self:PrintMessage("No whisper to %s: whispering is turned off", notification.target) end
             if not self.db.profile.quietMode then
                 self:PrintMessage("%s - %s", notification.target, notification.ability)
             end
