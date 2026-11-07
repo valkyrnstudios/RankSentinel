@@ -85,6 +85,7 @@ function addon:OnEnable()
     if addon.UseUnitEvents then
         self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
         self:RegisterEvent("UNIT_AURA")
+        after(3, function() self:PollDamageMeter(true) end)
         if not self.meterTicker then
             self.meterTicker = C_Timer.NewTicker(15, function() addon:PollDamageMeter() end)
         end
@@ -326,13 +327,25 @@ end
 -- WoW Forever hides other players' cast spell IDs, but Blizzard's built-in damage meter lists each
 -- group member's damage/healing spells with readable spell IDs. Poll it to catch the spells the
 -- UNIT_AURA path cannot see (damage, heals and other instant spells that leave no buff).
-function addon:PollDamageMeter()
+-- `baselineOnly` records the current meter totals without reporting anything, so spells that were
+-- cast before the addon started watching (or that merely remain listed in the session) are not
+-- mistaken for new casts. Afterwards a spell is only processed when its total changed.
+function addon:PollDamageMeter(baselineOnly)
     if not self.db.profile.enable or not self.UseUnitEvents then return end
     if not (C_DamageMeter and Enum and Enum.DamageMeterSessionType and Enum.DamageMeterType) then return end
-    if not IsInGroup() or UnitInBattleground("player") ~= nil then return end
+    if not IsInGroup() or UnitInBattleground("player") ~= nil then
+        -- when a group forms later, its first read must be a baseline, not a burst of "new" casts
+        self.meterNeedsBaseline = true
+        return
+    end
+    if self.meterNeedsBaseline then
+        baselineOnly = true
+        self.meterNeedsBaseline = nil
+    end
 
     local debug = self.db.profile.debug
     local sessionType = Enum.DamageMeterSessionType.Current
+    self.meterSeen = self.meterSeen or {}
 
     for _, dmType in ipairs({Enum.DamageMeterType.DamageDone, Enum.DamageMeterType.HealingDone}) do
         local ok, session = pcall(C_DamageMeter.GetCombatSessionFromType, sessionType, dmType)
@@ -356,7 +369,20 @@ function addon:PollDamageMeter()
                             for _, spell in ipairs(spells) do
                                 local spellID = type(spell) == "table" and not issecretvalue(spell) and spell.spellID
 
-                                if spellID and not issecretvalue(spellID) and self.AbilityData[spellID] and guid and
+                                local isNew = true
+                                if spellID and not issecretvalue(spellID) and guid and not issecretvalue(guid) then
+                                    local total = spell.totalAmount
+                                    if type(total) == "number" and not issecretvalue(total) then
+                                        local key = guid .. "-" .. spellID
+                                        isNew = self.meterSeen[key] ~= total
+                                        self.meterSeen[key] = total
+                                    end
+                                    if baselineOnly then isNew = false end
+                                end
+
+                                if not isNew then
+                                    -- unchanged since the last read: already seen, not a new cast
+                                elseif spellID and not issecretvalue(spellID) and self.AbilityData[spellID] and guid and
                                     not issecretvalue(guid) then
                                     if debug then
                                         self:PrintMessage("Meter: %s cast %d", name, spellID)
