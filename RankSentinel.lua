@@ -11,6 +11,13 @@ local UnitIsPossessed = _G.UnitIsPossessed or function() return false end
 local UnitIsCharmed = _G.UnitIsCharmed or function() return false end
 local issecretvalue = _G.issecretvalue or function() return false end
 local strmatch = string.match
+
+-- truthiness of a value that may be secret: a secret (unknown) value counts as false and is never
+-- boolean-tested (which would raise an error)
+local function IsTrue(value)
+    if issecretvalue(value) then return false end
+    return value and true or false
+end
 local tinsert = table.insert
 
 -- WoW Forever (Interface 16001) does not expose the combat log to addons
@@ -221,7 +228,7 @@ function addon:UNIT_AURA(event, unit, updateInfo)
         if not IsGroupUnit(casterUnit) then return end
 
         -- own casts are handled by UNIT_SPELLCAST_SUCCEEDED, where the spell ID is readable
-        if UnitIsUnit(casterUnit, "player") then return end
+        if IsTrue(UnitIsUnit(casterUnit, "player")) then return end
 
         local sourceGUID, sourceName = UnitGUID(casterUnit), UnitName(casterUnit)
         if not sourceGUID or not sourceName or issecretvalue(sourceGUID) or issecretvalue(sourceName) then return end
@@ -246,10 +253,15 @@ end
 function addon:ProcessCast(sourceGUID, sourceName, unit, destName, spellID, spellName)
     if not self.AbilityData[spellID] then return end
     if self.db.profile.ignoredPlayers[sourceGUID] then return end
-    if UnitIsPossessed(unit) then return end
-    if UnitIsCharmed(unit) then return end
-    if sourceGUID == self.playerGUID and not HasFullControl() then return end
-    if UnitIsEnemy("player", unit) then return end
+    -- These can return secret booleans for other players on Forever; testing one raises an error,
+    -- so a secret (unknown) result is treated as "not true" and the cast is still checked
+    if IsTrue(UnitIsPossessed(unit)) then return end
+    if IsTrue(UnitIsCharmed(unit)) then return end
+    if sourceGUID == self.playerGUID then
+        local fullControl = HasFullControl()
+        if not issecretvalue(fullControl) and not fullControl then return end
+    end
+    if IsTrue(UnitIsEnemy("player", unit)) then return end
 
     local castLevel = UnitLevel(unit)
     if not castLevel or issecretvalue(castLevel) or castLevel <= 0 then return end
@@ -303,7 +315,8 @@ end
 -- Finds the party/raid unit token for a (full or first) character name, excluding the player
 function addon:FindGroupUnitByName(name)
     local function matches(unit)
-        if not UnitExists(unit) then return false end
+        local exists = UnitExists(unit)
+        if not issecretvalue(exists) and not exists then return false end
         local short = UnitName(unit)
         if not short or issecretvalue(short) then return false end
         local full = GetUnitName and GetUnitName(unit, true)
@@ -314,7 +327,7 @@ function addon:FindGroupUnitByName(name)
     if IsInRaid() then
         for i = 1, GetNumGroupMembers() do
             local unit = "raid" .. i
-            if not UnitIsUnit(unit, "player") and matches(unit) then return unit end
+            if not IsTrue(UnitIsUnit(unit, "player")) and matches(unit) then return unit end
         end
     else
         for i = 1, GetNumSubgroupMembers() do
