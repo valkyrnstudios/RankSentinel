@@ -2,12 +2,15 @@ local addonName, addon = ...
 
 local fmt, strsplit, ssub, print = string.format, strsplit, string.sub, print
 local pairs, tinsert = pairs, table.insert
-local GetSpellLink, UnitGUID, GetNumGroupMembers, GetNumSubgroupMembers, GetPlayerInfoByGUID = GetSpellLink, UnitGUID,
+local GetSpellLink = C_Spell and C_Spell.GetSpellLink or GetSpellLink
+local UnitGUID, GetNumGroupMembers, GetNumSubgroupMembers, GetPlayerInfoByGUID = UnitGUID,
                                                                                                GetNumGroupMembers,
                                                                                                GetNumSubgroupMembers,
                                                                                                GetPlayerInfoByGUID
 local IsInRaid, IsInGroup, IsGUIDInGroup = IsInRaid, IsInGroup, IsGUIDInGroup
 local _G = _G
+local issecretvalue = _G.issecretvalue or function() return false end
+local ipairs = ipairs
 
 -- cache relevant unitids once so we don't do concat every call
 local raidUnit, raidUnitPet = {}, {}
@@ -24,6 +27,10 @@ end
 
 function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel, petOwner)
     local spellLink = GetSpellLink(spellID)
+    -- Forever's spell links already include the rank in the link text ("[Name (Rank 1)]"), but the
+    -- message templates add the rank themselves, so drop the trailing "(...N)" from the link text.
+    if type(spellLink) == "table" then spellLink = spellLink.link end
+    if type(spellLink) == "string" then spellLink = spellLink:gsub("%s*%([^%)%]]-%d+%)%]", "]") end
     local abilityData = self.AbilityData[spellID]
     local contactName = petOwner and petOwner.OwnerName or sourceName
     local by = petOwner and fmt(self.notifications.By, sourceName) or ''
@@ -54,6 +61,47 @@ function addon:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
     self.session.PlayersNotified[sourceUID] = true
 
     return msg, contactName, fmt('%s (Rank %d)', spellLink, abilityData.Rank)
+end
+
+-- WoW Forever characters have a first and last name ("Kyrii Kesmai"), but UnitName() only returns the
+-- first name, which cannot be whispered. Try the APIs that may return the full name.
+function addon:ResolveFullName(unit, guid, shortName)
+    local candidates = {}
+    local function add(label, value)
+        if type(value) == "string" and not (issecretvalue and issecretvalue(value)) and value ~= "" then
+            candidates[#candidates + 1] = {label = label, value = value}
+        end
+    end
+
+    if type(unit) == "string" and not (issecretvalue and issecretvalue(unit)) then
+        if UnitFullName then
+            local ok, name, realm = pcall(UnitFullName, unit)
+            if ok then add("UnitFullName", name) end
+        end
+        if GetUnitName then
+            local ok, name = pcall(GetUnitName, unit, true)
+            if ok then add("GetUnitName", name) end
+        end
+    end
+    if guid and GetPlayerInfoByGUID then
+        local ok, _, _, _, _, _, name = pcall(GetPlayerInfoByGUID, guid)
+        if ok then add("GetPlayerInfoByGUID", name) end
+    end
+
+    local chosen = shortName
+    for _, c in ipairs(candidates) do
+        if c.value:find(" ", 1, true) then
+            chosen = c.value
+            break
+        end
+    end
+
+    if self.db.profile.debug then
+        for _, c in ipairs(candidates) do self:PrintMessage("Name lookup %s = '%s'", c.label, c.value) end
+        self:PrintMessage("Whisper name for %s: '%s'", tostring(shortName), tostring(chosen))
+    end
+
+    return chosen
 end
 
 function addon:GetUID(guid)
@@ -123,21 +171,8 @@ function addon:InitializeSession()
     end
 end
 
-function addon:IsHighestAlertableRank(nextRankLevel, casterLevel)
-    if casterLevel == addon.MaxLevel then
-        return nextRankLevel > casterLevel
-    elseif casterLevel < 10 then
-        return nextRankLevel > casterLevel
-    elseif casterLevel < 20 then
-        return nextRankLevel + 3 > casterLevel
-    elseif casterLevel < addon.MaxLevel - 10 then
-        return nextRankLevel + 2 > casterLevel
-    elseif casterLevel < addon.MaxLevel then
-        return nextRankLevel + 1 > casterLevel
-    end
-
-    return nextRankLevel > casterLevel
-end
+-- No grace period: a cast is "max rank" only if the next rank isn't yet available at the caster's level
+function addon:IsHighestAlertableRank(nextRankLevel, casterLevel) return nextRankLevel > casterLevel end
 
 function addon:IsPetOwnerInRaid(petGuid)
     local petUID = self:GetUID(petGuid)

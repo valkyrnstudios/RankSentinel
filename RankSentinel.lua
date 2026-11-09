@@ -4,9 +4,25 @@ local addon = LibStub("AceAddon-3.0"):NewAddon(RankSentinel, addonName, "AceEven
 
 local fmt, after, unpack = string.format, C_Timer.After, unpack
 local UnitInBattleground, CombatLogGetCurrentEventInfo = _G.UnitInBattleground, _G.CombatLogGetCurrentEventInfo
-local HasFullControl, UnitIsPossessed, UnitIsCharmed, UnitIsEnemy, UnitLevel = _G.HasFullControl, _G.UnitIsPossessed,
-                                                                               _G.UnitIsCharmed, _G.UnitIsEnemy,
-                                                                               _G.UnitLevel
+local UnitIsEnemy, UnitLevel, UnitIsUnit = _G.UnitIsEnemy, _G.UnitLevel, _G.UnitIsUnit
+-- These may be missing on newer clients (WoW Forever), so fall back to harmless stubs
+local HasFullControl = _G.HasFullControl or function() return true end
+local UnitIsPossessed = _G.UnitIsPossessed or function() return false end
+local UnitIsCharmed = _G.UnitIsCharmed or function() return false end
+local issecretvalue = _G.issecretvalue or function() return false end
+local strmatch = string.match
+
+-- truthiness of a value that may be secret: a secret (unknown) value counts as false and is never
+-- boolean-tested (which would raise an error)
+local function IsTrue(value)
+    if issecretvalue(value) then return false end
+    return value and true or false
+end
+local tinsert = table.insert
+
+-- WoW Forever (Interface 16001) does not expose the combat log to addons
+-- (CombatLogGetCurrentEventInfo is nil), so casts are detected via UNIT_SPELLCAST_SUCCEEDED instead.
+addon.UseUnitEvents = CombatLogGetCurrentEventInfo == nil
 local GetAddOnMetadata = C_AddOns and C_AddOns.GetAddOnMetadata or _G.GetAddOnMetadata
 
 local bit_band = _G.bit.band
@@ -73,7 +89,16 @@ function addon:OnEnable()
         end
         addon.cleuParser:SetScript("OnEvent", addon.cleuParser.OnEvent)
     end
-    addon.cleuParser:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+    if addon.UseUnitEvents then
+        self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+        self:RegisterEvent("UNIT_AURA")
+        after(3, function() self:PollDamageMeter(true) end)
+        if not self.meterTicker then
+            self.meterTicker = C_Timer.NewTicker(15, function() addon:PollDamageMeter() end)
+        end
+    else
+        addon.cleuParser:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+    end
     self:RegisterEvent("PLAYER_ENTERING_WORLD")
 
     self:RegisterEvent("PLAYER_REGEN_ENABLED", function()
@@ -85,6 +110,7 @@ function addon:OnEnable()
         end
 
         after(5, function() self:ProcessQueuedNotifications() end)
+        if addon.UseUnitEvents then after(2, function() self:PollDamageMeter() end) end
     end)
 
     self:RegisterEvent("PLAYER_UNGHOST", function(...) after(5, function() self:ProcessQueuedNotifications() end) end)
@@ -122,20 +148,134 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 
     if bit_band(sourceFlags, COMBATLOG_FILTER_GROUP) == 0 then return end
 
+    self:ProcessCast(sourceGUID, sourceName, sourceName, destName, spellID, spellName)
+end
+
+-- Matches the unit tokens of the player, group members and their pets
+local function IsGroupUnit(unit)
+    if unit == "player" or unit == "pet" then return true end
+    return strmatch(unit, "^party%d+$") or strmatch(unit, "^partypet%d+$") or strmatch(unit, "^raid%d+$") or
+               strmatch(unit, "^raidpet%d+$")
+end
+
+-- Used when the combat log isn't available to addons (WoW Forever)
+function addon:UNIT_SPELLCAST_SUCCEEDED(event, unit, castGUID, spellID)
+    if not self.db.profile.enable then return end
+
+    local debug = self.db.profile.debug
+    local unitIsString = type(unit) == "string" and not issecretvalue(unit)
+
+    if not unitIsString then return end
+
+    -- A cast GUID is "Cast-<type>-<server>-<instance>-<zone>-<spellID>-<castUID>": when the spell ID
+    -- is secret (other players on Forever), try to recover it from the cast GUID instead
+    local fromCastGUID
+    if (not spellID or issecretvalue(spellID)) and type(castGUID) == "string" and not issecretvalue(castGUID) then
+        local id = strmatch(castGUID, "^Cast%-%d+%-%d+%-%d+%-%d+%-(%d+)%-")
+        if id then
+            spellID, fromCastGUID = tonumber(id), true
+        end
+    end
+
+    if debug and unit ~= "player" and IsGroupUnit(unit) then
+        self:PrintMessage("Cast %s: spellID %s, castGUID %s%s", unit,
+                          (spellID and not issecretvalue(spellID)) and tostring(spellID) or "<secret>",
+                          issecretvalue(castGUID) and "<secret>" or tostring(castGUID),
+                          fromCastGUID and " (spell ID read from castGUID)" or "")
+    end
+
+    if not spellID or issecretvalue(spellID) then return end
+    if not self.AbilityData[spellID] then return end
+    if not IsGroupUnit(unit) then return end
+    if UnitInBattleground("player") ~= nil then return end
+
+    local sourceGUID, sourceName = UnitGUID(unit), UnitName(unit)
+    if not sourceGUID or not sourceName or issecretvalue(sourceGUID) or issecretvalue(sourceName) then
+        if debug then self:PrintMessage("Dropped %s cast: GUID/name unavailable or secret", unit) end
+        return
+    end
+
+    local spellName = C_Spell and C_Spell.GetSpellName and C_Spell.GetSpellName(spellID) or tostring(spellID)
+
+    -- the target of the cast is not provided by this event
+    self:ProcessCast(sourceGUID, sourceName, unit, nil, spellID, spellName)
+end
+
+-- Forever hides other players' cast spell IDs (secret values), but the IDs of the auras they
+-- receive stay readable. Buff/debuff ranks are therefore detected through UNIT_AURA.
+function addon:UNIT_AURA(event, unit, updateInfo)
+    if not self.db.profile.enable then return end
+    if type(unit) ~= "string" or issecretvalue(unit) then return end
+    -- check the unit first: nameplate/enemy updates carry secret fields that error when read
+    if not IsGroupUnit(unit) then return end
+    if type(updateInfo) ~= "table" or issecretvalue(updateInfo) then return end
+
+    local isFull = updateInfo.isFullUpdate
+    if issecretvalue(isFull) or isFull then return end
+
+    local added, updated = updateInfo.addedAuras, updateInfo.updatedAuraInstanceIDs
+    if issecretvalue(added) then added = nil end
+    if issecretvalue(updated) then updated = nil end
+
+    local getByInstance = C_UnitAuras and C_UnitAuras.GetAuraDataByAuraInstanceID
+
+    local function check(aura, kind)
+        if type(aura) ~= "table" then return end
+
+        local spellID, casterUnit = aura.spellId, aura.sourceUnit
+        if not spellID or issecretvalue(spellID) or not self.AbilityData[spellID] then return end
+        if not casterUnit or issecretvalue(casterUnit) or type(casterUnit) ~= "string" then return end
+        if not IsGroupUnit(casterUnit) then return end
+
+        -- own casts are handled by UNIT_SPELLCAST_SUCCEEDED, where the spell ID is readable
+        if IsTrue(UnitIsUnit(casterUnit, "player")) then return end
+
+        local sourceGUID, sourceName = UnitGUID(casterUnit), UnitName(casterUnit)
+        if not sourceGUID or not sourceName or issecretvalue(sourceGUID) or issecretvalue(sourceName) then return end
+
+        if self.db.profile.debug then
+            self:PrintMessage("Aura %d (%s) on %s from %s", spellID, kind, unit, sourceName)
+        end
+
+        local spellName = C_Spell and C_Spell.GetSpellName and C_Spell.GetSpellName(spellID) or tostring(spellID)
+
+        self:ProcessCast(sourceGUID, sourceName, casterUnit, nil, spellID, spellName)
+    end
+
+    if added then for _, aura in ipairs(added) do check(aura, "added") end end
+
+    if getByInstance and updated then
+        for _, id in ipairs(updated) do check(getByInstance(unit, id), "refreshed") end
+    end
+end
+
+-- `unit` is anything UnitLevel & co accept (unit token or name)
+function addon:ProcessCast(sourceGUID, sourceName, unit, destName, spellID, spellName)
     if not self.AbilityData[spellID] then return end
     if self.db.profile.ignoredPlayers[sourceGUID] then return end
-    if UnitIsPossessed(sourceName) then return end
-    if UnitIsCharmed(sourceName) then return end
-    if sourceGUID == self.playerGUID and not HasFullControl() then return end
-    if UnitIsEnemy("player", sourceName) then return end
+    -- These can return secret booleans for other players on Forever; testing one raises an error,
+    -- so a secret (unknown) result is treated as "not true" and the cast is still checked
+    if IsTrue(UnitIsPossessed(unit)) then return end
+    if IsTrue(UnitIsCharmed(unit)) then return end
+    if sourceGUID == self.playerGUID then
+        local fullControl = HasFullControl()
+        if not issecretvalue(fullControl) and not fullControl then return end
+    end
+    if IsTrue(UnitIsEnemy("player", unit)) then return end
 
-    -- local isInGroup, petOwner = self.InGroupWith(sourceGUID)
-    -- if not isInGroup then return end
-
-    local castLevel = UnitLevel(sourceName)
+    local castLevel = UnitLevel(unit)
+    if not castLevel or issecretvalue(castLevel) or castLevel <= 0 then return end
     if self.db.profile.onlyMaxLevel and castLevel < addon.MaxLevel then return end
 
     local uid = self:GetUID(sourceGUID)
+
+    -- Remember the whisperable (full) name for this player
+    if sourceGUID ~= self.playerGUID then
+        self.session.FullNames = self.session.FullNames or {}
+        if not self.session.FullNames[sourceName] or self.session.FullNames[sourceName] == sourceName then
+            self.session.FullNames[sourceName] = self:ResolveFullName(unit, sourceGUID, sourceName)
+        end
+    end
 
     -- Only notify once per ability group
     local abilityGroupIndex = fmt("%s-%d", uid, addon.AbilityData[spellID].AbilityGroup)
@@ -170,6 +310,202 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
     self:RecordNotification(self.playerName, playerSpellIndex)
 
     self.session.PlayerGroupsNotified[abilityGroupIndex] = true
+end
+
+-- Finds the party/raid unit token for a (full or first) character name, excluding the player
+function addon:FindGroupUnitByName(name)
+    local function matches(unit)
+        local exists = UnitExists(unit)
+        if not issecretvalue(exists) and not exists then return false end
+        local short = UnitName(unit)
+        if not short or issecretvalue(short) then return false end
+        local full = GetUnitName and GetUnitName(unit, true)
+        if full and not issecretvalue(full) and full == name then return true end
+        return short == name or strmatch(name, "^(%S+)") == short
+    end
+
+    if IsInRaid() then
+        for i = 1, GetNumGroupMembers() do
+            local unit = "raid" .. i
+            if not IsTrue(UnitIsUnit(unit, "player")) and matches(unit) then return unit end
+        end
+    else
+        for i = 1, GetNumSubgroupMembers() do
+            local unit = "party" .. i
+            if matches(unit) then return unit end
+        end
+    end
+end
+
+-- WoW Forever hides other players' cast spell IDs, but Blizzard's built-in damage meter lists each
+-- group member's damage/healing spells with readable spell IDs. Poll it to catch the spells the
+-- UNIT_AURA path cannot see (damage, heals and other instant spells that leave no buff).
+-- `baselineOnly` records the current meter totals without reporting anything, so spells that were
+-- cast before the addon started watching (or that merely remain listed in the session) are not
+-- mistaken for new casts. Afterwards a spell is only processed when its total changed.
+function addon:PollDamageMeter(baselineOnly)
+    if not self.db.profile.enable or not self.UseUnitEvents then return end
+    if not (C_DamageMeter and Enum and Enum.DamageMeterSessionType and Enum.DamageMeterType) then return end
+    if not IsInGroup() or UnitInBattleground("player") ~= nil then
+        -- when a group forms later, its first read must be a baseline, not a burst of "new" casts
+        self.meterNeedsBaseline = true
+        return
+    end
+    if self.meterNeedsBaseline then
+        baselineOnly = true
+        self.meterNeedsBaseline = nil
+    end
+
+    local debug = self.db.profile.debug
+    local sessionType = Enum.DamageMeterSessionType.Current
+    self.meterSeen = self.meterSeen or {}
+
+    for _, dmType in ipairs({Enum.DamageMeterType.DamageDone, Enum.DamageMeterType.HealingDone}) do
+        local ok, session = pcall(C_DamageMeter.GetCombatSessionFromType, sessionType, dmType)
+        local sources = ok and type(session) == "table" and not issecretvalue(session) and session.combatSources
+
+        if type(sources) == "table" and not issecretvalue(sources) then
+            for _, source in ipairs(sources) do
+                local name = type(source) == "table" and not issecretvalue(source) and source.name
+                if type(name) == "string" and not issecretvalue(name) then
+                    local unit = self:FindGroupUnitByName(name)
+
+                    if unit then
+                        local ok2, detail = pcall(C_DamageMeter.GetCombatSessionSourceFromType, sessionType, dmType,
+                                                  source.sourceGUID)
+                        local spells = ok2 and type(detail) == "table" and not issecretvalue(detail) and
+                                           detail.combatSpells
+
+                        if type(spells) == "table" and not issecretvalue(spells) then
+                            local guid = UnitGUID(unit)
+
+                            for _, spell in ipairs(spells) do
+                                local spellID = type(spell) == "table" and not issecretvalue(spell) and spell.spellID
+
+                                local isNew = true
+                                if spellID and not issecretvalue(spellID) and guid and not issecretvalue(guid) then
+                                    local total = spell.totalAmount
+                                    if type(total) == "number" and not issecretvalue(total) then
+                                        local key = guid .. "-" .. spellID
+                                        isNew = self.meterSeen[key] ~= total
+                                        self.meterSeen[key] = total
+                                    end
+                                    if baselineOnly then isNew = false end
+                                end
+
+                                if not isNew then
+                                    -- unchanged since the last read: already seen, not a new cast
+                                elseif spellID and not issecretvalue(spellID) and self.AbilityData[spellID] and guid and
+                                    not issecretvalue(guid) then
+                                    if debug then
+                                        self:PrintMessage("Meter: %s cast %d", name, spellID)
+                                    end
+
+                                    local spellName = C_Spell and C_Spell.GetSpellName and
+                                                          C_Spell.GetSpellName(spellID) or tostring(spellID)
+
+                                    self:ProcessCast(guid, UnitName(unit), unit, nil, spellID, spellName)
+                                elseif debug and spellID and issecretvalue(spellID) then
+                                    self:PrintMessage("Meter: %s spell ID is secret", name)
+                                end
+                            end
+                        elseif debug then
+                            self:PrintMessage("Meter: no readable spells for %s (%s)", name, ok2 and "secret/empty" or
+                                                  tostring(detail))
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
+
+-- Prints what this client exposes that could replace the combat log (run /ranksentinel probe)
+function addon:ProbeForever()
+    local function keys(t)
+        local out = {}
+        for k in pairs(t) do out[#out + 1] = tostring(k) end
+        table.sort(out)
+        return table.concat(out, ", ")
+    end
+
+    self:PrintMessage("Probe: build %s, project %s, combat log %s", tostring(select(4, GetBuildInfo())),
+                      tostring(_G.WOW_PROJECT_ID), addon.UseUnitEvents and "unavailable" or "available")
+
+    if C_DamageMeter then
+        self:PrintMessage("C_DamageMeter functions: %s", keys(C_DamageMeter))
+    else
+        self:PrintMessage("C_DamageMeter: not present")
+    end
+
+    if Enum and Enum.DamageMeterType then
+        self:PrintMessage("Enum.DamageMeterType: %s", keys(Enum.DamageMeterType))
+    end
+    if Enum and Enum.DamageMeterSessionType then
+        self:PrintMessage("Enum.DamageMeterSessionType: %s", keys(Enum.DamageMeterSessionType))
+    end
+
+    if C_DamageMeter and C_DamageMeter.IsDamageMeterAvailable then
+        local ok, available, reason = pcall(C_DamageMeter.IsDamageMeterAvailable)
+        self:PrintMessage("IsDamageMeterAvailable: %s %s %s", tostring(ok), tostring(available), tostring(reason))
+    end
+end
+
+-- Dumps the structure (and whether values are secret) of the built-in damage meter data
+function addon:ProbeDamageMeter()
+    if not (C_DamageMeter and Enum and Enum.DamageMeterSessionType and Enum.DamageMeterType) then
+        self:PrintMessage("Probe meter: C_DamageMeter not available")
+        return
+    end
+
+    local function show(label, v, depth)
+        if issecretvalue(v) then
+            self:PrintMessage("%s = <secret %s>", label, type(v))
+        elseif type(v) == "table" then
+            local n = 0
+            for _ in pairs(v) do n = n + 1 end
+            self:PrintMessage("%s = table (%d entries)", label, n)
+            if depth > 0 then
+                local shown = 0
+                for k, val in pairs(v) do
+                    shown = shown + 1
+                    if shown > 8 then break end
+                    show(label .. "." .. tostring(k), val, depth - 1)
+                end
+            end
+        else
+            self:PrintMessage("%s = %s", label, tostring(v))
+        end
+    end
+
+    for _, dmType in ipairs({"DamageDone", "HealingDone"}) do
+        local ok, session = pcall(C_DamageMeter.GetCombatSessionFromType, Enum.DamageMeterSessionType.Overall,
+                                  Enum.DamageMeterType[dmType])
+        if not ok then
+            self:PrintMessage("%s: error %s", dmType, tostring(session))
+        else
+            show(dmType, session, 1)
+
+            local sources = type(session) == "table" and not issecretvalue(session) and session.combatSources
+            local first = sources and not issecretvalue(sources) and sources[1]
+            if first and not issecretvalue(first) then
+                show(dmType .. " source1", first, 1)
+
+                local guid = first.sourceGUID
+                local ok2, detail = pcall(C_DamageMeter.GetCombatSessionSourceFromType,
+                                          Enum.DamageMeterSessionType.Overall, Enum.DamageMeterType[dmType], guid)
+                if ok2 then
+                    show(dmType .. " detail", detail, 2)
+                    local spells = type(detail) == "table" and not issecretvalue(detail) and detail.combatSpells
+                    if spells and not issecretvalue(spells) and spells[1] then
+                        show(dmType .. " spell1", spells[1], 1)
+                    end
+                else
+                    self:PrintMessage("%s detail: error %s", dmType, tostring(detail))
+                end
+            end
+        end
+    end
 end
 
 function addon:ChatCommand(cmd)
@@ -222,6 +558,10 @@ function addon:ChatCommand(cmd)
                 self:PrintMessage("%s - %s", notification.target, notification.ability)
             end
         end
+    elseif msg == "probe" then
+        self:ProbeForever()
+    elseif msg == "probe meter" then
+        self:ProbeDamageMeter()
     elseif msg == "sync" then
         self:SyncBroadcast()
     elseif "report" == string.sub(msg, 1, #"report") then
