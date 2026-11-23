@@ -21,4 +21,5 @@ externals:
         url: https://repos.wowace.com/wow/callbackhandler/trunk/CallbackHandler-1.0
 
 ignore:
-  - AbilityData/Build.py
+  - data/Build.py
+  - data/*.csv

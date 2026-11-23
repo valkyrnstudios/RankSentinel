@@ -1,13 +1,13 @@
 # 1. Open https://docs.google.com/spreadsheets/d/1jtx1WyfChzACzh0WBWANtrqkRtS3D-zPWqs3eOnyVvY/edit#gid=0
-# 2. Download "Classic Abilities" as CSV to ".\AbilityData\classic.csv"
-# 3. Download "TBC Abilities" as CSV to ".\AbilityData\TBC.csv"
-# 4. Execute this script from root, "python .\AbilityData\Build.py"
+# 2. Download "Classic Abilities" as CSV to ".\data\classic.csv"
+# 3. Download "TBC Abilities" as CSV to ".\data\TBC.csv"
+# 4. Execute this script from root, "python .\data\Build.py"
 
 from datetime import date
 
 import csv, os
 
-if not os.path.isdir('./AbilityData'):
+if not os.path.isdir('./data'):
   print('Must be run from Addon root')
   exit()
 
@@ -18,7 +18,7 @@ eras = {
 }
 
 for eraLua, eraCsv in eras.items():
-  if not os.path.exists('./AbilityData/{0}'.format(eraCsv)):
+  if not os.path.exists('./data/{0}'.format(eraCsv)):
     print('{0} not found'.format(eraCsv));
     continue
 
@@ -26,7 +26,7 @@ for eraLua, eraCsv in eras.items():
   ability_list = []
   reverse_lookup = {}
 
-  with open('./AbilityData/{0}'.format(eraCsv), 'r', newline='') as csvfile:
+  with open('./data/{0}'.format(eraCsv), 'r', newline='') as csvfile:
     csvreader = csv.DictReader(csvfile)
 
     headers = next(csvreader)
@@ -64,7 +64,7 @@ for eraLua, eraCsv in eras.items():
 
     print('{0} Loaded / {1} Excluded abilities'.format(len(ability_list), excluded_count))
 
-  with open('./AbilityData/{0}'.format(eraLua), 'w', newline='') as abilityData:
+  with open('./data/{0}'.format(eraLua), 'w', newline='') as abilityData:
     abilityData.write('-- Built on {0}\n\n'.format(date.today()))
     abilityData.write('local _, addon = ...\n\n')
     abilityData.write('addon.AbilityData = {\n')

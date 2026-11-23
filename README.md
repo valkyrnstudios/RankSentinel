@@ -6,8 +6,7 @@ We built this tool to help your raid group make small improvements so they can a
 
 - Legitimate low-rank Abilities have been excluded
 - Battlegrounds are also excluded
-- Ability data comes from [Gogo's revised ability list](https://docs.google.com/spreadsheets/d/1jtx1WyfChzACzh0WBWANtrqkRtS3D-zPWqs3eOnyVvY/edit?usp=sharing), please leave a comment for any ability data changes you have in mind.
-- A large focus has been on delivering the most optimized code possible, memory usage is significantly less than Questie, your favorite damage meter, or inventory management add-on.
+- Ability data originates from [Gogo's revised ability list](https://docs.google.com/spreadsheets/d/1jtx1WyfChzACzh0WBWANtrqkRtS3D-zPWqs3eOnyVvY/edit?usp=sharing), which is now included in this repository.
 - RankSentinel's [GitHub issues](https://github.com/valkyrnstudios/RankSentinel/issues) and [CurseForge comments](https://www.curseforge.com/wow/addons/ranksentinel) are great locations to report any issues you find.
 - RankSentinel is a [spiritual successor](https://github.com/valkyrnstudios/RankSentinel/issues/5) to the now-defunct GogoWatch and SpellSnob add-ons.
 
