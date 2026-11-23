@@ -13,6 +13,7 @@ if not os.path.isdir('./data'):
 
 eras = {
   'Classic.lua': 'classic.csv',
+  'Forever.lua': 'Forever.csv',
   "TBC.lua": 'tbc.csv',
   "Wrath.lua": 'wrath.csv'
 }

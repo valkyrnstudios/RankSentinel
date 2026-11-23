@@ -1,0 +1,1455 @@
+Class,Ability,Level,Rank,Ability ID,Include,Note
+Druid,Aquatic Form,16,Shapeshift,1066,No,Only 1 Rank
+Druid,Barkskin,44,,22812,No,Only 1 Rank
+Druid,Barkskin Effect (DND),44,,22839,No,Only 1 Rank
+Druid,Bash,14,1,5211,,
+Druid,Bash,30,2,6798,,
+Druid,Bash,46,3,8983,,
+Druid,Bear Form,10,Shapeshift,5487,No,Unique rank
+Druid,Dire Bear Form,40,Shapeshift,9634,No,Unique rank
+Druid,Cat Form,20,Shapeshift,768,No,Only 1 Rank
+Druid,Challenging Roar,28,,5209,No,Only 1 Rank
+Druid,Claw,20,1,1082,,
+Druid,Claw,28,2,3029,,
+Druid,Claw,38,3,5201,,
+Druid,Claw,48,4,9849,,
+Druid,Claw,58,5,9850,,
+Druid,Cower,28,1,8998,,
+Druid,Cower,40,2,9000,,
+Druid,Cower,52,3,9892,,
+Druid,Abolish Poison,26,,2893,No,Unique rank
+Druid,Cure Poison,14,,8946,No,Unique rank
+Druid,Dash,26,1,1850,,
+Druid,Dash,46,2,9821,,
+Druid,Demoralizing Roar,10,1,99,,
+Druid,Demoralizing Roar,20,2,1735,,
+Druid,Demoralizing Roar,32,3,9490,,
+Druid,Demoralizing Roar,42,4,9747,,
+Druid,Demoralizing Roar,52,5,9898,,
+Druid,Enrage,12,,5229,No,Only 1 Rank
+Druid,Entangling Roots,8,1,339,No,OK To Use Rank 1
+Druid,Entangling Roots,18,2,1062,,
+Druid,Entangling Roots,28,3,5195,,
+Druid,Entangling Roots,38,4,5196,,
+Druid,Entangling Roots,48,5,9852,,
+Druid,Entangling Roots,58,6,9853,,
+Druid,Faerie Fire,18,1,770,,
+Druid,Faerie Fire,30,2,778,,
+Druid,Faerie Fire,42,3,9749,,
+Druid,Faerie Fire,54,4,9907,,
+Druid,Faerie Fire (Feral),1,1,16857,,
+Druid,Faerie Fire (Feral),30,2,17390,,
+Druid,Faerie Fire (Feral),42,3,17391,,
+Druid,Faerie Fire (Feral),54,4,17392,,
+Druid,Feline Grace,40,Passive,20719,No,Passive Effect
+Druid,Ferocious Bite,32,1,22568,,
+Druid,Ferocious Bite,40,2,22827,,
+Druid,Ferocious Bite,48,3,22828,,
+Druid,Ferocious Bite,56,4,22829,,
+Druid,Ferocious Bite,60,5,31018,,
+Druid,Frenzied Regeneration,36,1,22842,,
+Druid,Frenzied Regeneration,46,2,22895,,
+Druid,Frenzied Regeneration,56,3,22896,,
+Druid,Gift of the Wild,50,1,21849,,
+Druid,Gift of the Wild,60,2,21850,,
+Druid,Growl,10,,6795,No,Only 1 Rank
+Druid,Healing Touch,1,1,5185,No,Healing Spell
+Druid,Healing Touch,8,2,5186,No,Healing Spell
+Druid,Healing Touch,14,3,5187,No,Healing Spell
+Druid,Healing Touch,20,4,5188,No,Healing Spell
+Druid,Healing Touch,26,5,5189,No,Healing Spell
+Druid,Healing Touch,32,6,6778,No,Healing Spell
+Druid,Healing Touch,38,7,8903,No,Healing Spell
+Druid,Healing Touch,44,8,9758,No,Healing Spell
+Druid,Healing Touch,50,9,9888,No,Healing Spell
+Druid,Healing Touch,56,10,9889,No,Healing Spell
+Druid,Healing Touch,60,11,25297,No,Coming from AQ20
+Druid,Hibernate,18,1,2637,,
+Druid,Hibernate,38,2,18657,,
+Druid,Hibernate,58,3,18658,,
+Druid,Hurricane,40,1,16914,,
+Druid,Hurricane,50,2,17401,,
+Druid,Hurricane,60,3,17402,,
+Druid,Innervate,40,,29166,No,Only 1 Rank
+Druid,Insect Swarm,1,1,5570,,
+Druid,Insect Swarm,30,2,24974,,
+Druid,Insect Swarm,40,3,24975,,
+Druid,Insect Swarm,50,4,24976,,
+Druid,Insect Swarm,60,5,24977,,
+Druid,Mark of the Wild,1,1,1126,,
+Druid,Mark of the Wild,10,2,5232,,
+Druid,Mark of the Wild,20,3,6756,,
+Druid,Mark of the Wild,30,4,5234,,
+Druid,Mark of the Wild,40,5,8907,,
+Druid,Mark of the Wild,50,6,9884,,
+Druid,Mark of the Wild,60,7,9885,,
+Druid,Maul,10,1,6807,,
+Druid,Maul,18,2,6808,,
+Druid,Maul,26,3,6809,,
+Druid,Maul,34,4,8972,,
+Druid,Maul,42,5,9745,,
+Druid,Maul,50,6,9880,,
+Druid,Maul,58,7,9881,,
+Druid,Moonfire,4,1,8921,No,OK To Use Rank 1
+Druid,Moonfire,10,2,8924,,
+Druid,Moonfire,16,3,8925,,
+Druid,Moonfire,22,4,8926,,
+Druid,Moonfire,28,5,8927,,
+Druid,Moonfire,34,6,8928,,
+Druid,Moonfire,40,7,8929,,
+Druid,Moonfire,46,8,9833,,
+Druid,Moonfire,52,9,9834,,
+Druid,Moonfire,58,10,9835,,
+Druid,Moonkin Form,1,Shapeshift,24858,No,Passive Effect
+Druid,Nature's Grasp,1,1,16689,No,OK To Use Rank 1
+Druid,Nature's Grasp,18,2,16810,,
+Druid,Nature's Grasp,28,3,16811,,
+Druid,Nature's Grasp,38,4,16812,,
+Druid,Nature's Grasp,48,5,16813,,
+Druid,Nature's Grasp,58,6,17329,,
+Druid,Pounce,36,1,9005,,
+Druid,Pounce,46,2,9823,,
+Druid,Pounce,56,3,9827,,
+Druid,Prowl,20,1,5215,,
+Druid,Prowl,40,2,6783,,
+Druid,Prowl,60,3,9913,,
+Druid,Rake,24,1,1822,,
+Druid,Rake,34,2,1823,,
+Druid,Rake,44,3,1824,,
+Druid,Rake,54,4,9904,,
+Druid,Ravage,32,1,6785,,
+Druid,Ravage,42,2,6787,,
+Druid,Ravage,50,3,9866,,
+Druid,Ravage,58,4,9867,,
+Druid,Rebirth,20,1,20484,,
+Druid,Rebirth,30,2,20739,,
+Druid,Rebirth,40,3,20742,,
+Druid,Rebirth,50,4,20747,,
+Druid,Rebirth,60,5,20748,,
+Druid,Regrowth,12,1,8936,No,Healing Spell
+Druid,Regrowth,18,2,8938,No,Healing Spell
+Druid,Regrowth,24,3,8939,No,Healing Spell
+Druid,Regrowth,30,4,8940,No,Healing Spell
+Druid,Regrowth,36,5,8941,No,Healing Spell
+Druid,Regrowth,42,6,9750,No,Healing Spell
+Druid,Regrowth,48,7,9856,No,Healing Spell
+Druid,Regrowth,54,8,9857,No,Healing Spell
+Druid,Regrowth,60,9,9858,No,Healing Spell
+Druid,Rejuvenation,4,1,774,No,Healing Spell
+Druid,Rejuvenation,10,2,1058,No,Healing Spell
+Druid,Rejuvenation,16,3,1430,No,Healing Spell
+Druid,Rejuvenation,22,4,2090,No,Healing Spell
+Druid,Rejuvenation,28,5,2091,No,Healing Spell
+Druid,Rejuvenation,34,6,3627,No,Healing Spell
+Druid,Rejuvenation,40,7,8910,No,Healing Spell
+Druid,Rejuvenation,46,8,9839,No,Healing Spell
+Druid,Rejuvenation,52,9,9840,No,Healing Spell
+Druid,Rejuvenation,58,10,9841,No,Healing Spell
+Druid,Rejuvenation,60,11,25299,No,Coming from AQ20
+Druid,Remove Curse,24,,2782,No,Only 1 Rank
+Druid,Rip,20,1,1079,,
+Druid,Rip,28,2,9492,,
+Druid,Rip,36,3,9493,,
+Druid,Rip,44,4,9752,,
+Druid,Rip,52,5,9894,,
+Druid,Rip,60,6,9896,,
+Druid,Shred,22,1,5221,,
+Druid,Shred,30,2,6800,,
+Druid,Shred,38,3,8992,,
+Druid,Shred,46,4,9829,,
+Druid,Shred,54,5,9830,,
+Druid,Soothe Animal,22,1,2908,,
+Druid,Soothe Animal,38,2,8955,,
+Druid,Soothe Animal,54,3,9901,,
+Druid,Starfire,20,1,2912,,
+Druid,Starfire,26,2,8949,,
+Druid,Starfire,34,3,8950,,
+Druid,Starfire,42,4,8951,,
+Druid,Starfire,50,5,9875,,
+Druid,Starfire,58,6,9876,,
+Druid,Starfire,60,7,25298,No,Coming from AQ20
+Druid,Swipe,16,1,779,,
+Druid,Swipe,24,2,780,,
+Druid,Swipe,34,3,769,,
+Druid,Swipe,44,4,9754,,
+Druid,Swipe,54,5,9908,,
+Druid,Teleport: Moonglade,10,,18960,No,Only 1 Rank
+Druid,Thorns,6,1,467,,
+Druid,Thorns,14,2,782,,
+Druid,Thorns,24,3,1075,,
+Druid,Thorns,34,4,8914,,
+Druid,Thorns,44,5,9756,,
+Druid,Thorns,54,6,9910,,
+Druid,Tiger's Fury,24,1,5217,,
+Druid,Tiger's Fury,36,2,6793,,
+Druid,Tiger's Fury,48,3,9845,,
+Druid,Tiger's Fury,60,4,9846,,
+Druid,Track Humanoids,32,,5225,No,Only 1 Rank
+Druid,Tranquility,30,1,740,,
+Druid,Tranquility,40,2,8918,,
+Druid,Tranquility,50,3,9862,,
+Druid,Tranquility,60,4,9863,,
+Druid,Travel Form,30,Shapeshift,783,No,Only 1 Rank
+Druid,Wrath,1,1,5176,,
+Druid,Wrath,6,2,5177,,
+Druid,Wrath,14,3,5178,,
+Druid,Wrath,22,4,5179,,
+Druid,Wrath,30,5,5180,,
+Druid,Wrath,38,6,6780,,
+Druid,Wrath,46,7,8905,,
+Druid,Wrath,54,8,9912,,
+Hunter,Aimed Shot,1,1,19434,,
+Hunter,Aimed Shot,28,2,20900,,
+Hunter,Aimed Shot,36,3,20901,,
+Hunter,Aimed Shot,44,4,20902,,
+Hunter,Aimed Shot,52,5,20903,,
+Hunter,Aimed Shot,60,6,20904,,
+Hunter,Arcane Resistance,20,1,24495,No,Passive Effect
+Hunter,Arcane Resistance,30,2,24508,No,Passive Effect
+Hunter,Arcane Resistance,40,3,24509,No,Passive Effect
+Hunter,Arcane Resistance,50,4,24510,No,Passive Effect
+Hunter,Arcane Shot,6,1,3044,No,OK To Use Rank 1
+Hunter,Arcane Shot,12,2,14281,,
+Hunter,Arcane Shot,20,3,14282,,
+Hunter,Arcane Shot,28,4,14283,,
+Hunter,Arcane Shot,36,5,14284,,
+Hunter,Arcane Shot,44,6,14285,,
+Hunter,Arcane Shot,52,7,14286,,
+Hunter,Arcane Shot,60,8,14287,,
+Hunter,Aspect of the Beast,30,,13161,No,Only 1 Rank
+Hunter,Aspect of the Cheetah,20,,5118,No,Only 1 Rank
+Hunter,Aspect of the Hawk,10,1,13165,,
+Hunter,Aspect of the Hawk,18,2,14318,,
+Hunter,Aspect of the Hawk,28,3,14319,,
+Hunter,Aspect of the Hawk,38,4,14320,,
+Hunter,Aspect of the Hawk,48,5,14321,,
+Hunter,Aspect of the Hawk,58,6,14322,,
+Hunter,Aspect of the Hawk,60,7,25296,No,Coming from AQ20
+Hunter,Aspect of the Monkey,4,,13163,No,Only 1 Rank
+Hunter,Aspect of the Pack,40,,13159,No,Only 1 Rank
+Hunter,Aspect of the Wild,46,1,20043,,
+Hunter,Aspect of the Wild,56,2,20190,,
+Hunter,Auto Shot,1,,75,No,Only 1 Rank
+Hunter,Beast Lore,24,,1462,No,Only 1 Rank
+Hunter,Call Pet,10,,883,No,Only 1 Rank
+Hunter,Concussive Shot,8,,5116,No,Only 1 Rank
+Hunter,Counterattack,1,1,19306,,
+Hunter,Counterattack,42,2,20909,,
+Hunter,Counterattack,54,3,20910,,
+Hunter,Disengage,20,1,781,,
+Hunter,Disengage,34,2,14272,,
+Hunter,Disengage,48,3,14273,,
+Hunter,Dismiss Pet,10,,2641,No,Only 1 Rank
+Hunter,Distracting Shot,12,1,20736,,
+Hunter,Distracting Shot,20,2,14274,,
+Hunter,Distracting Shot,30,3,15629,,
+Hunter,Distracting Shot,40,4,15630,,
+Hunter,Distracting Shot,50,5,15631,,
+Hunter,Distracting Shot,60,6,15632,,
+Hunter,Eagle Eye,14,,6197,No,Only 1 Rank
+Hunter,Explosive Trap,34,1,13813,,
+Hunter,Explosive Trap,44,2,14316,,
+Hunter,Explosive Trap,54,3,14317,,
+Hunter,Eyes of the Beast,14,,1002,No,Only 1 Rank
+Hunter,Feed Pet,10,,6991,No,Only 1 Rank
+Hunter,Feign Death,30,,5384,No,Only 1 Rank
+Hunter,Fire Resistance,20,1,24440,No,Passive Effect
+Hunter,Fire Resistance,30,2,24441,No,Passive Effect
+Hunter,Fire Resistance,40,3,24463,No,Passive Effect
+Hunter,Fire Resistance,50,4,24464,No,Passive Effect
+Hunter,Flare,32,,1543,No,Only 1 Rank
+Hunter,Freezing Trap,20,1,1499,,
+Hunter,Freezing Trap,40,2,14310,,
+Hunter,Freezing Trap,60,3,14311,,
+Hunter,Frost Resistance,20,1,24475,No,Passive Effect
+Hunter,Frost Resistance,30,2,24476,No,Passive Effect
+Hunter,Frost Resistance,40,3,24477,No,Passive Effect
+Hunter,Frost Resistance,50,4,24478,No,Passive Effect
+Hunter,Frost Trap,28,,13809,No,Only 1 Rank
+Hunter,Great Stamina,10,1,4195,No,Passive Effect
+Hunter,Great Stamina,12,2,4196,No,Passive Effect
+Hunter,Great Stamina,18,3,4197,No,Passive Effect
+Hunter,Great Stamina,24,4,4198,No,Passive Effect
+Hunter,Great Stamina,30,5,4199,No,Passive Effect
+Hunter,Great Stamina,36,6,4200,No,Passive Effect
+Hunter,Great Stamina,42,7,4201,No,Passive Effect
+Hunter,Great Stamina,48,8,4202,No,Passive Effect
+Hunter,Great Stamina,54,9,5048,No,Passive Effect
+Hunter,Great Stamina,60,10,5049,No,Passive Effect
+Hunter,Growl,20,3,14923,,
+Hunter,Growl,30,4,14924,,
+Hunter,Growl,40,5,14925,,
+Hunter,Growl,50,6,14926,,
+Hunter,Growl,60,7,14927,,
+Hunter,Hunter's Mark,6,1,1130,,
+Hunter,Hunter's Mark,22,2,14323,,
+Hunter,Hunter's Mark,40,3,14324,,
+Hunter,Hunter's Mark,58,4,14325,,
+Hunter,Immolation Trap,16,1,13795,,
+Hunter,Immolation Trap,26,2,14302,,
+Hunter,Immolation Trap,36,3,14303,,
+Hunter,Immolation Trap,46,4,14304,,
+Hunter,Immolation Trap,56,5,14305,,
+Hunter,Mend Pet,12,1,136,,
+Hunter,Mend Pet,20,2,3111,,
+Hunter,Mend Pet,28,3,3661,,
+Hunter,Mend Pet,36,4,3662,,
+Hunter,Mend Pet,44,5,13542,,
+Hunter,Mend Pet,52,6,13543,,
+Hunter,Mend Pet,60,7,13544,,
+Hunter,Mongoose Bite,16,1,1495,,
+Hunter,Mongoose Bite,30,2,14269,,
+Hunter,Mongoose Bite,44,3,14270,,
+Hunter,Mongoose Bite,58,4,14271,,
+Hunter,Multi-Shot,18,1,2643,,
+Hunter,Multi-Shot,30,2,14288,,
+Hunter,Multi-Shot,42,3,14289,,
+Hunter,Multi-Shot,54,4,14290,,
+Hunter,Multi-Shot,60,5,25294,No,Coming from AQ20
+Hunter,Natural Armor,10,1,24547,No,Passive Effect
+Hunter,Natural Armor,12,2,24556,No,Passive Effect
+Hunter,Natural Armor,18,3,24557,No,Passive Effect
+Hunter,Natural Armor,24,4,24558,No,Passive Effect
+Hunter,Natural Armor,30,5,24559,No,Passive Effect
+Hunter,Natural Armor,36,6,24560,No,Passive Effect
+Hunter,Natural Armor,42,7,24561,No,Passive Effect
+Hunter,Natural Armor,48,8,24562,No,Passive Effect
+Hunter,Natural Armor,54,9,24631,No,Passive Effect
+Hunter,Natural Armor,60,10,24632,No,Passive Effect
+Hunter,Nature Resistance,20,1,24494,No,Passive Effect
+Hunter,Nature Resistance,30,2,24511,No,Passive Effect
+Hunter,Nature Resistance,40,3,24512,No,Passive Effect
+Hunter,Nature Resistance,50,4,24513,No,Passive Effect
+Hunter,Rapid Fire,26,,3045,No,Only 1 Rank
+Hunter,Raptor Strike,1,1,2973,,
+Hunter,Raptor Strike,8,2,14260,,
+Hunter,Raptor Strike,16,3,14261,,
+Hunter,Raptor Strike,24,4,14262,,
+Hunter,Raptor Strike,32,5,14263,,
+Hunter,Raptor Strike,40,6,14264,,
+Hunter,Raptor Strike,48,7,14265,,
+Hunter,Raptor Strike,56,8,14266,,
+Hunter,Readiness,0,,23989,No,Passive Effect
+Hunter,Revive Pet,10,,982,No,Only 1 Rank
+Hunter,Scare Beast,14,1,1513,,
+Hunter,Scare Beast,30,2,14326,,
+Hunter,Scare Beast,46,3,14327,,
+Hunter,Scorpid Sting,22,1,3043,,
+Hunter,Scorpid Sting,32,2,14275,,
+Hunter,Scorpid Sting,42,3,14276,,
+Hunter,Scorpid Sting,52,4,14277,,
+Hunter,Serpent Sting,4,1,1978,No,OK To Use Rank 1
+Hunter,Serpent Sting,10,2,13549,,
+Hunter,Serpent Sting,18,3,13550,,
+Hunter,Serpent Sting,26,4,13551,,
+Hunter,Serpent Sting,34,5,13552,,
+Hunter,Serpent Sting,42,6,13553,,
+Hunter,Serpent Sting,50,7,13554,,
+Hunter,Serpent Sting,58,8,13555,,
+Hunter,Serpent Sting,60,9,25295,No,Coming from AQ20
+Hunter,Shadow Resistance,20,1,24490,No,Passive Effect
+Hunter,Shadow Resistance,30,2,24514,No,Passive Effect
+Hunter,Shadow Resistance,40,3,24515,No,Passive Effect
+Hunter,Shadow Resistance,50,4,24516,No,Passive Effect
+Hunter,Tame Beast,10,,1515,No,Only 1 Rank
+Hunter,Track Beasts,1,,1494,No,Only 1 Rank
+Hunter,Track Demons,32,,19878,No,Only 1 Rank
+Hunter,Track Dragonkin,50,,19879,No,Only 1 Rank
+Hunter,Track Elementals,26,,19880,No,Only 1 Rank
+Hunter,Track Giants,40,,19882,No,Only 1 Rank
+Hunter,Track Hidden,24,,19885,No,Only 1 Rank
+Hunter,Track Humanoids,10,,19883,No,Only 1 Rank
+Hunter,Track Undead,18,,19884,No,Only 1 Rank
+Hunter,Tranquilizing Shot,60,,19801,No,Only 1 Rank
+Hunter,Trueshot Aura,1,1,19506,No,Only 1 Rank
+Hunter,Viper Sting,36,1,3034,,
+Hunter,Viper Sting,46,2,14279,,
+Hunter,Viper Sting,56,3,14280,,
+Hunter,Volley,40,1,1510,,
+Hunter,Volley,50,2,14294,,
+Hunter,Volley,58,3,14295,,
+Hunter,Wing Clip,12,1,2974,No,OK To Use Rank 1
+Hunter,Wing Clip,38,2,14267,,
+Hunter,Wing Clip,60,3,14268,,
+Hunter,Wyvern Sting,1,1,19386,,
+Hunter,Wyvern Sting,50,2,24132,,
+Hunter,Wyvern Sting,60,3,24133,,
+Mage,Amplify Magic,18,1,1008,,
+Mage,Amplify Magic,30,2,8455,,
+Mage,Amplify Magic,42,3,10169,,
+Mage,Amplify Magic,54,4,10170,,
+Mage,Arcane Brilliance,56,1,23028,No,Only 1 Rank
+Mage,Arcane Explosion,14,1,1449,No,OK To Use Rank 1
+Mage,Arcane Explosion,22,2,8437,,
+Mage,Arcane Explosion,30,3,8438,,
+Mage,Arcane Explosion,38,4,8439,,
+Mage,Arcane Explosion,46,5,10201,,
+Mage,Arcane Explosion,54,6,10202,,
+Mage,Arcane Intellect,1,1,1459,,
+Mage,Arcane Intellect,14,2,1460,,
+Mage,Arcane Intellect,28,3,1461,,
+Mage,Arcane Intellect,42,4,10156,,
+Mage,Arcane Intellect,56,5,10157,,
+Mage,Arcane Missiles,8,1,5143,,
+Mage,Arcane Missiles,16,2,5144,,
+Mage,Arcane Missiles,24,3,5145,,
+Mage,Arcane Missiles,32,4,8416,,
+Mage,Arcane Missiles,40,5,8417,,
+Mage,Arcane Missiles,48,6,10211,,
+Mage,Arcane Missiles,56,7,10212,,
+Mage,Arcane Missiles,56,8,25345,No,Coming from AQ20
+Mage,Blast Wave,1,1,11113,,
+Mage,Blast Wave,36,2,13018,,
+Mage,Blast Wave,44,3,13019,,
+Mage,Blast Wave,52,4,13020,,
+Mage,Blast Wave,60,5,13021,,
+Mage,Blink,20,,1953,No,Only 1 Rank
+Mage,Blizzard,20,1,10,No,OK To Use Low Rank
+Mage,Blizzard,28,2,6141,No,OK To Use Low Rank
+Mage,Blizzard,36,3,8427,No,OK To Use Low Rank
+Mage,Blizzard,44,4,10185,No,OK To Use Low Rank
+Mage,Blizzard,52,5,10186,No,OK To Use Low Rank
+Mage,Blizzard,60,6,10187,No,OK To Use Low Rank
+Mage,Cone of Cold,26,1,120,No,OK To Use Rank 1
+Mage,Cone of Cold,34,2,8492,,
+Mage,Cone of Cold,42,3,10159,,
+Mage,Cone of Cold,50,4,10160,,
+Mage,Cone of Cold,58,5,10161,,
+Mage,Conjure Food,6,1,587,No,OK To Use Low Rank
+Mage,Conjure Food,12,2,597,No,OK To Use Low Rank
+Mage,Conjure Food,22,3,990,No,OK To Use Low Rank
+Mage,Conjure Food,32,4,6129,No,OK To Use Low Rank
+Mage,Conjure Food,42,5,10144,No,OK To Use Low Rank
+Mage,Conjure Food,52,6,10145,No,OK To Use Low Rank
+Mage,Conjure Food,60,7,28612,No,OK To Use Low Rank
+Mage,Conjure Mana Agate,28,,759,No,Unique rank
+Mage,Conjure Mana Citrine,48,,10053,No,Unique rank
+Mage,Conjure Mana Jade,38,,3552,No,Unique rank
+Mage,Conjure Mana Ruby,58,,10054,No,Unique rank
+Mage,Conjure Water,4,1,5504,No,OK To Use Low Rank
+Mage,Conjure Water,10,2,5505,No,OK To Use Low Rank
+Mage,Conjure Water,20,3,5506,No,OK To Use Low Rank
+Mage,Conjure Water,30,4,6127,No,OK To Use Low Rank
+Mage,Conjure Water,40,5,10138,No,OK To Use Low Rank
+Mage,Conjure Water,50,6,10139,No,OK To Use Low Rank
+Mage,Conjure Water,60,7,10140,No,OK To Use Low Rank
+Mage,Counterspell,24,,2139,No,Only 1 Rank
+Mage,Dampen Magic,12,1,604,,
+Mage,Dampen Magic,24,2,8450,,
+Mage,Dampen Magic,36,3,8451,,
+Mage,Dampen Magic,48,4,10173,,
+Mage,Dampen Magic,60,5,10174,,
+Mage,Detect Magic,16,,2855,No,Only 1 Rank
+Mage,Evocation,20,,12051,No,Only 1 Rank
+Mage,Fire Blast,6,1,2136,,
+Mage,Fire Blast,14,2,2137,,
+Mage,Fire Blast,22,3,2138,,
+Mage,Fire Blast,30,4,8412,,
+Mage,Fire Blast,38,5,8413,,
+Mage,Fire Blast,46,6,10197,,
+Mage,Fire Blast,54,7,10199,,
+Mage,Fire Ward,20,1,543,,
+Mage,Fire Ward,30,2,8457,,
+Mage,Fire Ward,40,3,8458,,
+Mage,Fire Ward,50,4,10223,,
+Mage,Fire Ward,60,5,10225,,
+Mage,Fireball,1,1,133,,
+Mage,Fireball,6,2,143,,
+Mage,Fireball,12,3,145,,
+Mage,Fireball,18,4,3140,,
+Mage,Fireball,24,5,8400,,
+Mage,Fireball,30,6,8401,,
+Mage,Fireball,36,7,8402,,
+Mage,Fireball,42,8,10148,,
+Mage,Fireball,48,9,10149,,
+Mage,Fireball,54,10,10150,,
+Mage,Fireball,60,11,10151,,
+Mage,Fireball,60,12,25306,No,Coming from AQ20
+Mage,Flamestrike,16,1,2120,No,OK To Use Low Rank
+Mage,Flamestrike,24,2,2121,No,OK To Use Low Rank
+Mage,Flamestrike,32,3,8422,No,OK To Use Low Rank
+Mage,Flamestrike,40,4,8423,No,OK To Use Low Rank
+Mage,Flamestrike,48,5,10215,No,OK To Use Low Rank
+Mage,Flamestrike,56,6,10216,No,OK To Use Low Rank
+Mage,Frost Armor,1,1,168,,
+Mage,Frost Armor,10,2,7300,,
+Mage,Frost Armor,20,3,7301,,
+Mage,Frost Nova,10,1,122,No,OK To Use Rank 1
+Mage,Frost Nova,26,2,865,,
+Mage,Frost Nova,40,3,6131,,
+Mage,Frost Nova,54,4,10230,,
+Mage,Frost Ward,22,1,6143,,
+Mage,Frost Ward,32,2,8461,,
+Mage,Frost Ward,42,3,8462,,
+Mage,Frost Ward,52,4,10177,,
+Mage,Frost Ward,60,5,28609,,
+Mage,Frostbolt,4,1,116,No,OK To Use Rank 1
+Mage,Frostbolt,8,2,205,,
+Mage,Frostbolt,14,3,837,,
+Mage,Frostbolt,20,4,7322,,
+Mage,Frostbolt,26,5,8406,,
+Mage,Frostbolt,32,6,8407,,
+Mage,Frostbolt,38,7,8408,,
+Mage,Frostbolt,44,8,10179,,
+Mage,Frostbolt,50,9,10180,,
+Mage,Frostbolt,56,10,10181,,
+Mage,Frostbolt,60,11,25304,No,Coming from AQ20
+Mage,Ice Armor,30,1,7302,,
+Mage,Ice Armor,40,2,7320,,
+Mage,Ice Armor,50,3,10219,,
+Mage,Ice Armor,60,4,10220,,
+Mage,Ice Barrier,1,1,11426,,
+Mage,Ice Barrier,46,2,13031,,
+Mage,Ice Barrier,52,3,13032,,
+Mage,Ice Barrier,58,4,13033,,
+Mage,Mage Armor,34,1,6117,,
+Mage,Mage Armor,46,2,22782,,
+Mage,Mage Armor,58,3,22783,,
+Mage,Mana Shield,20,1,1463,,
+Mage,Mana Shield,28,2,8494,,
+Mage,Mana Shield,36,3,8495,,
+Mage,Mana Shield,44,4,10191,,
+Mage,Mana Shield,52,5,10192,,
+Mage,Mana Shield,60,6,10193,,
+Mage,Polymorph,8,1,118,No,OK To Use Low Rank
+Mage,Polymorph,20,2,12824,No,OK To Use Low Rank
+Mage,Polymorph,40,3,12825,No,OK To Use Low Rank
+Mage,Polymorph,60,4,12826,No,Max Rank
+Mage,Polymorph,60,Pig,28272,No,Max Rank
+Mage,Polymorph,60,Turtle,28271,No,Max Rank
+Mage,Polymorph: Cow,60,,28270,No,Max Rank
+Mage,Portal: Darnassus,50,,11419,No,Only 1 Rank
+Mage,Portal: Ironforge,40,,11416,No,Only 1 Rank
+Mage,Portal: Orgrimmar,40,,11417,No,Only 1 Rank
+Mage,Portal: Stormwind,40,,10059,No,Only 1 Rank
+Mage,Portal: Thunder Bluff,50,,11420,No,Only 1 Rank
+Mage,Portal: Undercity,40,,11418,No,Only 1 Rank
+Mage,Pyroblast,1,1,11366,,
+Mage,Pyroblast,24,2,12505,,
+Mage,Pyroblast,30,3,12522,,
+Mage,Pyroblast,36,4,12523,,
+Mage,Pyroblast,42,5,12524,,
+Mage,Pyroblast,48,6,12525,,
+Mage,Pyroblast,54,7,12526,,
+Mage,Pyroblast,60,8,18809,,
+Mage,Remove Lesser Curse,18,,475,No,Only 1 Rank
+Mage,Scorch,22,1,2948,,
+Mage,Scorch,28,2,8444,,
+Mage,Scorch,34,3,8445,,
+Mage,Scorch,40,4,8446,,
+Mage,Scorch,46,5,10205,,
+Mage,Scorch,52,6,10206,,
+Mage,Scorch,58,7,10207,,
+Mage,Slow Fall,12,,130,No,Only 1 Rank
+Mage,Teleport: Darnassus,30,,3565,No,Only 1 Rank
+Mage,Teleport: Ironforge,20,,3562,No,Only 1 Rank
+Mage,Teleport: Orgrimmar,20,,3567,No,Only 1 Rank
+Mage,Teleport: Stormwind,20,,3561,No,Only 1 Rank
+Mage,Teleport: Thunder Bluff,30,,3566,No,Only 1 Rank
+Mage,Teleport: Undercity,20,,3563,No,Only 1 Rank
+Paladin,Blessing of Freedom,18,,1044,No,Only 1 Rank
+Paladin,Blessing of Light,40,1,19977,,
+Paladin,Blessing of Light,50,2,19978,,
+Paladin,Blessing of Light,60,3,19979,,
+Paladin,Blessing of Might,4,1,19740,,
+Paladin,Blessing of Might,12,2,19834,,
+Paladin,Blessing of Might,22,3,19835,,
+Paladin,Blessing of Might,32,4,19836,,
+Paladin,Blessing of Might,42,5,19837,,
+Paladin,Blessing of Might,52,6,19838,,
+Paladin,Blessing of Might,60,7,25291,No,Coming from AQ20
+Paladin,Blessing of Protection,10,1,1022,,
+Paladin,Blessing of Protection,24,2,5599,,
+Paladin,Blessing of Protection,38,3,10278,,
+Paladin,Blessing of Sacrifice,46,1,6940,,
+Paladin,Blessing of Sacrifice,54,2,20729,,
+Paladin,Blessing of Salvation,26,,1038,No,Only 1 Rank
+Paladin,Blessing of Sanctuary,1,1,20911,,
+Paladin,Blessing of Sanctuary,40,2,20912,,
+Paladin,Blessing of Sanctuary,50,3,20913,,
+Paladin,Blessing of Sanctuary,60,4,20914,,
+Paladin,Blessing of Wisdom,14,1,19742,,
+Paladin,Blessing of Wisdom,24,2,19850,,
+Paladin,Blessing of Wisdom,34,3,19852,,
+Paladin,Blessing of Wisdom,44,4,19853,,
+Paladin,Blessing of Wisdom,54,5,19854,,
+Paladin,Blessing of Wisdom,60,6,25290,No,Coming from AQ20
+Paladin,Concentration Aura,22,,19746,No,Only 1 Rank
+Paladin,Consecration,1,1,26573,No,OK To Use Low Rank
+Paladin,Consecration,30,2,20116,No,OK To Use Low Rank
+Paladin,Consecration,40,3,20922,No,OK To Use Low Rank
+Paladin,Consecration,50,4,20923,No,OK To Use Low Rank
+Paladin,Consecration,60,5,20924,No,OK To Use Low Rank
+Paladin,Devotion Aura,1,1,465,,
+Paladin,Devotion Aura,10,2,10290,,
+Paladin,Devotion Aura,20,3,643,,
+Paladin,Devotion Aura,30,4,10291,,
+Paladin,Devotion Aura,40,5,1032,,
+Paladin,Devotion Aura,50,6,10292,,
+Paladin,Devotion Aura,60,7,10293,,
+Paladin,Divine Intervention,30,,19752,No,Only 1 Rank
+Paladin,Divine Protection,6,1,498,,
+Paladin,Divine Protection,18,2,5573,,
+Paladin,Divine Shield,34,1,642,,
+Paladin,Divine Shield,50,2,1020,,
+Paladin,Exorcism,20,1,879,,
+Paladin,Exorcism,28,2,5614,,
+Paladin,Exorcism,36,3,5615,,
+Paladin,Exorcism,44,4,10312,,
+Paladin,Exorcism,52,5,10313,,
+Paladin,Exorcism,60,6,10314,,
+Paladin,Fire Resistance Aura,36,1,19891,,
+Paladin,Fire Resistance Aura,48,2,19899,,
+Paladin,Fire Resistance Aura,60,3,19900,,
+Paladin,Flash of Light,20,1,19750,No,Healing Spell
+Paladin,Flash of Light,26,2,19939,No,Healing Spell
+Paladin,Flash of Light,34,3,19940,No,Healing Spell
+Paladin,Flash of Light,42,4,19941,No,Healing Spell
+Paladin,Flash of Light,50,5,19942,No,Healing Spell
+Paladin,Flash of Light,58,6,19943,No,Healing Spell
+Paladin,Frost Resistance Aura,32,1,19888,,
+Paladin,Frost Resistance Aura,44,2,19897,,
+Paladin,Frost Resistance Aura,56,3,19898,,
+Paladin,Greater Blessing of Kings,60,,25898,No,Only 1 Rank
+Paladin,Greater Blessing of Light,60,1,25890,No,Only 1 Rank
+Paladin,Greater Blessing of Might,52,1,25782,,
+Paladin,Greater Blessing of Might,60,2,25916,,
+Paladin,Greater Blessing of Salvation,60,,25895,No,Only 1 Rank
+Paladin,Greater Blessing of Sanctuary,60,1,25899,No,Only 1 Rank
+Paladin,Greater Blessing of Wisdom,54,1,25894,,
+Paladin,Greater Blessing of Wisdom,60,2,25918,,
+Paladin,Hammer of Justice,8,1,853,,
+Paladin,Hammer of Justice,24,2,5588,,
+Paladin,Hammer of Justice,40,3,5589,,
+Paladin,Hammer of Justice,54,4,10308,,
+Paladin,Hammer of Wrath,44,1,24275,,
+Paladin,Hammer of Wrath,52,2,24274,,
+Paladin,Hammer of Wrath,60,3,24239,,
+Paladin,Holy Light,1,1,635,No,Healing Spell
+Paladin,Holy Light,6,2,639,No,Healing Spell
+Paladin,Holy Light,14,3,647,No,Healing Spell
+Paladin,Holy Light,22,4,1026,No,Healing Spell
+Paladin,Holy Light,30,5,1042,No,Healing Spell
+Paladin,Holy Light,38,6,3472,No,Healing Spell
+Paladin,Holy Light,46,7,10328,No,Healing Spell
+Paladin,Holy Light,54,8,10329,No,Healing Spell
+Paladin,Holy Light,60,9,25292,No,Coming from AQ20
+Paladin,Holy Shield,1,1,20925,No,OK To Use Rank 1
+Paladin,Holy Shield,50,2,20927,,
+Paladin,Holy Shield,60,3,20928,,
+Paladin,Holy Shock,1,1,20473,No,Healing Spell
+Paladin,Holy Shock,48,2,20929,No,Healing Spell
+Paladin,Holy Shock,56,3,20930,No,Healing Spell
+Paladin,Holy Wrath,50,1,2812,,
+Paladin,Holy Wrath,60,2,10318,,
+Paladin,Judgement,4,,20271,No,Only 1 Rank
+Paladin,Lay on Hands,10,1,633,,
+Paladin,Lay on Hands,30,2,2800,,
+Paladin,Lay on Hands,50,3,10310,,
+Paladin,Cleanse,42,,4987,No,Unique rank
+Paladin,Purify,8,,1152,No,Unique rank
+Paladin,Redemption,12,1,7328,,
+Paladin,Redemption,24,2,10322,,
+Paladin,Redemption,36,3,10324,,
+Paladin,Redemption,48,4,20772,,
+Paladin,Redemption,60,5,20773,,
+Paladin,Retribution Aura,16,1,7294,,
+Paladin,Retribution Aura,26,2,10298,,
+Paladin,Retribution Aura,36,3,10299,,
+Paladin,Retribution Aura,46,4,10300,,
+Paladin,Retribution Aura,56,5,10301,,
+Paladin,Righteous Fury,16,,25780,No,Only 1 Rank
+Paladin,Seal of Command,1,1,20375,No,OK To Use Rank 1
+Paladin,Seal of Command,30,2,20915,,
+Paladin,Seal of Command,40,3,20918,,
+Paladin,Seal of Command,50,4,20919,,
+Paladin,Seal of Command,60,5,20920,,
+Paladin,Seal of Justice,22,,20164,No,Only 1 Rank
+Paladin,Seal of Light,30,1,20165,,
+Paladin,Seal of Light,40,2,20347,,
+Paladin,Seal of Light,50,3,20348,,
+Paladin,Seal of Light,60,4,20349,,
+Paladin,Seal of Righteousness,1,1,20154,,
+Paladin,Seal of Righteousness,1,1,21084,,
+Paladin,Seal of Righteousness,10,2,20287,,
+Paladin,Seal of Righteousness,18,3,20288,,
+Paladin,Seal of Righteousness,26,4,20289,,
+Paladin,Seal of Righteousness,34,5,20290,,
+Paladin,Seal of Righteousness,42,6,20291,,
+Paladin,Seal of Righteousness,50,7,20292,,
+Paladin,Seal of Righteousness,58,8,20293,,
+Paladin,Seal of the Crusader,6,1,21082,,
+Paladin,Seal of the Crusader,12,2,20162,,
+Paladin,Seal of the Crusader,22,3,20305,,
+Paladin,Seal of the Crusader,32,4,20306,,
+Paladin,Seal of the Crusader,42,5,20307,,
+Paladin,Seal of the Crusader,52,6,20308,,
+Paladin,Seal of Wisdom,38,1,20166,,
+Paladin,Seal of Wisdom,48,2,20356,,
+Paladin,Seal of Wisdom,58,3,20357,,
+Paladin,Sense Undead,20,,5502,No,Only 1 Rank
+Paladin,Shadow Resistance Aura,28,1,19876,,
+Paladin,Shadow Resistance Aura,40,2,19895,,
+Paladin,Shadow Resistance Aura,52,3,19896,,
+Paladin,Summon Charger,60,Summon,23214,No,Only 1 Rank
+Paladin,Summon Warhorse,40,Summon,13819,No,Only 1 Rank
+Paladin,Turn Undead,24,1,2878,,
+Paladin,Turn Undead,38,2,5627,,
+Paladin,Turn Undead,52,3,10326,,
+Priest,Abolish Disease,32,,552,No,Unique rank
+Priest,Cure Disease,14,,528,No,Unique rank
+Priest,Desperate Prayer,10,1,13908,,
+Priest,Desperate Prayer,18,2,19236,,
+Priest,Desperate Prayer,26,3,19238,,
+Priest,Desperate Prayer,34,4,19240,,
+Priest,Desperate Prayer,42,5,19241,,
+Priest,Desperate Prayer,50,6,19242,,
+Priest,Desperate Prayer,58,7,19243,,
+Priest,Devouring Plague,20,1,2944,,
+Priest,Devouring Plague,28,2,19276,,
+Priest,Devouring Plague,36,3,19277,,
+Priest,Devouring Plague,44,4,19278,,
+Priest,Devouring Plague,52,5,19279,,
+Priest,Devouring Plague,60,6,19280,,
+Priest,Dispel Magic,18,1,527,No,OK To Use Low Rank
+Priest,Dispel Magic,36,2,988,No,OK To Use Low Rank
+Priest,Divine Spirit,1,1,14752,,
+Priest,Divine Spirit,40,2,14818,,
+Priest,Divine Spirit,50,3,14819,,
+Priest,Divine Spirit,60,4,27841,,
+Priest,Elune's Grace,20,1,2651,,
+Priest,Elune's Grace,30,2,19289,,
+Priest,Elune's Grace,40,3,19291,,
+Priest,Elune's Grace,50,4,19292,,
+Priest,Elune's Grace,60,5,19293,,
+Priest,Fade,8,1,586,,
+Priest,Fade,20,2,9578,,
+Priest,Fade,30,3,9579,,
+Priest,Fade,40,4,9592,,
+Priest,Fade,50,5,10941,,
+Priest,Fade,60,6,10942,,
+Priest,Fear Ward,20,,6346,No,Only 1 Rank
+Priest,Feedback,20,1,13896,,
+Priest,Feedback,30,2,19271,,
+Priest,Feedback,40,3,19273,,
+Priest,Feedback,50,4,19274,,
+Priest,Feedback,60,5,19275,,
+Priest,Flash Heal,20,1,2061,No,Healing Spell
+Priest,Flash Heal,26,2,9472,No,Healing Spell
+Priest,Flash Heal,32,3,9473,No,Healing Spell
+Priest,Flash Heal,38,4,9474,No,Healing Spell
+Priest,Flash Heal,44,5,10915,No,Healing Spell
+Priest,Flash Heal,50,6,10916,No,Healing Spell
+Priest,Flash Heal,56,7,10917,No,Healing Spell
+Priest,Greater Heal,40,1,2060,No,Healing Spell
+Priest,Greater Heal,46,2,10963,No,Healing Spell
+Priest,Greater Heal,52,3,10964,No,Healing Spell
+Priest,Greater Heal,58,4,10965,No,Healing Spell
+Priest,Greater Heal,60,5,25314,No,Coming from AQ20
+Priest,Heal,16,1,2054,No,Healing Spell
+Priest,Heal,22,2,2055,No,Healing Spell
+Priest,Heal,28,3,6063,No,Healing Spell
+Priest,Heal,34,4,6064,No,Healing Spell
+Priest,Hex of Weakness,10,1,9035,,
+Priest,Hex of Weakness,20,2,19281,,
+Priest,Hex of Weakness,30,3,19282,,
+Priest,Hex of Weakness,40,4,19283,,
+Priest,Hex of Weakness,50,5,19284,,
+Priest,Hex of Weakness,60,6,19285,,
+Priest,Holy Fire,20,1,14914,,
+Priest,Holy Fire,24,2,15262,,
+Priest,Holy Fire,30,3,15263,,
+Priest,Holy Fire,36,4,15264,,
+Priest,Holy Fire,42,5,15265,,
+Priest,Holy Fire,48,6,15266,,
+Priest,Holy Fire,54,7,15267,,
+Priest,Holy Fire,60,8,15261,,
+Priest,Holy Nova,1,1,15237,No,OK To Use Low Rank
+Priest,Holy Nova,28,2,15430,No,OK To Use Low Rank
+Priest,Holy Nova,36,3,15431,No,OK To Use Low Rank
+Priest,Holy Nova,44,4,27799,No,OK To Use Low Rank
+Priest,Holy Nova,52,5,27800,No,OK To Use Low Rank
+Priest,Holy Nova,60,6,27801,No,OK To Use Low Rank
+Priest,Improved Prayer of Healing,0,3,15019,No,Passive Effect
+Priest,Inner Fire,12,1,588,,
+Priest,Inner Fire,20,2,7128,,
+Priest,Inner Fire,30,3,602,,
+Priest,Inner Fire,40,4,1006,,
+Priest,Inner Fire,50,5,10951,,
+Priest,Inner Fire,60,6,10952,,
+Priest,Lesser Heal,1,1,2050,No,Healing Spell
+Priest,Lesser Heal,4,2,2052,No,Healing Spell
+Priest,Lesser Heal,10,3,2053,No,Healing Spell
+Priest,Levitate,34,,1706,No,Only 1 Rank
+Priest,Lightwell,1,1,724,No,Shame
+Priest,Lightwell,50,2,27870,No,Shame
+Priest,Lightwell,60,3,27871,No,Shame
+Priest,Mana Burn,24,1,8129,,
+Priest,Mana Burn,32,2,8131,,
+Priest,Mana Burn,40,3,10874,,
+Priest,Mana Burn,48,4,10875,,
+Priest,Mana Burn,56,5,10876,,
+Priest,Mind Blast,10,1,8092,,
+Priest,Mind Blast,16,2,8102,,
+Priest,Mind Blast,22,3,8103,,
+Priest,Mind Blast,28,4,8104,,
+Priest,Mind Blast,34,5,8105,,
+Priest,Mind Blast,40,6,8106,,
+Priest,Mind Blast,46,7,10945,,
+Priest,Mind Blast,52,8,10946,,
+Priest,Mind Blast,58,9,10947,,
+Priest,Mind Control,30,1,605,,
+Priest,Mind Control,44,2,10911,,
+Priest,Mind Control,58,3,10912,,
+Priest,Mind Flay,1,1,15407,,
+Priest,Mind Flay,28,2,17311,,
+Priest,Mind Flay,36,3,17312,,
+Priest,Mind Flay,44,4,17313,,
+Priest,Mind Flay,52,5,17314,,
+Priest,Mind Flay,60,6,18807,,
+Priest,Mind Soothe,20,1,453,,
+Priest,Mind Soothe,36,2,8192,,
+Priest,Mind Soothe,52,3,10953,,
+Priest,Mind Vision,22,1,2096,,
+Priest,Mind Vision,44,2,10909,,
+Priest,Power Word: Fortitude,1,1,1243,,
+Priest,Power Word: Fortitude,12,2,1244,,
+Priest,Power Word: Fortitude,24,3,1245,,
+Priest,Power Word: Fortitude,36,4,2791,,
+Priest,Power Word: Fortitude,48,5,10937,,
+Priest,Power Word: Fortitude,60,6,10938,,
+Priest,Power Word: Shield,6,1,17,,
+Priest,Power Word: Shield,12,2,592,,
+Priest,Power Word: Shield,18,3,600,,
+Priest,Power Word: Shield,24,4,3747,,
+Priest,Power Word: Shield,30,5,6065,,
+Priest,Power Word: Shield,36,6,6066,,
+Priest,Power Word: Shield,42,7,10898,,
+Priest,Power Word: Shield,48,8,10899,,
+Priest,Power Word: Shield,54,9,10900,,
+Priest,Power Word: Shield,60,10,10901,,
+Priest,Prayer of Fortitude,48,1,21562,,
+Priest,Prayer of Fortitude,60,2,21564,,
+Priest,Prayer of Healing,30,1,596,No,Healing Spell
+Priest,Prayer of Healing,40,2,996,No,Healing Spell
+Priest,Prayer of Healing,50,3,10960,No,Healing Spell
+Priest,Prayer of Healing,60,4,10961,No,Healing Spell
+Priest,Prayer of Healing,60,5,25316,No,Coming from AQ20
+Priest,Prayer of Shadow Protection,56,1,27683,No,Only 1 Rank
+Priest,Prayer of Spirit,60,1,27681,No,Only 1 Rank
+Priest,Psychic Scream,14,1,8122,No,OK To Use Rank 1
+Priest,Psychic Scream,28,2,8124,,
+Priest,Psychic Scream,42,3,10888,,
+Priest,Psychic Scream,56,4,10890,,
+Priest,Renew,8,1,139,No,Healing Spell
+Priest,Renew,14,2,6074,No,Healing Spell
+Priest,Renew,20,3,6075,No,Healing Spell
+Priest,Renew,26,4,6076,No,Healing Spell
+Priest,Renew,32,5,6077,No,Healing Spell
+Priest,Renew,38,6,6078,No,Healing Spell
+Priest,Renew,44,7,10927,No,Healing Spell
+Priest,Renew,50,8,10928,No,Healing Spell
+Priest,Renew,56,9,10929,No,Healing Spell
+Priest,Renew,60,10,25315,No,Coming from AQ20
+Priest,Resurrection,10,1,2006,,
+Priest,Resurrection,22,2,2010,,
+Priest,Resurrection,34,3,10880,,
+Priest,Resurrection,46,4,10881,,
+Priest,Resurrection,58,5,20770,,
+Priest,Shackle Undead,20,1,9484,,
+Priest,Shackle Undead,40,2,9485,,
+Priest,Shackle Undead,60,3,10955,,
+Priest,Shadow Protection,30,1,976,,
+Priest,Shadow Protection,42,2,10957,,
+Priest,Shadow Protection,56,3,10958,,
+Priest,Shadow Word: Pain,4,1,589,,
+Priest,Shadow Word: Pain,10,2,594,,
+Priest,Shadow Word: Pain,18,3,970,,
+Priest,Shadow Word: Pain,26,4,992,,
+Priest,Shadow Word: Pain,34,5,2767,,
+Priest,Shadow Word: Pain,42,6,10892,,
+Priest,Shadow Word: Pain,50,7,10893,,
+Priest,Shadow Word: Pain,58,8,10894,,
+Priest,Shadowguard,20,1,18137,,
+Priest,Shadowguard,28,2,19308,,
+Priest,Shadowguard,36,3,19309,,
+Priest,Shadowguard,44,4,19310,,
+Priest,Shadowguard,52,5,19311,,
+Priest,Shadowguard,60,6,19312,,
+Priest,Smite,1,1,585,,
+Priest,Smite,6,2,591,,
+Priest,Smite,14,3,598,,
+Priest,Smite,22,4,984,,
+Priest,Smite,30,5,1004,,
+Priest,Smite,38,6,6060,,
+Priest,Smite,46,7,10933,,
+Priest,Smite,54,8,10934,,
+Priest,Starshards,10,1,10797,,
+Priest,Starshards,18,2,19296,,
+Priest,Starshards,26,3,19299,,
+Priest,Starshards,34,4,19302,,
+Priest,Starshards,42,5,19303,,
+Priest,Starshards,50,6,19304,,
+Priest,Starshards,58,7,19305,,
+Priest,Touch of Weakness,10,1,2652,,
+Priest,Touch of Weakness,20,2,19261,,
+Priest,Touch of Weakness,30,3,19262,,
+Priest,Touch of Weakness,40,4,19264,,
+Priest,Touch of Weakness,50,5,19265,,
+Priest,Touch of Weakness,60,6,19266,,
+Rogue,Ambush,18,1,8676,,
+Rogue,Ambush,26,2,8724,,
+Rogue,Ambush,34,3,8725,,
+Rogue,Ambush,42,4,11267,,
+Rogue,Ambush,50,5,11268,,
+Rogue,Ambush,58,6,11269,,
+Rogue,Backstab,4,1,53,,
+Rogue,Backstab,12,2,2589,,
+Rogue,Backstab,20,3,2590,,
+Rogue,Backstab,28,4,2591,,
+Rogue,Backstab,36,5,8721,,
+Rogue,Backstab,44,6,11279,,
+Rogue,Backstab,52,7,11280,,
+Rogue,Backstab,60,8,11281,,
+Rogue,Backstab,60,9,25300,No,Coming from AQ20
+Rogue,Blind,34,,2094,No,Only 1 Rank
+Rogue,Blinding Powder,34,,6510,No,Only 1 Rank
+Rogue,Cheap Shot,26,,1833,No,Only 1 Rank
+Rogue,Crippling Poison,20,1,3420,No,Unique rank
+Rogue,Crippling Poison II,50,2,3421,No,Unique rank
+Rogue,Deadly Poison,30,1,2835,No,Unique rank
+Rogue,Deadly Poison II,38,2,2837,No,Unique rank
+Rogue,Deadly Poison III,46,3,11357,No,Unique rank
+Rogue,Deadly Poison IV,54,4,11358,No,Unique rank
+Rogue,Deadly Poison V,60,5,25347,No,Coming from AQ20
+Rogue,Detect Traps,24,Passive,2836,No,Only 1 Rank
+Rogue,Disarm Trap,30,,1842,No,Only 1 Rank
+Rogue,Distract,22,,1725,No,Only 1 Rank
+Rogue,Evasion,8,,5277,No,Only 1 Rank
+Rogue,Eviscerate,1,1,2098,,
+Rogue,Eviscerate,8,2,6760,,
+Rogue,Eviscerate,16,3,6761,,
+Rogue,Eviscerate,24,4,6762,,
+Rogue,Eviscerate,32,5,8623,,
+Rogue,Eviscerate,40,6,8624,,
+Rogue,Eviscerate,48,7,11299,,
+Rogue,Eviscerate,56,8,11300,,
+Rogue,Eviscerate,60,9,31016,,
+Rogue,Expose Armor,14,1,8647,,
+Rogue,Expose Armor,26,2,8649,,
+Rogue,Expose Armor,36,3,8650,,
+Rogue,Expose Armor,46,4,11197,,
+Rogue,Expose Armor,56,5,11198,,
+Rogue,Feint,16,1,1966,,
+Rogue,Feint,28,2,6768,,
+Rogue,Feint,40,3,8637,,
+Rogue,Feint,52,4,11303,,
+Rogue,Feint,60,5,25302,No,Coming from AQ20
+Rogue,Garrote,14,1,703,,
+Rogue,Garrote,22,2,8631,,
+Rogue,Garrote,30,3,8632,,
+Rogue,Garrote,38,4,8633,,
+Rogue,Garrote,46,5,11289,,
+Rogue,Garrote,54,6,11290,,
+Rogue,Gouge,6,1,1776,,
+Rogue,Gouge,18,2,1777,,
+Rogue,Gouge,32,3,8629,,
+Rogue,Gouge,46,4,11285,,
+Rogue,Gouge,60,5,11286,,
+Rogue,Hemorrhage,1,1,16511,,
+Rogue,Hemorrhage,46,2,17347,,
+Rogue,Hemorrhage,58,3,17348,,
+Rogue,Instant Poison,20,1,8681,No,Unique rank
+Rogue,Instant Poison II,28,2,8687,No,Unique rank
+Rogue,Instant Poison III,36,3,8691,No,Unique rank
+Rogue,Instant Poison IV,44,4,11341,No,Unique rank
+Rogue,Instant Poison V,52,5,11342,No,Unique rank
+Rogue,Instant Poison VI,60,6,11343,No,Unique rank
+Rogue,Kick,12,1,1766,,
+Rogue,Kick,26,2,1767,,
+Rogue,Kick,42,3,1768,,
+Rogue,Kick,58,4,1769,,
+Rogue,Kidney Shot,30,1,408,,
+Rogue,Kidney Shot,50,2,8643,,
+Rogue,Mind-numbing Poison,24,1,5763,No,Unique rank
+Rogue,Mind-numbing Poison II,38,2,8694,No,Unique rank
+Rogue,Mind-numbing Poison III,52,3,11400,No,Unique rank
+Rogue,Pick Lock,1,,1804,No,Only 1 Rank
+Rogue,Pick Pocket,4,,921,No,Only 1 Rank
+Rogue,Poisons,20,,2842,No,Only 1 Rank
+Rogue,Rupture,20,1,1943,,
+Rogue,Rupture,28,2,8639,,
+Rogue,Rupture,36,3,8640,,
+Rogue,Rupture,44,4,11273,,
+Rogue,Rupture,52,5,11274,,
+Rogue,Rupture,60,6,11275,,
+Rogue,Safe Fall,40,Passive,1860,No,Only 1 Rank
+Rogue,Sap,10,1,6770,,
+Rogue,Sap,28,2,2070,,
+Rogue,Sap,48,3,11297,,
+Rogue,Sinister Strike,1,1,1752,,
+Rogue,Sinister Strike,6,2,1757,,
+Rogue,Sinister Strike,14,3,1758,,
+Rogue,Sinister Strike,22,4,1759,,
+Rogue,Sinister Strike,30,5,1760,,
+Rogue,Sinister Strike,38,6,8621,,
+Rogue,Sinister Strike,46,7,11293,,
+Rogue,Sinister Strike,54,8,11294,,
+Rogue,Slice and Dice,10,1,5171,,
+Rogue,Slice and Dice,42,2,6774,,
+Rogue,Sprint,10,1,2983,,
+Rogue,Sprint,34,2,8696,,
+Rogue,Sprint,58,3,11305,,
+Rogue,Stealth,1,1,1784,,
+Rogue,Stealth,20,2,1785,,
+Rogue,Stealth,40,3,1786,,
+Rogue,Stealth,60,4,1787,,
+Rogue,Vanish,22,1,1856,,
+Rogue,Vanish,42,2,1857,,
+Rogue,Wound Poison,32,1,13220,No,Unique rank
+Rogue,Wound Poison II,40,2,13228,No,Unique rank
+Rogue,Wound Poison III,48,3,13229,No,Unique rank
+Rogue,Wound Poison IV,56,4,13230,No,Unique rank
+Shaman,Ancestral Spirit,12,1,2008,,
+Shaman,Ancestral Spirit,24,2,20609,,
+Shaman,Ancestral Spirit,36,3,20610,,
+Shaman,Ancestral Spirit,48,4,20776,,
+Shaman,Ancestral Spirit,60,5,20777,,
+Shaman,Astral Recall,30,,556,No,Only 1 Rank
+Shaman,Chain Heal,40,1,1064,No,Healing Spell
+Shaman,Chain Heal,46,2,10622,No,Healing Spell
+Shaman,Chain Heal,54,3,10623,No,Healing Spell
+Shaman,Chain Lightning,32,1,421,,
+Shaman,Chain Lightning,40,2,930,,
+Shaman,Chain Lightning,48,3,2860,,
+Shaman,Chain Lightning,56,4,10605,,
+Shaman,Cure Disease,22,,2870,No,Only 1 Rank
+Shaman,Cure Poison,16,,526,No,Only 1 Rank
+Shaman,Disease Cleansing Totem,38,,8170,No,Only 1 Rank
+Shaman,Earth Shock,4,1,8042,No,OK To Use Rank 1
+Shaman,Earth Shock,8,2,8044,,
+Shaman,Earth Shock,14,3,8045,,
+Shaman,Earth Shock,24,4,8046,,
+Shaman,Earth Shock,36,5,10412,,
+Shaman,Earth Shock,48,6,10413,,
+Shaman,Earth Shock,60,7,10414,,
+Shaman,Earthbind Totem,6,,2484,No,Only 1 Rank
+Shaman,Far Sight,26,,6196,No,Only 1 Rank
+Shaman,Fire Nova Totem,12,1,1535,,
+Shaman,Fire Nova Totem,22,2,8498,,
+Shaman,Fire Nova Totem,32,3,8499,,
+Shaman,Fire Nova Totem,42,4,11314,,
+Shaman,Fire Nova Totem,52,5,11315,,
+Shaman,Fire Resistance Totem,28,1,8184,,
+Shaman,Fire Resistance Totem,42,2,10537,,
+Shaman,Fire Resistance Totem,58,3,10538,,
+Shaman,Flame Shock,10,1,8050,,
+Shaman,Flame Shock,18,2,8052,,
+Shaman,Flame Shock,28,3,8053,,
+Shaman,Flame Shock,40,4,10447,,
+Shaman,Flame Shock,52,5,10448,,
+Shaman,Flame Shock,60,6,29228,,
+Shaman,Flametongue Totem,28,1,8227,,
+Shaman,Flametongue Totem,38,2,8249,,
+Shaman,Flametongue Totem,48,3,10526,,
+Shaman,Flametongue Totem,58,4,16387,,
+Shaman,Flametongue Weapon,10,1,8024,,
+Shaman,Flametongue Weapon,18,2,8027,,
+Shaman,Flametongue Weapon,26,3,8030,,
+Shaman,Flametongue Weapon,36,4,16339,,
+Shaman,Flametongue Weapon,46,5,16341,,
+Shaman,Flametongue Weapon,56,6,16342,,
+Shaman,Frost Resistance Totem,24,1,8181,,
+Shaman,Frost Resistance Totem,38,2,10478,,
+Shaman,Frost Resistance Totem,54,3,10479,,
+Shaman,Frost Shock,20,1,8056,No,OK To Use Rank 1
+Shaman,Frost Shock,34,2,8058,,
+Shaman,Frost Shock,46,3,10472,,
+Shaman,Frost Shock,58,4,10473,,
+Shaman,Frostbrand Weapon,20,1,8033,,
+Shaman,Frostbrand Weapon,28,2,8038,,
+Shaman,Frostbrand Weapon,38,3,10456,,
+Shaman,Frostbrand Weapon,48,4,16355,,
+Shaman,Frostbrand Weapon,58,5,16356,,
+Shaman,Ghost Wolf,20,,2645,No,Only 1 Rank
+Shaman,Grace of Air Totem,42,1,8835,,
+Shaman,Grace of Air Totem,56,2,10627,,
+Shaman,Grace of Air Totem,60,3,25359,No,Coming from AQ20
+Shaman,Grounding Totem,30,,8177,No,Only 1 Rank
+Shaman,Healing Stream Totem,20,1,5394,,
+Shaman,Healing Stream Totem,30,2,6375,,
+Shaman,Healing Stream Totem,40,3,6377,,
+Shaman,Healing Stream Totem,50,4,10462,,
+Shaman,Healing Stream Totem,60,5,10463,,
+Shaman,Healing Wave,1,1,331,No,Healing Spell
+Shaman,Healing Wave,6,2,332,No,Healing Spell
+Shaman,Healing Wave,12,3,547,No,Healing Spell
+Shaman,Healing Wave,18,4,913,No,Healing Spell
+Shaman,Healing Wave,24,5,939,No,Healing Spell
+Shaman,Healing Wave,32,6,959,No,Healing Spell
+Shaman,Healing Wave,40,7,8005,No,Healing Spell
+Shaman,Healing Wave,48,8,10395,No,Healing Spell
+Shaman,Healing Wave,56,9,10396,No,Healing Spell
+Shaman,Healing Wave,60,10,25357,No,Coming from AQ20
+Shaman,Lesser Healing Wave,20,1,8004,No,Healing Spell
+Shaman,Lesser Healing Wave,28,2,8008,No,Healing Spell
+Shaman,Lesser Healing Wave,36,3,8010,No,Healing Spell
+Shaman,Lesser Healing Wave,44,4,10466,No,Healing Spell
+Shaman,Lesser Healing Wave,52,5,10467,No,Healing Spell
+Shaman,Lesser Healing Wave,60,6,10468,No,Healing Spell
+Shaman,Lightning Bolt,1,1,403,No,OK To Use Rank 1
+Shaman,Lightning Bolt,8,2,529,,
+Shaman,Lightning Bolt,14,3,548,,
+Shaman,Lightning Bolt,20,4,915,,
+Shaman,Lightning Bolt,26,5,943,,
+Shaman,Lightning Bolt,32,6,6041,,
+Shaman,Lightning Bolt,38,7,10391,,
+Shaman,Lightning Bolt,44,8,10392,,
+Shaman,Lightning Bolt,50,9,15207,,
+Shaman,Lightning Bolt,56,10,15208,,
+Shaman,Lightning Shield,8,1,324,,
+Shaman,Lightning Shield,16,2,325,,
+Shaman,Lightning Shield,24,3,905,,
+Shaman,Lightning Shield,32,4,945,,
+Shaman,Lightning Shield,40,5,8134,,
+Shaman,Lightning Shield,48,6,10431,,
+Shaman,Lightning Shield,56,7,10432,,
+Shaman,Magma Totem,26,1,8190,,
+Shaman,Magma Totem,36,2,10585,,
+Shaman,Magma Totem,46,3,10586,,
+Shaman,Magma Totem,56,4,10587,,
+Shaman,Mana Spring Totem,26,1,5675,,
+Shaman,Mana Spring Totem,36,2,10495,,
+Shaman,Mana Spring Totem,46,3,10496,,
+Shaman,Mana Spring Totem,56,4,10497,,
+Shaman,Mana Tide Totem,1,1,16190,,
+Shaman,Mana Tide Totem,48,2,17354,,
+Shaman,Mana Tide Totem,58,3,17359,,
+Shaman,Nature Resistance Totem,30,1,10595,,
+Shaman,Nature Resistance Totem,44,2,10600,,
+Shaman,Nature Resistance Totem,60,3,10601,,
+Shaman,Poison Cleansing Totem,22,,8166,No,Only 1 Rank
+Shaman,Purge,12,1,370,No,OK To Use Low Rank
+Shaman,Purge,32,2,8012,No,OK To Use Low Rank
+Shaman,Reincarnation,30,Passive,20608,No,Only 1 Rank
+Shaman,Rockbiter Weapon,1,1,8017,,
+Shaman,Rockbiter Weapon,8,2,8018,,
+Shaman,Rockbiter Weapon,16,3,8019,,
+Shaman,Rockbiter Weapon,24,4,10399,,
+Shaman,Rockbiter Weapon,34,5,16314,,
+Shaman,Rockbiter Weapon,44,6,16315,,
+Shaman,Rockbiter Weapon,54,7,16316,,
+Shaman,Searing Totem,10,1,3599,,
+Shaman,Searing Totem,20,2,6363,,
+Shaman,Searing Totem,30,3,6364,,
+Shaman,Searing Totem,40,4,6365,,
+Shaman,Searing Totem,50,5,10437,,
+Shaman,Searing Totem,60,6,10438,,
+Shaman,Sentry Totem,34,,6495,No,Only 1 Rank
+Shaman,Stoneclaw Totem,8,1,5730,,
+Shaman,Stoneclaw Totem,18,2,6390,,
+Shaman,Stoneclaw Totem,28,3,6391,,
+Shaman,Stoneclaw Totem,38,4,6392,,
+Shaman,Stoneclaw Totem,48,5,10427,,
+Shaman,Stoneclaw Totem,58,6,10428,,
+Shaman,Stoneskin Totem,4,1,8071,,
+Shaman,Stoneskin Totem,14,2,8154,,
+Shaman,Stoneskin Totem,24,3,8155,,
+Shaman,Stoneskin Totem,34,4,10406,,
+Shaman,Stoneskin Totem,44,5,10407,,
+Shaman,Stoneskin Totem,54,6,10408,,
+Shaman,Stormstrike,1,1,17364,No,Only 1 Rank
+Shaman,Strength of Earth Totem,10,1,8075,,
+Shaman,Strength of Earth Totem,24,2,8160,,
+Shaman,Strength of Earth Totem,38,3,8161,,
+Shaman,Strength of Earth Totem,52,4,10442,,
+Shaman,Strength of Earth Totem,60,5,25361,No,Coming from AQ20
+Shaman,Tranquil Air Totem,50,,25908,No,Only 1 Rank
+Shaman,Tremor Totem,18,,8143,No,Only 1 Rank
+Shaman,Water Breathing,22,,131,No,Only 1 Rank
+Shaman,Water Walking,28,,546,No,Only 1 Rank
+Shaman,Windfury Totem,32,1,8512,,
+Shaman,Windfury Totem,42,2,10613,,
+Shaman,Windfury Totem,52,3,10614,,
+Shaman,Windfury Weapon,30,1,8232,,
+Shaman,Windfury Weapon,40,2,8235,,
+Shaman,Windfury Weapon,50,3,10486,,
+Shaman,Windfury Weapon,60,4,16362,,
+Shaman,Windwall Totem,36,1,15107,,
+Shaman,Windwall Totem,46,2,15111,,
+Shaman,Windwall Totem,56,3,15112,,
+Warlock,Banish,28,1,710,No,OK To Use Rank 1
+Warlock,Banish,48,2,18647,No,Max Rank
+Warlock,Conflagrate,1,1,17962,,
+Warlock,Conflagrate,48,2,18930,,
+Warlock,Conflagrate,54,3,18931,,
+Warlock,Conflagrate,60,4,18932,,
+Warlock,Corruption,4,1,172,,
+Warlock,Corruption,14,2,6222,,
+Warlock,Corruption,24,3,6223,,
+Warlock,Corruption,34,4,7648,,
+Warlock,Corruption,44,5,11671,,
+Warlock,Corruption,54,6,11672,,
+Warlock,Corruption,60,7,25311,No,Coming from AQ20
+Warlock,Create Firestone,36,,17951,No,Unique rank
+Warlock,Create Firestone (Greater),46,,17952,No,Unique rank
+Warlock,Create Firestone (Lesser),28,,6366,No,Unique rank
+Warlock,Create Firestone (Major),56,,17953,No,Unique rank
+Warlock,Create Healthstone,34,,5699,No,Unique rank
+Warlock,Create Healthstone (Greater),46,,11729,No,Unique rank
+Warlock,Create Healthstone (Lesser),22,,6202,No,Unique rank
+Warlock,Create Healthstone (Major),58,,11730,No,Unique rank
+Warlock,Create Healthstone (Minor),10,,6201,No,Unique rank
+Warlock,Create Soulstone,40,,20755,No,Unique rank
+Warlock,Create Soulstone (Greater),50,,20756,No,Unique rank
+Warlock,Create Soulstone (Lesser),30,,20752,No,Unique rank
+Warlock,Create Soulstone (Major),60,,20757,No,Unique rank
+Warlock,Create Soulstone (Minor),18,,693,No,Unique rank
+Warlock,Create Spellstone,36,,2362,No,Unique rank
+Warlock,Create Spellstone (Greater),48,,17727,No,Unique rank
+Warlock,Create Spellstone (Major),60,,17728,No,Unique rank
+Warlock,Curse of Agony,8,1,980,,
+Warlock,Curse of Agony,18,2,1014,,
+Warlock,Curse of Agony,28,3,6217,,
+Warlock,Curse of Agony,38,4,11711,,
+Warlock,Curse of Agony,48,5,11712,,
+Warlock,Curse of Agony,58,6,11713,,
+Warlock,Curse of Doom,60,,603,No,Only 1 Rank
+Warlock,Curse of Recklessness,14,1,704,,
+Warlock,Curse of Recklessness,28,2,7658,,
+Warlock,Curse of Recklessness,42,3,7659,,
+Warlock,Curse of Recklessness,56,4,11717,,
+Warlock,Curse of Shadow,44,1,17862,,
+Warlock,Curse of Shadow,56,2,17937,,
+Warlock,Curse of the Elements,32,1,1490,,
+Warlock,Curse of the Elements,46,2,11721,,
+Warlock,Curse of the Elements,60,3,11722,,
+Warlock,Curse of Tongues,26,1,1714,,
+Warlock,Curse of Tongues,50,2,11719,,
+Warlock,Curse of Weakness,4,1,702,,
+Warlock,Curse of Weakness,12,2,1108,,
+Warlock,Curse of Weakness,22,3,6205,,
+Warlock,Curse of Weakness,32,4,7646,,
+Warlock,Curse of Weakness,42,5,11707,,
+Warlock,Curse of Weakness,52,6,11708,,
+Warlock,Dark Pact,1,1,18220,,
+Warlock,Dark Pact,50,2,18937,,
+Warlock,Dark Pact,60,3,18938,,
+Warlock,Death Coil,42,1,6789,,
+Warlock,Death Coil,50,2,17925,,
+Warlock,Death Coil,58,3,17926,,
+Warlock,Demon Armor,20,1,706,,
+Warlock,Demon Armor,30,2,1086,,
+Warlock,Demon Armor,40,3,11733,,
+Warlock,Demon Armor,50,4,11734,,
+Warlock,Demon Armor,60,5,11735,,
+Warlock,Demon Skin,1,1,687,,
+Warlock,Demon Skin,10,2,696,,
+Warlock,Detect Greater Invisibility,50,,11743,No,Unique rank
+Warlock,Detect Invisibility,38,,2970,No,Unique rank
+Warlock,Detect Lesser Invisibility,26,,132,No,Unique rank
+Warlock,Drain Life,14,1,689,No,OK To Use Low Rank
+Warlock,Drain Life,22,2,699,No,OK To Use Low Rank
+Warlock,Drain Life,30,3,709,No,OK To Use Low Rank
+Warlock,Drain Life,38,4,7651,No,OK To Use Low Rank
+Warlock,Drain Life,46,5,11699,No,OK To Use Low Rank
+Warlock,Drain Life,54,6,11700,No,OK To Use Low Rank
+Warlock,Drain Mana,24,1,5138,,
+Warlock,Drain Mana,34,2,6226,,
+Warlock,Drain Mana,44,3,11703,,
+Warlock,Drain Mana,54,4,11704,,
+Warlock,Drain Soul,10,1,1120,No,OK To Use Rank 1
+Warlock,Drain Soul,24,2,8288,,
+Warlock,Drain Soul,38,3,8289,,
+Warlock,Drain Soul,52,4,11675,,
+Warlock,Enslave Demon,30,1,1098,,
+Warlock,Enslave Demon,44,2,11725,,
+Warlock,Enslave Demon,58,3,11726,,
+Warlock,Eye of Kilrogg,22,Summon,126,No,Only 1 Rank
+Warlock,Fear,8,1,5782,,
+Warlock,Fear,32,2,6213,,
+Warlock,Fear,56,3,6215,,
+Warlock,Health Funnel,12,1,755,,
+Warlock,Health Funnel,20,2,3698,,
+Warlock,Health Funnel,28,3,3699,,
+Warlock,Health Funnel,36,4,3700,,
+Warlock,Health Funnel,44,5,11693,,
+Warlock,Health Funnel,52,6,11694,,
+Warlock,Health Funnel,60,7,11695,,
+Warlock,Hellfire,30,1,1949,No,OK To Use Rank 1
+Warlock,Hellfire,42,2,11683,,
+Warlock,Hellfire,54,3,11684,,
+Warlock,Howl of Terror,40,1,5484,,
+Warlock,Howl of Terror,54,2,17928,,
+Warlock,Immolate,1,1,348,,
+Warlock,Immolate,10,2,707,,
+Warlock,Immolate,20,3,1094,,
+Warlock,Immolate,30,4,2941,,
+Warlock,Immolate,40,5,11665,,
+Warlock,Immolate,50,6,11667,,
+Warlock,Immolate,60,7,11668,,
+Warlock,Immolate,60,8,25309,No,Coming from AQ20
+Warlock,Inferno,50,Summon,1122,No,Only 1 Rank
+Warlock,Life Tap,6,1,1454,No,OK To Use Low Rank
+Warlock,Life Tap,16,2,1455,No,OK To Use Low Rank
+Warlock,Life Tap,26,3,1456,No,OK To Use Low Rank
+Warlock,Life Tap,36,4,11687,No,OK To Use Low Rank
+Warlock,Life Tap,46,5,11688,No,OK To Use Low Rank
+Warlock,Life Tap,56,6,11689,No,OK To Use Low Rank
+Warlock,Rain of Fire,20,1,5740,No,OK To Use Rank 1
+Warlock,Rain of Fire,34,2,6219,,
+Warlock,Rain of Fire,46,3,11677,,
+Warlock,Rain of Fire,58,4,11678,,
+Warlock,Ritual of Doom,60,,18540,No,Only 1 Rank
+Warlock,Ritual of Summoning,20,,698,No,Only 1 Rank
+Warlock,Searing Pain,18,1,5676,,
+Warlock,Searing Pain,26,2,17919,,
+Warlock,Searing Pain,34,3,17920,,
+Warlock,Searing Pain,42,4,17921,,
+Warlock,Searing Pain,50,5,17922,,
+Warlock,Searing Pain,58,6,17923,,
+Warlock,Sense Demons,24,,5500,No,Only 1 Rank
+Warlock,Shadow Bolt,1,1,686,,
+Warlock,Shadow Bolt,6,2,695,,
+Warlock,Shadow Bolt,12,3,705,,
+Warlock,Shadow Bolt,20,4,1088,,
+Warlock,Shadow Bolt,28,5,1106,,
+Warlock,Shadow Bolt,36,6,7641,,
+Warlock,Shadow Bolt,44,7,11659,,
+Warlock,Shadow Bolt,52,8,11660,,
+Warlock,Shadow Bolt,60,9,11661,,
+Warlock,Shadow Bolt,60,10,25307,No,Coming from AQ20
+Warlock,Shadow Ward,32,1,6229,,
+Warlock,Shadow Ward,42,2,11739,,
+Warlock,Shadow Ward,52,3,11740,,
+Warlock,Shadow Ward,60,4,28610,,
+Warlock,Shadowburn,1,1,17877,,
+Warlock,Shadowburn,24,2,18867,,
+Warlock,Shadowburn,32,3,18868,,
+Warlock,Shadowburn,40,4,18869,,
+Warlock,Shadowburn,48,5,18870,,
+Warlock,Shadowburn,56,6,18871,,
+Warlock,Siphon Life,1,1,18265,,
+Warlock,Siphon Life,38,2,18879,,
+Warlock,Siphon Life,48,3,18880,,
+Warlock,Siphon Life,58,4,18881,,
+Warlock,Soul Fire,48,1,6353,,
+Warlock,Soul Fire,56,2,17924,,
+Warlock,Summon Dreadsteed,60,Summon,23161,No,Only 1 Rank
+Warlock,Summon Felhunter,30,Summon,691,No,Only 1 Rank
+Warlock,Summon Felsteed,40,Summon,5784,No,Only 1 Rank
+Warlock,Summon Imp,1,Summon,688,No,Only 1 Rank
+Warlock,Summon Succubus,20,Summon,712,No,Only 1 Rank
+Warlock,Summon Voidwalker,10,Summon,697,No,Only 1 Rank
+Warlock,Unending Breath,16,,5697,No,Only 1 Rank
+Warrior,Battle Shout,1,1,6673,,
+Warrior,Battle Shout,12,2,5242,,
+Warrior,Battle Shout,22,3,6192,,
+Warrior,Battle Shout,32,4,11549,,
+Warrior,Battle Shout,42,5,11550,,
+Warrior,Battle Shout,52,6,11551,,
+Warrior,Battle Shout,60,7,25289,No,Coming from AQ20
+Warrior,Battle Stance,1,,2457,No,Only 1 Rank
+Warrior,Berserker Rage,32,,18499,No,Only 1 Rank
+Warrior,Berserker Stance,30,,2458,No,Only 1 Rank
+Warrior,Bloodrage,10,,2687,No,Only 1 Rank
+Warrior,Bloodthirst,1,1,23881,,
+Warrior,Bloodthirst,48,2,23892,,
+Warrior,Bloodthirst,54,3,23893,,
+Warrior,Bloodthirst,60,4,23894,,
+Warrior,Challenging Shout,26,,1161,No,Only 1 Rank
+Warrior,Charge,4,1,100,,
+Warrior,Charge,26,2,6178,,
+Warrior,Charge,46,3,11578,,
+Warrior,Cleave,20,1,845,,
+Warrior,Cleave,30,2,7369,,
+Warrior,Cleave,40,3,11608,,
+Warrior,Cleave,50,4,11609,,
+Warrior,Cleave,60,5,20569,,
+Warrior,Defensive Stance,10,,71,No,Only 1 Rank
+Warrior,Demoralizing Shout,14,1,1160,,
+Warrior,Demoralizing Shout,24,2,6190,,
+Warrior,Demoralizing Shout,34,3,11554,,
+Warrior,Demoralizing Shout,44,4,11555,,
+Warrior,Demoralizing Shout,54,5,11556,,
+Warrior,Disarm,18,,676,No,Only 1 Rank
+Warrior,Execute,24,1,5308,,
+Warrior,Execute,32,2,20658,,
+Warrior,Execute,40,3,20660,,
+Warrior,Execute,48,4,20661,,
+Warrior,Execute,56,5,20662,,
+Warrior,Hamstring,8,1,1715,,
+Warrior,Hamstring,32,2,7372,,
+Warrior,Hamstring,54,3,7373,,
+Warrior,Heroic Strike,1,1,78,,
+Warrior,Heroic Strike,8,2,284,,
+Warrior,Heroic Strike,16,3,285,,
+Warrior,Heroic Strike,24,4,1608,,
+Warrior,Heroic Strike,32,5,11564,,
+Warrior,Heroic Strike,40,6,11565,,
+Warrior,Heroic Strike,48,7,11566,,
+Warrior,Heroic Strike,56,8,11567,,
+Warrior,Heroic Strike,60,9,25286,No,Coming from AQ20
+Warrior,Improved Pummel,1,1,12288,No,Talent Related
+Warrior,Improved Pummel,1,2,12707,No,Talent Related
+Warrior,Improved Pummel,1,3,12708,No,Talent Related
+Warrior,Intercept,30,1,20252,,
+Warrior,Intercept,42,2,20616,,
+Warrior,Intercept,52,3,20617,,
+Warrior,Intimidating Shout,22,,5246,No,Only 1 Rank
+Warrior,Mocking Blow,16,1,694,,
+Warrior,Mocking Blow,26,2,7400,,
+Warrior,Mocking Blow,36,3,7402,,
+Warrior,Mocking Blow,46,4,20559,,
+Warrior,Mocking Blow,56,5,20560,,
+Warrior,Mortal Strike,1,1,12294,,
+Warrior,Mortal Strike,48,2,21551,,
+Warrior,Mortal Strike,54,3,21552,,
+Warrior,Mortal Strike,60,4,21553,,
+Warrior,Overpower,12,1,7384,,
+Warrior,Overpower,28,2,7887,,
+Warrior,Overpower,44,3,11584,,
+Warrior,Overpower,60,4,11585,,
+Warrior,Pummel,38,1,6552,,
+Warrior,Pummel,58,2,6554,,
+Warrior,Recklessness,50,,1719,No,Only 1 Rank
+Warrior,Rend,4,1,772,,
+Warrior,Rend,10,2,6546,,
+Warrior,Rend,20,3,6547,,
+Warrior,Rend,30,4,6548,,
+Warrior,Rend,40,5,11572,,
+Warrior,Rend,50,6,11573,,
+Warrior,Rend,60,7,11574,,
+Warrior,Retaliation,20,,20230,No,Only 1 Rank
+Warrior,Revenge,14,1,6572,,
+Warrior,Revenge,24,2,6574,,
+Warrior,Revenge,34,3,7379,,
+Warrior,Revenge,44,4,11600,,
+Warrior,Revenge,54,5,11601,,
+Warrior,Revenge,60,6,25288,No,Coming from AQ20
+Warrior,Shield Bash,12,1,72,,
+Warrior,Shield Bash,32,2,1671,,
+Warrior,Shield Bash,52,3,1672,,
+Warrior,Shield Block,16,,2565,No,Only 1 Rank
+Warrior,Shield Slam,1,1,23922,,
+Warrior,Shield Slam,48,2,23923,,
+Warrior,Shield Slam,54,3,23924,,
+Warrior,Shield Slam,60,4,23925,,
+Warrior,Shield Wall,28,,871,No,Only 1 Rank
+Warrior,Slam,30,1,1464,,
+Warrior,Slam,38,2,8820,,
+Warrior,Slam,46,3,11604,,
+Warrior,Slam,54,4,11605,,
+Warrior,Sunder Armor,10,1,7386,,
+Warrior,Sunder Armor,22,2,7405,,
+Warrior,Sunder Armor,34,3,8380,,
+Warrior,Sunder Armor,46,4,11596,,
+Warrior,Sunder Armor,58,5,11597,,
+Warrior,Taunt,10,,355,No,Only 1 Rank
+Warrior,Thunder Clap,6,1,6343,,
+Warrior,Thunder Clap,18,2,8198,,
+Warrior,Thunder Clap,28,3,8204,,
+Warrior,Thunder Clap,38,4,8205,,
+Warrior,Thunder Clap,48,5,11580,,
+Warrior,Thunder Clap,58,6,11581,,
+Warrior,Whirlwind,36,,1680,No,Only 1 Rank

@@ -28,7 +28,8 @@ locale\ruRU.lua
 
 RankSentinel.lua
 
-data\Classic.lua [AllowLoadGameType vanilla, camelot]
+data\Classic.lua [AllowLoadGameType vanilla]
+data\Forever.lua [AllowLoadGameType camelot]
 data\TBC.lua [AllowLoadGameType tbc]
 data\Wrath.lua [AllowLoadGameType wrath]
 
