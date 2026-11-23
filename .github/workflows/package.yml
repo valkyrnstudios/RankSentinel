@@ -20,5 +20,7 @@ jobs:
         with:
           fetch-depth: 10
 
-      - name: Package and release Classic
+      - name: Package and release Forever
         uses: BigWigsMods/packager@master
+        with:
+          args: -g forever
