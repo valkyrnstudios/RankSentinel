@@ -6,6 +6,10 @@ L[addonName] = "Rank Sentinel"
 L["Enable"] = _G.ENABLE
 L["Whisper"] = _G.WHISPER
 L["Debug"] = _G.BINDING_HEADER_DEBUG
+L["Scan action bars"] = true
+L["Notify about trainer spells"] = true
+L["List newly available trainer spells when you level up."] = true
+L["New trainer spells: %s"] = true
 
 local notifications = {
     ["random"] = false,

@@ -35,3 +35,4 @@ data\Wrath.lua [AllowLoadGameType wrath]
 
 Communications.lua
 Parser.lua
+ActionBars.lua
