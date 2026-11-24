@@ -5,6 +5,8 @@ local addon = LibStub("AceAddon-3.0"):NewAddon(RankSentinel, addonName, "AceEven
 local fmt = string.format
 local tinsert = table.insert
 local GetAddOnMetadata = _G.C_AddOns and _G.C_AddOns.GetAddOnMetadata or _G.GetAddOnMetadata
+local UnitExists, UnitGUID, UnitName = _G.UnitExists, _G.UnitGUID, _G.UnitName
+local isSecret = _G.issecretvalue or function() return false end
 
 addon.Version = GetAddOnMetadata(addonName, "Version")
 addon.InterfaceVersion = select(4, GetBuildInfo())
@@ -109,7 +111,8 @@ function addon:ChatCommand(cmd)
         self.comms:BroadcastLead(self.playerName)
         self.comms:PrintLead()
     elseif msg == "ignore" then
-        if UnitExists("target") then
+        local targetExists = UnitExists("target")
+        if not isSecret(targetExists) and targetExists then
             self:IgnoreTarget()
         else
             self:PrintMessage(self.L["ChatCommand"].Ignore.Target)
@@ -216,12 +219,11 @@ end
 
 function addon:IgnoreTarget()
     local guid = UnitGUID("target")
-    if not guid then
+    local name = UnitName("target")
+    if isSecret(guid) or not guid or isSecret(name) or not name then
         self:PrintMessage(self.L["Utilities"].IgnorePlayer.Error)
         return
     end
-
-    local name, _ = UnitName("target")
 
     if self.db.profile.ignoredPlayers[guid] == nil then
         self:PrintMessage(self.L["Utilities"].IgnorePlayer.Ignored, name)
@@ -459,7 +461,10 @@ function addon:BuildOptionsPanel()
                 desc = self.L['Help']['ignore'],
                 width = optionsWidth,
                 order = 5.1,
-                func = function() if UnitExists("target") then self:IgnoreTarget() end end
+                func = function()
+                    local targetExists = UnitExists("target")
+                    if not isSecret(targetExists) and targetExists then self:IgnoreTarget() end
+                end
             },
             ignoredPlayersList = {
                 name = "Ignored Players",
