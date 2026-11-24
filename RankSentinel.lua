@@ -4,9 +4,10 @@ local addon = LibStub("AceAddon-3.0"):NewAddon(RankSentinel, addonName, "AceEven
 
 local fmt = string.format
 local tinsert = table.insert
-local GetAddOnMetadata = C_AddOns and C_AddOns.GetAddOnMetadata or _G.GetAddOnMetadata
+local GetAddOnMetadata = _G.C_AddOns and _G.C_AddOns.GetAddOnMetadata or _G.GetAddOnMetadata
 
 addon.Version = GetAddOnMetadata(addonName, "Version")
+addon.InterfaceVersion = select(4, GetBuildInfo())
 addon.MaxLevel = _G.GetMaxPlayerLevel()
 
 addon.playerGUID = UnitGUID("player")
@@ -51,18 +52,10 @@ function addon:OnEnable()
 
     if not self.db.profile.isLatestVersion then
         self:PrintMessage(self.L["Utilities"]["Outdated"])
-        self.db.profile.enabled = false
         return
     end
 
-    if not addon.cleuParser then -- re-use if someone did /disable /enable
-        addon.cleuParser = CreateFrame("Frame")
-        addon.cleuParser.OnEvent = function(frame, event, ...)
-            addon.COMBAT_LOG_EVENT_UNFILTERED(addon, event, ...) -- make sure we get a proper 'self'
-        end
-        addon.cleuParser:SetScript("OnEvent", addon.cleuParser.OnEvent)
-    end
-    addon.cleuParser:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+    self.parser:Setup()
 
     self:RegisterEvent("PLAYER_REGEN_ENABLED", function()
         if self.settingsPending then
@@ -72,6 +65,7 @@ function addon:OnEnable()
             _G.Settings.OpenToCategory(category.ID)
         end
 
+        self.parser.damageMeter:Poll()
         self.comms:ScheduleQueueProcessing()
     end)
 
@@ -92,6 +86,7 @@ function addon:ChatCommand(cmd)
 
     if msg == "reset" then
         self.db:ResetProfile()
+        self.parser:Setup()
         self:PrintMessage(self.L["ChatCommand"].Reset)
     elseif msg == "count" then
         self:PrintMessage(self.L["ChatCommand"].Count.Spells, self:CountCache(self.db.profile.announcedSpells))
@@ -106,8 +101,9 @@ function addon:ChatCommand(cmd)
         self:PrintMessage("%s = %s", self.L["Whisper"], tostring(self.db.profile.whisper))
     elseif msg == "enable" then
         self.db.profile.enable = not self.db.profile.enable
-        self:PrintMessage("%s = %s", self.L["Enable"], tostring(self.db.profile.enable))
+        self.parser:Setup()
         if self.db.profile.enable then self.comms:BroadcastJoin() end
+        self:PrintMessage("%s = %s", self.L["Enable"], tostring(self.db.profile.enable))
     elseif msg == "lead" then
         self.comms.cluster.lead = self.playerName
         self.comms:BroadcastLead(self.playerName)
@@ -284,13 +280,12 @@ function addon:PrintMessage(msg, ...) print(fmt("|cFFFFFF00%s|r: |c0000FF00%s|r"
 
 function addon:SetNotificationFlavor(flavor)
     if self.L["Notification"][flavor] ~= nil then
-        self.notifications = self.L["Notification"][self.db.profile.notificationFlavor]
         self.db.profile.notificationFlavor = flavor
     else
         self:PrintMessage(self.L["ChatCommand"].Flavor.Unavailable, flavor or '')
         self.db.profile.notificationFlavor = "default"
-        self.notifications = self.L["Notification"]["default"]
     end
+    self.notifications = self.L["Notification"][self.db.profile.notificationFlavor] or self.L["Notification"].default
 end
 
 function addon:GetRandomNotificationFlavor()
@@ -310,10 +305,6 @@ function addon:UpgradeProfile()
         self.db:ResetDB()
     elseif self.db.profile.dbVersion ~= addon.Version and addon.Version ~= 'v0.0.0' then
         self:PrintMessage(self.L["Utilities"].Upgrade)
-        if not self.db.profile.isLatestVersion then
-            -- Re-enable automatically disabled version
-            self.db.profile.enabled = true
-        end
         self.db.profile.isLatestVersion = true
         self:ClearCache()
     end
@@ -323,9 +314,9 @@ function addon:UpgradeProfile()
     end
 end
 
-local function GetProfileOption(info) return addon.db.profile[info[#info]] end
+local function getProfileOption(info) return addon.db.profile[info[#info]] end
 
-local function SetProfileOption(info, value) addon.db.profile[info[#info]] = value end
+local function setProfileOption(info, value) addon.db.profile[info[#info]] = value end
 
 function addon:BuildOptionsPanel()
     local optionsWidth = 1.08
@@ -336,8 +327,8 @@ function addon:BuildOptionsPanel()
             return fmt("%s - %s%s", self.L[addonName], addon.Version,
                        self.db.profile.isLatestVersion and '' or (' - ' .. self.L["Utilities"]["Outdated"]))
         end,
-        get = GetProfileOption,
-        set = SetProfileOption,
+        get = getProfileOption,
+        set = setProfileOption,
         args = {
             cacheCount = {
                 name = fmt(self.L["ChatCommand"].Count.Spells, self:CountCache(self.db.profile.announcedSpells)),
@@ -362,10 +353,8 @@ function addon:BuildOptionsPanel()
                 order = 1.1,
                 set = function(_, value)
                     self.db.profile.enable = value
-
-                    if value then
-                        self.comms:BroadcastJoin()
-                    end
+                    self.parser:Setup()
+                    if value then self.comms:BroadcastJoin() end
                 end,
                 disabled = function() return not self.db.profile.isLatestVersion end
             },

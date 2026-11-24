@@ -1,43 +1,24 @@
 local addonName, addon = ...
 
-local fmt, smatch, strsplit, tsort, tinsert = string.format, string.match, strsplit, table.sort, table.insert
-local UnitInBattleground = UnitInBattleground
-local InCombatLockdown, UnitIsDeadOrGhost, UnitAffectingCombat = InCombatLockdown, UnitIsDeadOrGhost, UnitAffectingCombat
-local SendChatMessage, GetSpellLink = SendChatMessage, GetSpellLink
+local fmt, smatch, tsort, tinsert = string.format, string.match, table.sort, table.insert
+local strsplit = _G.strsplit
+local UnitInBattleground = _G.UnitInBattleground
+local InCombatLockdown, UnitIsDeadOrGhost = _G.InCombatLockdown, _G.UnitIsDeadOrGhost
+local UnitAffectingCombat = _G.UnitAffectingCombat
+local SendChatMessage = _G.SendChatMessage
+local GetSpellLink = _G.GetSpellLink or (_G.C_Spell and _G.C_Spell.GetSpellLink)
+local GetSpellName = _G.C_Spell and _G.C_Spell.GetSpellName
+local After = _G.C_Timer.After
 
 local prefix = string.upper(addonName)
 
 addon.comms = {cluster = {lead = addon.playerName}}
 
-function addon.comms:Setup()
-    addon:RegisterComm(prefix, function(...) self:OnCommReceived(...) end)
-
-    if not addon.db.profile.isLatestVersion then return end
-
-    addon:RegisterEvent("PLAYER_ENTERING_WORLD", self.PLAYER_ENTERING_WORLD, self)
-    addon:RegisterEvent("GROUP_LEFT", self.GROUP_LEFT, self)
-    addon:RegisterEvent("GROUP_JOINED", self.GROUP_JOINED, self)
-    addon:RegisterEvent("GROUP_ROSTER_UPDATE", self.GROUP_ROSTER_UPDATE, self)
-    addon:RegisterEvent("PLAYER_UNGHOST", self.ScheduleQueueProcessing, self)
-    addon:RegisterEvent("PLAYER_ALIVE", self.ScheduleQueueProcessing, self)
-
-    self:ResetLead()
-end
-
-function addon.comms:ScheduleQueueProcessing()
-    C_Timer.After(5, function() self:ProcessQueuedNotifications() end)
-end
-
-function addon.comms:ShouldWhisper()
-    local profile = addon.db.profile
-    return profile.enable and profile.whisper and profile.isLatestVersion and UnitInBattleground("player") == nil
-end
-
 function addon.comms:OnCommReceived(receivedPrefix, message, _, sender)
     if receivedPrefix ~= prefix or sender == addon.playerName then return end
 
     local command, data = strsplit("|", message)
-    if not command then return end
+    if not command or not data or data == "" then return end
 
     if addon.db.profile.debug then
         addon:PrintMessage("OnCommReceived: %s; Sender: %s; Data: %s", command, sender, data)
@@ -47,6 +28,7 @@ function addon.comms:OnCommReceived(receivedPrefix, message, _, sender)
         self:RecordNotification(sender, data)
     elseif command == 'LEAD' then
         local name, intVersion = strsplit(",", data)
+        if not name or name == "" or not tonumber(intVersion) then return end
         self.cluster.lead = name
 
         if self.clusterJoinPending then
@@ -61,18 +43,15 @@ function addon.comms:OnCommReceived(receivedPrefix, message, _, sender)
         if addon.db.profile.debug or addon.Version == 'v9.9.9' then addon:PrintMessage("Lead taken by " .. name) end
     elseif command == 'JOIN' then
         local name, intVersion = strsplit(",", data)
-
+        if not name or name == "" or not tonumber(intVersion) then return end
         self:CheckRelease(intVersion, name)
 
-        addon:SendCommMessage(prefix, fmt('LEAD|%s,%d', self.cluster.lead, self.release.int), "WHISPER",
-                             sender)
+        addon:SendCommMessage(prefix, fmt('LEAD|%s,%d', self.cluster.lead, self.releaseVersion), "WHISPER", sender)
     elseif command == 'SYNC' then
-        if addon.db.profile.announcedSpells[data] ~= true then addon.db.profile.announcedSpells[data] = true end
-    else
-        if addon.session.UnsupportedComm[command] == nil then
-            addon.session.UnsupportedComm[command] = true
-            addon:PrintMessage(addon.L["Broadcast"].Unrecognized, command, sender)
-        end
+        addon.db.profile.announcedSpells[data] = true
+    elseif not addon.session.UnsupportedComm[command] then
+        addon.session.UnsupportedComm[command] = true
+        addon:PrintMessage(addon.L["Broadcast"].Unrecognized, command, sender)
     end
 end
 
@@ -87,26 +66,23 @@ end
 function addon.comms:PrintLead() addon:PrintMessage(addon.L["Cluster"].Lead, self.cluster.lead) end
 
 function addon.comms:RecordNotification(sender, playerSpellIndex)
-    if addon.db.profile.announcedSpells[playerSpellIndex] ~= true then
-        addon.db.profile.announcedSpells[playerSpellIndex] = true
-    end
-
+    addon.db.profile.announcedSpells[playerSpellIndex] = true
     if sender == addon.playerName then self:Broadcast("NOTIFY", playerSpellIndex) end
 end
 
 function addon.comms:ResetLead()
-    self.cluster = {lead = addon.playerName}
+    self.cluster.lead = addon.playerName
     self.clusterJoinPending = nil
 end
 
 function addon.comms:BroadcastJoin()
-    self:Broadcast("JOIN", fmt("%s,%d", addon.playerName, self.release.int))
+    self:Broadcast("JOIN", fmt("%s,%d", addon.playerName, self.releaseVersion))
 end
 
 function addon.comms:BroadcastLead(playerName)
     if not playerName or not self:ShouldWhisper() then return end
 
-    self:Broadcast('LEAD', fmt('%s,%d', playerName, self.release.int))
+    self:Broadcast('LEAD', fmt('%s,%d', playerName, self.releaseVersion))
 end
 
 function addon.comms:SyncBroadcast(array, index)
@@ -132,16 +108,12 @@ function addon.comms:SyncBroadcast(array, index)
             addon:SendCommMessage(prefix, fmt("%s|%s", 'SYNC', array[i]), "RAID", "BULK")
         end
 
-        C_Timer.After(3, function() self:SyncBroadcast(array, index + batch_size) end)
+        After(3, function() self:SyncBroadcast(array, index + batch_size) end)
     end
 end
 
 function addon.comms:PLAYER_ENTERING_WORLD(_, isInitialLogin, isReloadingUi)
     if not isInitialLogin and not isReloadingUi then return end
-
-    local major, minor, patch = smatch(addon.Version, "v(%d+)%.(%d+)%.(%d+)")
-
-    self.release = {major = major, minor = minor, patch = patch, int = tonumber(fmt('%d%d%d', major, minor, patch))}
 
     if isReloadingUi then
         self.clusterJoinPending = true
@@ -173,6 +145,23 @@ function addon.comms:GROUP_ROSTER_UPDATE()
     end
 end
 
+function addon.comms:Setup()
+    local major, minor, patch = smatch(addon.Version, "v(%d+)%.(%d+)%.(%d+)")
+    self.releaseVersion = major and tonumber(major .. minor .. patch) or 0
+    addon:RegisterComm(prefix, function(...) self:OnCommReceived(...) end)
+
+    if not addon.db.profile.isLatestVersion then return end
+
+    addon:RegisterEvent("PLAYER_ENTERING_WORLD", self.PLAYER_ENTERING_WORLD, self)
+    addon:RegisterEvent("GROUP_LEFT", self.GROUP_LEFT, self)
+    addon:RegisterEvent("GROUP_JOINED", self.GROUP_JOINED, self)
+    addon:RegisterEvent("GROUP_ROSTER_UPDATE", self.GROUP_ROSTER_UPDATE, self)
+    addon:RegisterEvent("PLAYER_UNGHOST", self.ScheduleQueueProcessing, self)
+    addon:RegisterEvent("PLAYER_ALIVE", self.ScheduleQueueProcessing, self)
+
+    self:ResetLead()
+end
+
 function addon.comms:CheckRelease(theirIntRelease, name)
     theirIntRelease = tonumber(theirIntRelease)
     if addon.db.profile.debug or addon.Version == 'v9.9.9' then
@@ -183,72 +172,74 @@ function addon.comms:CheckRelease(theirIntRelease, name)
     if theirIntRelease == 999 or addon.Version == 'v9.9.9' or not theirIntRelease then return end
 
     -- Failed to parse version or older version
-    if self.release.int == 0 or theirIntRelease == 0 then return end
+    if self.releaseVersion == 0 or theirIntRelease == 0 then return end
 
-    if self.release.int < theirIntRelease then
+    if self.releaseVersion < theirIntRelease then
         addon:PrintMessage(addon.L["Utilities"]["NewVersion"])
         return true
     end
 end
 
+function addon.comms:ShouldWhisper()
+    if addon.InterfaceVersion >= 16000 and addon.InterfaceVersion < 17000 then return false end
+
+    local profile = addon.db.profile
+    return profile.enable and profile.whisper and profile.isLatestVersion and UnitInBattleground("player") == nil
+end
+
 function addon.comms:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel, petOwner)
-    local spellLink = GetSpellLink(spellID)
-    local abilityData = addon.AbilityData[spellID]
+    local spellLink = (GetSpellLink and GetSpellLink(spellID)) or tostring(spellID)
+    if addon.InterfaceVersion >= 16000 and addon.InterfaceVersion < 17000 then
+        local spellName = GetSpellName and GetSpellName(spellID)
+        if spellName then
+            spellLink = spellLink:gsub("|h%b[]|h", function() return "|h[" .. spellName .. "]|h" end, 1)
+        end
+    end
+    local rank = addon.AbilityData[spellID].Rank
     local contactName = petOwner and petOwner.OwnerName or sourceName
-    local by = petOwner and fmt(addon.notifications.By, sourceName) or ''
-    local msg = nil
     local sourceUID = addon:GetUID(sourceGUID)
+    local flavor = addon.notifications
+    if addon.db.profile.notificationFlavor == 'random' then flavor = addon:GetRandomNotificationFlavor() end
 
-    if addon.db.profile.notificationFlavor == 'random' then addon.notifications = addon:GetRandomNotificationFlavor() end
-
-    if sourceGUID == addon.playerGUID then
-        msg = fmt(addon.notifications.Base, spellLink, abilityData.Rank, by, nextRankLevel)
-
-        msg = fmt("%s %s", addon.notifications.Prefix.Self, msg)
-
-    elseif addon.playerName == self.cluster.lead and self:ShouldWhisper() then
-        msg = fmt(addon.notifications.Base, spellLink, abilityData.Rank, by, nextRankLevel)
-
-        if addon.session.PlayersNotified[sourceUID] == true or petOwner then
-            msg = fmt("%s %s", addon.notifications.Prefix.Whisper, msg)
-        else
-            msg = fmt("%s %s %s", addon.notifications.Prefix.Whisper, msg, addon.notifications.Suffix)
+    local by = petOwner and fmt(flavor.By, sourceName) or ''
+    local message = fmt(flavor.Base, spellLink, rank, by, nextRankLevel)
+    if sourceGUID ~= addon.playerGUID and addon.playerName == self.cluster.lead and self:ShouldWhisper() then
+        message = fmt("%s %s", flavor.Prefix.Whisper, message)
+        if not addon.session.PlayersNotified[sourceUID] and not petOwner then
+            message = fmt("%s %s", message, flavor.Suffix)
         end
     else
-        msg = fmt(addon.notifications.Base, sourceName, spellLink, abilityData.Rank, by, nextRankLevel)
-
-        msg = fmt("%s %s", addon.notifications.Prefix.Self, msg)
+        message = fmt("%s %s", flavor.Prefix.Self, message)
     end
 
     addon.session.PlayersNotified[sourceUID] = true
 
-    return msg, contactName, fmt('%s (Rank %d)', spellLink, abilityData.Rank)
+    return message, contactName, fmt('%s (Rank %d)', spellLink, rank)
 end
 
 function addon.comms:ProcessQueuedNotifications()
-    if #addon.session.Queue == 0 or InCombatLockdown() or UnitIsDeadOrGhost("player") then return end
+    local queue = addon.session.Queue
+    if #queue == 0 or InCombatLockdown() or UnitIsDeadOrGhost("player") then return end
 
-    local notification = nil
+    local isLead = addon.playerName == self.cluster.lead
+    local shouldWhisper = isLead and self:ShouldWhisper()
     local retry = {}
 
-    for i = 1, #addon.session.Queue do
-        notification = addon.session.Queue[i]
+    for _, notification in ipairs(queue) do
 
         if notification.target == addon.playerName then
             addon:PrintMessage(notification.message)
-        elseif addon.playerName == self.cluster.lead and self:ShouldWhisper() then
+        elseif shouldWhisper then
             if UnitAffectingCombat(notification.target) then
                 retry[#retry + 1] = notification
             else
                 SendChatMessage(notification.message, "WHISPER", nil, notification.target)
             end
-        elseif addon.playerName ~= self.cluster.lead then
-            if not addon.db.profile.quietMode then
-                addon:PrintMessage("(%s) %s - %s", self.cluster.lead, notification.target, notification.ability)
-            end
-        else
-            if not addon.db.profile.quietMode then
+        elseif not addon.db.profile.quietMode then
+            if isLead then
                 addon:PrintMessage("%s - %s", notification.target, notification.ability)
+            else
+                addon:PrintMessage("(%s) %s - %s", self.cluster.lead, notification.target, notification.ability)
             end
         end
     end
@@ -266,6 +257,10 @@ function addon.comms:QueueNotification(message, target, ability)
     else
         self:ProcessQueuedNotifications()
     end
+end
+
+function addon.comms:ScheduleQueueProcessing()
+    After(5, function() self:ProcessQueuedNotifications() end)
 end
 
 function addon.comms:UpdateSessionReport(playerSpellIndex, playerName, spellName, spellID)
