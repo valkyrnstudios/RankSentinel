@@ -60,7 +60,11 @@ function addon.comms:OnCommReceived(receivedPrefix, message, _, sender)
 end
 
 function addon.comms:Broadcast(command, data)
-    if not addon.db.profile.enable or UnitInBattleground("player") ~= nil then return end
+    if command == "LEAD" then
+        if not self:ShouldWhisper() then return end
+    elseif not addon.db.profile.enable or UnitInBattleground("player") ~= nil then
+        return
+    end
 
     if addon.db.profile.debug then addon:PrintMessage("Broadcasting %s: %s", command, data) end
 
@@ -84,7 +88,7 @@ function addon.comms:BroadcastJoin()
 end
 
 function addon.comms:BroadcastLead(playerName)
-    if not playerName or not self:ShouldWhisper() then return end
+    if not playerName then return end
 
     self:Broadcast('LEAD', fmt('%s,%d', playerName, self.releaseVersion))
 end
