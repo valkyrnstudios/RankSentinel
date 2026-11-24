@@ -90,8 +90,6 @@ function addon.comms:BroadcastLead(playerName)
 end
 
 function addon.comms:SyncBroadcast(array, index)
-    local batch_size = 10
-
     if array == nil or index == nil then
         addon:PrintMessage(addon.L["Cluster"].Sync, addon:CountCache(addon.db.profile.announcedSpells))
 
@@ -101,18 +99,20 @@ function addon.comms:SyncBroadcast(array, index)
         tsort(ordered_announcements)
 
         self:SyncBroadcast(ordered_announcements, 1)
-    else
-        addon:PrintMessage(addon.L["Cluster"].Batch, index, index + batch_size)
+    elseif index <= #array then
+        local batchSize = 10
+        local last = math.min(index + batchSize - 1, #array)
+        addon:PrintMessage(addon.L["Cluster"].Batch, index, last)
 
-        for i = index, index + batch_size do
-            if array[i] == nil then return end
-
+        for i = index, last do
             if addon.db.profile.debug then print(fmt("Sending %d - %s", i, array[i])) end
 
             addon:SendCommMessage(prefix, fmt("%s|%s", 'SYNC', array[i]), "RAID", "BULK")
         end
 
-        After(3, function() self:SyncBroadcast(array, index + batch_size) end)
+        if last < #array then
+            After(3, function() self:SyncBroadcast(array, last + 1) end)
+        end
     end
 end
 
