@@ -11,6 +11,7 @@ local isSecret = _G.issecretvalue or function() return false end
 addon.Version = GetAddOnMetadata(addonName, "Version")
 addon.InterfaceVersion = select(4, GetBuildInfo())
 addon.MaxLevel = _G.GetMaxPlayerLevel()
+addon.MessageFormat = "|cFFFFFF00%s|r: |cFF00FF00%s|r"
 
 addon.playerGUID = UnitGUID("player")
 addon.playerName = UnitName("player")
@@ -25,6 +26,8 @@ function addon:OnInitialize()
             enable = true,
             whisper = true,
             whisperLanguage = "auto",
+            scanActionBars = true,
+            notifyTrainerSpells = true,
             debug = false,
             announcedSpells = {},
             ignoredPlayers = {},
@@ -90,6 +93,7 @@ function addon:ChatCommand(cmd)
     if msg == "reset" then
         self.db:ResetProfile()
         self.parser:Setup()
+        self.actionBars:Setup(self.db.profile.scanActionBars)
         self:PrintMessage(self.L["ChatCommand"].Reset)
     elseif msg == "count" then
         self:PrintMessage(self.L["ChatCommand"].Count.Spells, self:CountCache(self.db.profile.announcedSpells))
@@ -279,7 +283,7 @@ function addon:PrintHelp(subHelp)
     self:PrintMessage('- %s|cffffffff: %s|r', 'advanced', self.L['Help']['advanced'])
 end
 
-function addon:PrintMessage(msg, ...) print(fmt("|cFFFFFF00%s|r: |c0000FF00%s|r", self.L[addonName], fmt(msg, ...))) end
+function addon:PrintMessage(msg, ...) print(fmt(self.MessageFormat, self.L[addonName], fmt(msg, ...))) end
 
 function addon:SetNotificationFlavor(flavor)
     if self.L["Notification"][flavor] ~= nil then
@@ -404,6 +408,24 @@ function addon:BuildOptionsPanel()
                 },
                 get = function() return self.session.announceTo end,
                 set = function(_, value) self.session.announceTo = value end
+            },
+            actionBarsHeader = {name = _G.ACTIONBARS_LABEL, type = "header", width = "full", order = 2.3},
+            scanActionBars = {
+                name = self.L["Scan action bars"],
+                type = "toggle",
+                width = optionsWidth,
+                order = 2.4,
+                set = function(_, value)
+                    self.db.profile.scanActionBars = value
+                    self.actionBars:Setup(value)
+                end
+            },
+            notifyTrainerSpells = {
+                name = self.L["Notify about trainer spells"],
+                desc = self.L["List newly available trainer spells when you level up."],
+                type = "toggle",
+                width = optionsWidth,
+                order = 2.5
             },
             clusterHeader = {name = "Cluster", type = "header", width = "full", order = 3.0},
             leader = {
