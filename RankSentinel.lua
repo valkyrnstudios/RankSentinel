@@ -2,18 +2,9 @@ local addonName, RankSentinel = ...
 
 local addon = LibStub("AceAddon-3.0"):NewAddon(RankSentinel, addonName, "AceEvent-3.0", "AceComm-3.0")
 
-local fmt, after, unpack = string.format, C_Timer.After, unpack
-local UnitInBattleground, CombatLogGetCurrentEventInfo = _G.UnitInBattleground, _G.CombatLogGetCurrentEventInfo
-local HasFullControl, UnitIsPossessed, UnitIsCharmed, UnitIsEnemy, UnitLevel = _G.HasFullControl, _G.UnitIsPossessed,
-                                                                               _G.UnitIsCharmed, _G.UnitIsEnemy,
-                                                                               _G.UnitLevel
+local fmt = string.format
+local tinsert = table.insert
 local GetAddOnMetadata = C_AddOns and C_AddOns.GetAddOnMetadata or _G.GetAddOnMetadata
-
-local bit_band = _G.bit.band
-local COMBATLOG_OBJECT_AFFILIATION_MINE = _G.COMBATLOG_OBJECT_AFFILIATION_MINE or 0x00000001
-local COMBATLOG_OBJECT_AFFILIATION_PARTY = _G.COMBATLOG_OBJECT_AFFILIATION_PARTY or 0x00000002
-local COMBATLOG_OBJECT_AFFILIATION_RAID = _G.COMBATLOG_OBJECT_AFFILIATION_RAID or 0x00000004
-local COMBATLOG_FILTER_GROUP = _G.bit.bor(COMBATLOG_OBJECT_AFFILIATION_MINE, COMBATLOG_OBJECT_AFFILIATION_PARTY, COMBATLOG_OBJECT_AFFILIATION_RAID)
 
 addon.Version = GetAddOnMetadata(addonName, "Version")
 addon.MaxLevel = _G.GetMaxPlayerLevel()
@@ -22,8 +13,6 @@ addon.playerGUID = UnitGUID("player")
 addon.playerName = UnitName("player")
 
 if not addon.Version or string.match(addon.Version, 'project') then addon.Version = 'v9.9.9' end
-
-addon._commPrefix = string.upper(addonName)
 
 function addon:OnInitialize()
     self.L = LibStub("AceLocale-3.0"):GetLocale(addonName)
@@ -58,7 +47,7 @@ function addon:OnEnable()
     self:InitializeSession()
     self:BuildOptionsPanel()
 
-    self:RegisterComm(self._commPrefix)
+    self.comms:Setup()
 
     if not self.db.profile.isLatestVersion then
         self:PrintMessage(self.L["Utilities"]["Outdated"])
@@ -74,7 +63,6 @@ function addon:OnEnable()
         addon.cleuParser:SetScript("OnEvent", addon.cleuParser.OnEvent)
     end
     addon.cleuParser:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-    self:RegisterEvent("PLAYER_ENTERING_WORLD")
 
     self:RegisterEvent("PLAYER_REGEN_ENABLED", function()
         if self.settingsPending then
@@ -84,18 +72,8 @@ function addon:OnEnable()
             _G.Settings.OpenToCategory(category.ID)
         end
 
-        after(5, function() self:ProcessQueuedNotifications() end)
+        self.comms:ScheduleQueueProcessing()
     end)
-
-    self:RegisterEvent("PLAYER_UNGHOST", function(...) after(5, function() self:ProcessQueuedNotifications() end) end)
-
-    self:RegisterEvent("PLAYER_ALIVE", function(...) after(5, function() self:ProcessQueuedNotifications() end) end)
-
-    self:RegisterEvent("GROUP_LEFT")
-    self:RegisterEvent("GROUP_JOINED")
-    self:RegisterEvent("GROUP_ROSTER_UPDATE")
-
-    self:ResetLead()
 
     if not self.db.profile.quietMode then
         self:PrintMessage("Loaded %s", self.Version)
@@ -107,69 +85,6 @@ function addon:OnEnable()
         self:PrintMessage("Debug enabled, clearing cache on reload")
         self:ClearCache()
     end
-end
-
-function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
-    if not self.db.profile.enable then return end
-    if UnitInBattleground("player") ~= nil then return end
-
-    local _, subevent, _, sourceGUID, sourceName, sourceFlags, _, _, destName, _, _, spellID, spellName =
-        CombatLogGetCurrentEventInfo()
-
-    -- bail out early for trivial cases (lookups before function calls, wide checks to narrow)
-    if subevent ~= "SPELL_CAST_SUCCESS" then return end
-    if not sourceName then return end
-
-    if bit_band(sourceFlags, COMBATLOG_FILTER_GROUP) == 0 then return end
-
-    if not self.AbilityData[spellID] then return end
-    if self.db.profile.ignoredPlayers[sourceGUID] then return end
-    if UnitIsPossessed(sourceName) then return end
-    if UnitIsCharmed(sourceName) then return end
-    if sourceGUID == self.playerGUID and not HasFullControl() then return end
-    if UnitIsEnemy("player", sourceName) then return end
-
-    -- local isInGroup, petOwner = self.InGroupWith(sourceGUID)
-    -- if not isInGroup then return end
-
-    local castLevel = UnitLevel(sourceName)
-    if self.db.profile.onlyMaxLevel and castLevel < addon.MaxLevel then return end
-
-    local uid = self:GetUID(sourceGUID)
-
-    -- Only notify once per ability group
-    local abilityGroupIndex = fmt("%s-%d", uid, addon.AbilityData[spellID].AbilityGroup)
-    if self.session.PlayerGroupsNotified[abilityGroupIndex] ~= nil and not self.db.profile.debug then return end
-
-    local targetLevel = destName and UnitLevel(destName) or 0
-    local isMax, nextRankLevel = self:IsMaxRank(spellID, castLevel, targetLevel)
-    if isMax or not nextRankLevel or nextRankLevel <= 0 then return end
-
-    if not self.session.PlayerLevelCache[uid] then
-        self.session.PlayerLevelCache[uid] = castLevel
-    elseif castLevel > self.session.PlayerLevelCache[uid] then
-        -- If downrank, don't notify on a new level up this session
-        return
-    end
-
-    local playerSpellIndex = fmt("%s-%s-%s", uid, castLevel, spellID)
-    if self.db.profile.announcedSpells[playerSpellIndex] ~= nil and not self.db.profile.debug then return end
-
-    -- Disabled for Classic/TBC, restore for Wrath
-    -- if petOwner then
-    --     self:UpdateSessionReport(playerSpellIndex, fmt("%s (%s)", sourceName, petOwner.OwnerName), spellName, spellID)
-    -- else
-    self:UpdateSessionReport(playerSpellIndex, sourceName, spellName, spellID)
-    -- end
-
-    local notification, target, ability = self:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel,
-                                                                 petOwner)
-
-    self:QueueNotification(notification, target, ability)
-
-    self:RecordNotification(self.playerName, playerSpellIndex)
-
-    self.session.PlayerGroupsNotified[abilityGroupIndex] = true
 end
 
 function addon:ChatCommand(cmd)
@@ -192,11 +107,11 @@ function addon:ChatCommand(cmd)
     elseif msg == "enable" then
         self.db.profile.enable = not self.db.profile.enable
         self:PrintMessage("%s = %s", self.L["Enable"], tostring(self.db.profile.enable))
-        if self.db.profile.enable then self:Broadcast("JOIN", fmt("%s,%d", self.playerName, addon.release.int)) end
+        if self.db.profile.enable then self.comms:BroadcastJoin() end
     elseif msg == "lead" then
-        self.cluster.lead = self.playerName
-        self:BroadcastLead(self.playerName)
-        self:PrintLead()
+        self.comms.cluster.lead = self.playerName
+        self.comms:BroadcastLead(self.playerName)
+        self.comms:PrintLead()
     elseif msg == "ignore" then
         if UnitExists("target") then
             self:IgnoreTarget()
@@ -212,7 +127,7 @@ function addon:ChatCommand(cmd)
 
             self:PrintMessage(self.L["ChatCommand"].Queue.Clear, queued)
         elseif sub == 'process' or sub == 'send' then
-            self:ProcessQueuedNotifications()
+            self.comms:ProcessQueuedNotifications()
         else
             self:PrintMessage(self.L["ChatCommand"].Queue.Count, #self.session.Queue)
             local notification = nil
@@ -223,11 +138,11 @@ function addon:ChatCommand(cmd)
             end
         end
     elseif msg == "sync" then
-        self:SyncBroadcast()
+        self.comms:SyncBroadcast()
     elseif "report" == string.sub(msg, 1, #"report") then
         local _, channel = strsplit(' ', msg)
 
-        self:ReportToChannel(channel)
+        self.comms:ReportToChannel(channel)
     elseif "flavor" == string.sub(msg, 1, #"flavor") then
         local _, sub = strsplit(' ', msg)
         if self.L["Notification"][sub] ~= nil then
@@ -265,73 +180,334 @@ function addon:ChatCommand(cmd)
     end
 end
 
-function addon:IsMaxRank(spellID, casterLevel, targetLevel)
-    -- UnitLevel(destName) returns 0 for non-party members
-    -- Ignore casts with larger than 10 level differences
-    if targetLevel >= 1 and targetLevel < casterLevel - 8 then return true end
+function addon:InitializeSession()
+    self.session = {
+        Queue = {},
+        Report = {},
+        UnsupportedComm = {},
+        PlayersNotified = {},
+        PlayerGroupsNotified = {},
+        announceTo = "self",
+        PlayerLevelCache = {}
+    }
 
-    local lookup_key = fmt('%s-%s', spellID, casterLevel)
+    if IsInRaid() then
+        self.session.announceTo = "raid"
+    elseif IsInGroup() then
+        self.session.announceTo = "party"
+    end
+end
 
-    if self.db.profile.isMaxRank[lookup_key] ~= nil and not self.db.profile.debug then
-        -- this as a boolean would only work for isMax == true where the 2nd argument is discarded
-        -- it fails for isMax == false in the caller because `nextRankLevel` would show up as nil
-        -- ClearCache should take care of old boolean entries if we up the version.
-        return unpack(self.db.profile.isMaxRank[lookup_key])
+function addon:ClearCache()
+    local count = self:CountCache(self.db.profile.announcedSpells)
+    local isMaxRankCount = self:CountCache(self.db.profile.isMaxRank)
+
+    self.db.profile.announcedSpells = {}
+    self.db.profile.isMaxRank = {}
+    self.db.profile.petOwnerCache = {}
+
+    self:InitializeSession()
+
+    self:PrintMessage(self.L["Cache"].Reset, count, isMaxRankCount)
+end
+
+function addon:CountCache(cache)
+    local count = 0
+    for _ in pairs(cache) do count = count + 1 end
+
+    return count
+end
+
+function addon:IgnoreTarget()
+    local guid = UnitGUID("target")
+    if not guid then
+        self:PrintMessage(self.L["Utilities"].IgnorePlayer.Error)
+        return
     end
 
-    local abilityData = addon.AbilityData[spellID]
+    local name, _ = UnitName("target")
 
-    local abilityGroupData = addon.AbilityGroups[abilityData["AbilityGroup"]]
+    if self.db.profile.ignoredPlayers[guid] == nil then
+        self:PrintMessage(self.L["Utilities"].IgnorePlayer.Ignored, name)
+        self.db.profile.ignoredPlayers[guid] = name
+    else
+        self:PrintMessage(self.L["Utilities"].IgnorePlayer.Unignored, name)
+        self.db.profile.ignoredPlayers[guid] = nil
+    end
+end
 
-    -- Vast majority of checks will be on lvl 70, check if highest available rank first
-    if spellID == abilityGroupData[#abilityGroupData] then
-        if self.db.profile.debug then self:PrintMessage("Caching max rank %s", lookup_key) end
+function addon:PrintHelp(subHelp)
+    if subHelp == 'advanced' then
+        self:PrintMessage("%s (%s)", self.L['Help']['advanced'], self.Version)
 
-        self.db.profile.isMaxRank[lookup_key] = {true}
+        self:PrintMessage('- %s (%s)|cffffffff: %s|r', 'debug', tostring(self.db.profile.debug), self.L['Help']['debug'])
 
-        return true
+        self:PrintMessage('- %s|cffffffff: %s|r', 'clear', self.L['Help']['clear'])
+
+        self:PrintMessage('- %s|cffffffff: %s|r', 'ignore', self.L['Help']['ignore'])
+
+        self:PrintMessage('- %s|cffffffff: %s|r', 'queue', self.L['Help']['queue'])
+
+        self:PrintMessage('- %s|cffffffff: %s|r', 'queue clear', self.L['Help']['queue clear'])
+
+        self:PrintMessage('- %s|cffffffff: %s|r', 'queue process', self.L['Help']['queue process'])
+
+        self:PrintMessage('- %s|cffffffff: %s|r', 'reset', self.L['Help']['reset'])
+
+        self:PrintMessage('- %s|cffffffff: %s|r', 'sync', self.L['Help']['sync'])
+
+        return
     end
 
-    -- Above block guarantees there's another rank
-    local nextRankID = abilityGroupData[abilityData["Rank"] + 1]
+    self:PrintMessage("%s (%s)", self.L['Help']['title'], self.Version)
 
-    local nextRankData = addon.AbilityData[nextRankID]
+    self:PrintMessage('- %s (%s)|cffffffff: %s|r', 'enable', tostring(self.db.profile.enable), self.L['Help']['enable'])
 
-    -- Above logic assumes no ranks are excluded, breaks for Arcane Explosion at least
-    -- If rank not the index, find proper rank
-    if nextRankData == nil or (nextRankData.Rank ~= (abilityData.Rank + 1)) then
-        if self.db.profile.debug then
-            self:PrintMessage("Mismatching indices next rank (%d), performing search", abilityData["Rank"] + 1)
+    self:PrintMessage('- %s (%s)|cffffffff: %s|r', 'whisper', tostring(self.db.profile.whisper),
+                      self.L['Help']['whisper'])
+
+    self:PrintMessage('- %s|cffffffff: %s|r', 'report [channel]', self.L['Help']['report [channel]'])
+
+    self:PrintMessage('- %s|cffffffff: %s|r', 'count', self.L['Help']['count'])
+
+    self:PrintMessage('- %s (%s)|cffffffff: %s|r', 'lead', self.comms.cluster.lead, self.L['Help']['lead'])
+
+    self:PrintMessage('- %s (%s)|cffffffff: %s|r', 'flavor', self.db.profile.notificationFlavor,
+                      self.L['Help']['flavor'])
+
+    self:PrintMessage('- %s|cffffffff: %s|r', 'flavor [option]', self.L['Help']['flavor [option]'])
+
+    self:PrintMessage('- %s|cffffffff: %s|r', 'advanced', self.L['Help']['advanced'])
+end
+
+function addon:PrintMessage(msg, ...) print(fmt("|cFFFFFF00%s|r: |c0000FF00%s|r", self.L[addonName], fmt(msg, ...))) end
+
+function addon:SetNotificationFlavor(flavor)
+    if self.L["Notification"][flavor] ~= nil then
+        self.notifications = self.L["Notification"][self.db.profile.notificationFlavor]
+        self.db.profile.notificationFlavor = flavor
+    else
+        self:PrintMessage(self.L["ChatCommand"].Flavor.Unavailable, flavor or '')
+        self.db.profile.notificationFlavor = "default"
+        self.notifications = self.L["Notification"]["default"]
+    end
+end
+
+function addon:GetRandomNotificationFlavor()
+    local keyset = {}
+
+    for k, v in pairs(self.L["Notification"]) do if v and v.By ~= nil then tinsert(keyset, k) end end
+
+    return self.L["Notification"][keyset[math.random(#keyset)]]
+end
+
+function addon:UpgradeProfile()
+    if not self.db.profile.isMaxRank then self.db.profile.isMaxRank = {} end
+    if not self.db.profile.petOwnerCache then self.db.profile.petOwnerCache = {} end
+
+    if self.db:GetCurrentProfile() == "Default" then
+        self:PrintMessage("Old profile detected, resetting database")
+        self.db:ResetDB()
+    elseif self.db.profile.dbVersion ~= addon.Version and addon.Version ~= 'v0.0.0' then
+        self:PrintMessage(self.L["Utilities"].Upgrade)
+        if not self.db.profile.isLatestVersion then
+            -- Re-enable automatically disabled version
+            self.db.profile.enabled = true
         end
+        self.db.profile.isLatestVersion = true
+        self:ClearCache()
+    end
 
-        for _, checkedSpellID in pairs(abilityGroupData) do
-            nextRankID = checkedSpellID
-            nextRankData = addon.AbilityData[checkedSpellID]
+    for k, v in pairs(self.db.profile.ignoredPlayers) do
+        if v == true then self.db.profile.ignoredPlayers[k] = nil end
+    end
+end
 
-            if (abilityData.Rank + 1) == nextRankData.Rank then
-                if self.db.profile.debug then
-                    self:PrintMessage("Found proper next rank (%d) for %s", nextRankData.Rank, nextRankID)
+local function GetProfileOption(info) return addon.db.profile[info[#info]] end
+
+local function SetProfileOption(info, value) addon.db.profile[info[#info]] = value end
+
+function addon:BuildOptionsPanel()
+    local optionsWidth = 1.08
+
+    local optionsTable = {
+        type = "group",
+        name = function()
+            return fmt("%s - %s%s", self.L[addonName], addon.Version,
+                       self.db.profile.isLatestVersion and '' or (' - ' .. self.L["Utilities"]["Outdated"]))
+        end,
+        get = GetProfileOption,
+        set = SetProfileOption,
+        args = {
+            cacheCount = {
+                name = fmt(self.L["ChatCommand"].Count.Spells, self:CountCache(self.db.profile.announcedSpells)),
+                type = "description",
+                width = optionsWidth,
+                fontSize = "medium",
+                order = 0.1
+            },
+            ranksCached = {
+                name = fmt(self.L["ChatCommand"].Count.Ranks, self:CountCache(self.db.profile.isMaxRank)),
+                type = "description",
+                width = optionsWidth,
+                fontSize = "medium",
+                order = 0.2
+            },
+            generalHeader = {name = _G.GENERAL, type = "header", width = "full", order = 1.0},
+            enable = {
+                name = _G.ENABLE,
+                desc = self.L['Help']['enable'],
+                type = "toggle",
+                width = optionsWidth,
+                order = 1.1,
+                set = function(_, value)
+                    self.db.profile.enable = value
+
+                    if value then
+                        self.comms:BroadcastJoin()
+                    end
+                end,
+                disabled = function() return not self.db.profile.isLatestVersion end
+            },
+            whisper = {
+                name = _G.WHISPER,
+                desc = self.L['Help']['whisper'],
+                type = "toggle",
+                width = optionsWidth,
+                order = 1.2
+            },
+            onlyMaxLevel = {
+                name = "Max level only",
+                desc = fmt("Only notify level %d characters", addon.MaxLevel),
+                type = "toggle",
+                width = optionsWidth,
+                order = 1.3
+            },
+            quietMode = {
+                name = "Quiet Mode",
+                desc = "Reduce output to minimum",
+                type = "toggle",
+                width = optionsWidth,
+                order = 1.4
+            },
+            announceHeader = {name = "Announce", type = "header", width = "full", order = 2.0},
+            announce = {
+                name = _G.BNET_REPORT,
+                desc = self.L['Help']['report [channel]'],
+                type = "execute",
+                width = optionsWidth,
+                order = 2.1,
+                func = function() self.comms:ReportToChannel(self.session.announceTo) end
+            },
+            announceTo = {
+                name = _G.CHANNEL,
+                type = "select",
+                width = optionsWidth,
+                order = 2.2,
+                values = {
+                    ["self"] = "self",
+                    ["say"] = "say",
+                    ["party"] = "party",
+                    ["raid"] = "raid",
+                    ["guild"] = "guild"
+                },
+                get = function() return self.session.announceTo end,
+                set = function(_, value) self.session.announceTo = value end
+            },
+            clusterHeader = {name = "Cluster", type = "header", width = "full", order = 3.0},
+            leader = {
+                name = function() return "Leader: " .. self.comms.cluster.lead end,
+                type = "description",
+                width = optionsWidth,
+                fontSize = "medium",
+                order = 3.1
+            },
+            takeLead = {
+                name = "Take lead",
+                desc = self.L['Help']['lead'],
+                type = "execute",
+                width = optionsWidth,
+                order = 3.2,
+                func = function()
+                    self.comms.cluster.lead = self.playerName
+                    self.comms:BroadcastLead(self.playerName)
+                end,
+                disabled = function() return self.playerName == self.comms.cluster.lead end
+            },
+            flavorHeader = {name = "Notification Flavor", type = "header", width = "full", order = 4.0},
+            notificationFlavor = {
+                name = "Flavors",
+                desc = self.L['Help']['flavor [option]'],
+                type = "select",
+                width = optionsWidth,
+                order = 4.1,
+                set = function(_, value) self:SetNotificationFlavor(value) end,
+                values = function()
+                    local p = {}
+                    for flavor, _ in pairs(self.L["Notification"]) do p[flavor] = flavor end
+                    return p
                 end
-                break
-            end
-        end
-    end
+            },
+            notificationFlavorExample = {
+                name = function()
+                    local flavor = self.db.profile.notificationFlavor
 
-    if nextRankData.Level == 0 then
-        if self.db.profile.debug then
-            self:PrintMessage("Failed to get next rank past %d, guessed %d", spellID, nextRankID)
-        end
-        return nil, -1
-    end
+                    if self.L["Notification"][flavor] and self.L["Notification"][flavor].Base ~= nil then
+                        return fmt('  ' .. self.L["Notification"][flavor].Base, '[Spell]', '9', '', '62')
+                    else
+                        return ''
+                    end
+                end,
+                type = "description",
+                width = optionsWidth * 2,
+                fontSize = "medium",
+                order = 4.2
+            },
+            ignoreHeader = {name = "Ignore", type = "header", width = "full", order = 5.0},
+            ignore = {
+                name = _G.IGNORE_PLAYER,
+                type = "execute",
+                desc = self.L['Help']['ignore'],
+                width = optionsWidth,
+                order = 5.1,
+                func = function() if UnitExists("target") then self:IgnoreTarget() end end
+            },
+            ignoredPlayersList = {
+                name = "Ignored Players",
+                type = "select",
+                width = optionsWidth,
+                order = 5.2,
+                values = function()
+                    local p = {}
+                    for _, v in pairs(self.db.profile.ignoredPlayers) do p[v] = v end
+                    return p
+                end,
+                set = function(_, value) self.session.ignoredSelectedPlayer = value end,
+                get = function() return self.session.ignoredSelectedPlayer end,
+                disabled = function() return self:CountCache(self.db.profile.ignoredPlayers) == 0 end
+            },
+            removeIgnore = {
+                name = _G.IGNORE_REMOVE,
+                type = "execute",
+                width = optionsWidth,
+                order = 5.3,
+                func = function()
+                    for k, v in pairs(self.db.profile.ignoredPlayers) do
+                        if v == self.session.ignoredSelectedPlayer then
+                            self.db.profile.ignoredPlayers[k] = nil
+                            break
+                        end
+                    end
+                end,
+                disabled = function()
+                    return self:CountCache(self.db.profile.ignoredPlayers) == 0 or self.session.ignoredSelectedPlayer ==
+                               nil
+                end
+            }
 
-    local isMax = self:IsHighestAlertableRank(nextRankData.Level, casterLevel)
+        }
+    }
 
-    if self.db.profile.debug then
-        self:PrintMessage("Casted %d, next rank (%d) available at %d, isMax %s", spellID, nextRankID,
-                          nextRankData.Level, tostring(isMax))
-    end
-
-    self.db.profile.isMaxRank[lookup_key] = {isMax, nextRankData.Level}
-
-    return isMax, nextRankData.Level
+    addon.options = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(self.L[addonName])
+    LibStub("AceConfig-3.0"):RegisterOptionsTable(self.L[addonName], optionsTable)
 end

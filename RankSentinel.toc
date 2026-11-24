@@ -33,6 +33,5 @@ data\Forever.lua [AllowLoadGameType camelot]
 data\TBC.lua [AllowLoadGameType tbc]
 data\Wrath.lua [AllowLoadGameType wrath]
 
-Cluster.lua
-Cache.lua
-Utilities.lua
+Communications.lua
+Parser.lua
