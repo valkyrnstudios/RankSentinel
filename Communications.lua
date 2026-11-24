@@ -9,6 +9,7 @@ local SendChatMessage = _G.SendChatMessage
 local GetSpellLink = _G.GetSpellLink or (_G.C_Spell and _G.C_Spell.GetSpellLink)
 local GetSpellName = _G.C_Spell and _G.C_Spell.GetSpellName
 local After = _G.C_Timer.After
+local wipe = _G.wipe
 
 local prefix = string.upper(addonName)
 
@@ -129,6 +130,9 @@ function addon.comms:GROUP_LEFT()
 end
 
 function addon.comms:GROUP_JOINED()
+    local meter = addon.parser.damageMeter
+    if meter.ticker then wipe(meter.sessions) end
+
     -- TODO delay, happens too early
     self:BroadcastJoin()
     addon:InitializeSession()
