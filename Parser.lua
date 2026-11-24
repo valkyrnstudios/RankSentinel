@@ -370,7 +370,7 @@ function addon:ProcessCast(spellID, spellName, sourceGUID, sourceName, castLevel
 
     self.comms:UpdateSessionReport(playerSpellIndex, sourceName, spellName, spellID)
 
-    local notification, target, ability = self.comms:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel)
+    local notification, target, ability = self.comms:BuildNotification(spellID, sourceGUID, uid, sourceName, nextRankLevel)
 
     self.comms:QueueNotification(notification, target, ability)
 

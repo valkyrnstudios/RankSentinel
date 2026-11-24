@@ -199,7 +199,7 @@ function addon.comms:ShouldWhisper()
     return profile.enable and profile.whisper and profile.isLatestVersion and UnitInBattleground("player") == nil
 end
 
-function addon.comms:BuildNotification(spellID, sourceGUID, sourceName, nextRankLevel, petOwner)
+function addon.comms:BuildNotification(spellID, sourceGUID, sourceUID, sourceName, nextRankLevel, petOwner)
     local spellLink = (GetSpellLink and GetSpellLink(spellID)) or tostring(spellID)
     if addon.InterfaceVersion >= 16000 and addon.InterfaceVersion < 17000 then
         local spellName = GetSpellName and GetSpellName(spellID)
@@ -209,7 +209,6 @@ function addon.comms:BuildNotification(spellID, sourceGUID, sourceName, nextRank
     end
     local rank = addon.AbilityData[spellID].Rank
     local contactName = petOwner and petOwner.OwnerName or sourceName
-    local sourceUID = addon:GetUID(sourceGUID)
     local profile = addon.db.profile
     local whisper = sourceGUID ~= addon.playerGUID and self:ShouldWhisper()
     local notifications = addon.L["Notification"]
