@@ -357,7 +357,11 @@ function addon:BuildOptionsPanel()
                 desc = self.L['Help']['whisper'],
                 type = "toggle",
                 width = optionsWidth,
-                order = 1.2
+                order = 1.2,
+                disabled = function()
+                    return (self.InterfaceVersion >= 16000 and self.InterfaceVersion < 17000)
+                        or not self.db.profile.isLatestVersion
+                end
             },
             whisperLanguage = {
                 name = "Whisper language",
