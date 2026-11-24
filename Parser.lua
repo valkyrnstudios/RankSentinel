@@ -134,7 +134,7 @@ function addon.parser.damageMeter:PollType(meterType, unitsByGUID, unitsByName)
     local reportChanges = snapshot.totals ~= nil
     local totals = snapshot.totals or {}
     local guid, unit, name
-    local details, spells, level, canReport, spellTotals
+    local details, spells, level, spellTotals
     local spellID, amount, spellName
 
     for _, source in ipairs(sources) do
@@ -154,9 +154,7 @@ function addon.parser.damageMeter:PollType(meterType, unitsByGUID, unitsByName)
             details = getSource(sessionKey, meterType, guid)
             spells = not isSecret(details) and details and details.combatSpells
             if not isSecret(spells) and spells then
-                level = UnitLevel(unit)
-                name = resolveFullName(unit, guid)
-                canReport = reportChanges and not isSecret(level) and level and level > 0 and name
+                name = nil
                 spellTotals = totals[guid] or {}
                 totals[guid] = spellTotals
 
@@ -165,9 +163,17 @@ function addon.parser.damageMeter:PollType(meterType, unitsByGUID, unitsByName)
                     if not isSecret(spellID) and addon.AbilityData[spellID]
                         and not isSecret(amount) and amount
                     then
-                        if canReport and amount > 0 and amount ~= spellTotals[spellID] then
-                            spellName = GetSpellName(spellID) or tostring(spellID)
-                            addon:ProcessCast(spellID, spellName, guid, name, level, 0)
+                        if reportChanges and amount > 0 and amount ~= spellTotals[spellID] then
+                            -- Cache failed lookups too, so each source is checked once.
+                            if name == nil then
+                                level = UnitLevel(unit)
+                                name = not isSecret(level) and level and level > 0
+                                    and resolveFullName(unit, guid) or false
+                            end
+                            if name then
+                                spellName = GetSpellName(spellID) or tostring(spellID)
+                                addon:ProcessCast(spellID, spellName, guid, name, level, 0)
+                            end
                         end
                         spellTotals[spellID] = amount
                     end
