@@ -24,6 +24,7 @@ function addon:OnInitialize()
         profile = {
             enable = true,
             whisper = true,
+            whisperLanguage = "auto",
             debug = false,
             announcedSpells = {},
             ignoredPlayers = {},
@@ -287,15 +288,6 @@ function addon:SetNotificationFlavor(flavor)
         self:PrintMessage(self.L["ChatCommand"].Flavor.Unavailable, flavor or '')
         self.db.profile.notificationFlavor = "default"
     end
-    self.notifications = self.L["Notification"][self.db.profile.notificationFlavor] or self.L["Notification"].default
-end
-
-function addon:GetRandomNotificationFlavor()
-    local keyset = {}
-
-    for k, v in pairs(self.L["Notification"]) do if v and v.By ~= nil then tinsert(keyset, k) end end
-
-    return self.L["Notification"][keyset[math.random(#keyset)]]
 end
 
 function addon:UpgradeProfile()
@@ -366,6 +358,14 @@ function addon:BuildOptionsPanel()
                 type = "toggle",
                 width = optionsWidth,
                 order = 1.2
+            },
+            whisperLanguage = {
+                name = "Whisper language",
+                type = "select",
+                width = optionsWidth,
+                order = 1.25,
+                disabled = function() return not self.db.profile.whisper end,
+                values = {auto = "Automatic", enUS = "English", frFR = "Français", ruRU = "Русский"}
             },
             onlyMaxLevel = {
                 name = "Max level only",

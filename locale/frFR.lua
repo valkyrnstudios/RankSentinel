@@ -1,11 +1,6 @@
-local addonName, _ = ...
-local L = LibStub("AceLocale-3.0"):NewLocale(addonName, "frFR")
+local addonName, addon = ...
 
-if not L then return end
-
-L[addonName] = "Rank Sentinel"
-
-L["Notification"] = {
+addon.notificationLocales.frFR = {
   ["random"] = false,
   ["default"] = {
     ["Prefix"] = {
@@ -26,6 +21,13 @@ L["Notification"] = {
     ["By"] = " mmgr %s"
   }
 }
+
+local L = LibStub("AceLocale-3.0"):NewLocale(addonName, "frFR")
+
+if not L then return end
+
+L[addonName] = "Rank Sentinel"
+L["Notification"] = addon.notificationLocales.frFR
 
 L["Cache"] = {
   ["Reset"] = "Cache vid\195\169: %d entr\195\169es purg\195\169es et %d rangs max oubli\195\169s",

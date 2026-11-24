@@ -1,14 +1,7 @@
-local addonName, _ = ...
+local addonName, addon = ...
 local fmt = string.format
-local L = LibStub("AceLocale-3.0"):NewLocale(addonName, "ruRU")
-if not L then return end
--- Translator ZamestoTV
-L[addonName] = "Rank Sentinel"
-L["Enable"] = _G.ENABLE
-L["Whisper"] = _G.WHISPER
-L["Debug"] = _G.BINDING_HEADER_DEBUG
 
-L["Notification"] = {
+addon.notificationLocales.ruRU = {
     ["random"] = false,
     ["default"] = {
         ["Prefix"] = {
@@ -65,6 +58,15 @@ L["Notification"] = {
         ["By"]     = " от %s"
     }
 }
+
+local L = LibStub("AceLocale-3.0"):NewLocale(addonName, "ruRU")
+if not L then return end
+-- Translator ZamestoTV
+L[addonName] = "Rank Sentinel"
+L["Enable"] = _G.ENABLE
+L["Whisper"] = _G.WHISPER
+L["Debug"] = _G.BINDING_HEADER_DEBUG
+L["Notification"] = addon.notificationLocales.ruRU
 
 L["Cache"] = {
     ["Reset"] = "Кэш сброшен: удалено %d записей, забыто %d макс. рангов",

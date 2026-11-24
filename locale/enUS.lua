@@ -1,4 +1,4 @@
-﻿local addonName, _ = ...
+﻿local addonName, addon = ...
 local fmt = string.format
 local L = LibStub("AceLocale-3.0"):NewLocale(addonName, "enUS", true)
 
@@ -7,7 +7,7 @@ L["Enable"] = _G.ENABLE
 L["Whisper"] = _G.WHISPER
 L["Debug"] = _G.BINDING_HEADER_DEBUG
 
-L["Notification"] = {
+local notifications = {
     ["random"] = false,
     ["default"] = {
         ["Prefix"] = {
@@ -64,6 +64,9 @@ L["Notification"] = {
         ["By"] = " by ye %s"
     }
 }
+
+addon.notificationLocales = {enUS = notifications}
+L["Notification"] = notifications
 
 L["Cache"] = {
     ["Reset"] = "Cache reset: %d entries purged and %d max ranks forgotten",

@@ -8,10 +8,13 @@ local UnitAffectingCombat = _G.UnitAffectingCombat
 local SendChatMessage = _G.SendChatMessage
 local GetSpellLink = _G.GetSpellLink or (_G.C_Spell and _G.C_Spell.GetSpellLink)
 local GetSpellName = _G.C_Spell and _G.C_Spell.GetSpellName
+local GetPreferredPlaySettings = _G.C_AccountServices and _G.C_AccountServices.GetPreferredPlaySettings
 local After = _G.C_Timer.After
 local wipe = _G.wipe
 
 local prefix = string.upper(addonName)
+
+local onlineLocales = {[4] = "frFR", [13] = "ruRU"}
 
 addon.comms = {cluster = {lead = addon.playerName}}
 
@@ -185,6 +188,7 @@ function addon.comms:CheckRelease(theirIntRelease, name)
 end
 
 function addon.comms:ShouldWhisper()
+    if addon.playerName ~= self.cluster.lead then return false end
     if addon.InterfaceVersion >= 16000 and addon.InterfaceVersion < 17000 then return false end
 
     local profile = addon.db.profile
@@ -202,18 +206,33 @@ function addon.comms:BuildNotification(spellID, sourceGUID, sourceName, nextRank
     local rank = addon.AbilityData[spellID].Rank
     local contactName = petOwner and petOwner.OwnerName or sourceName
     local sourceUID = addon:GetUID(sourceGUID)
-    local flavor = addon.notifications
-    if addon.db.profile.notificationFlavor == 'random' then flavor = addon:GetRandomNotificationFlavor() end
+    local profile = addon.db.profile
+    local whisper = sourceGUID ~= addon.playerGUID and self:ShouldWhisper()
+    local notifications = addon.L["Notification"]
+    if whisper then
+        local locale = profile.whisperLanguage
+        if locale == "auto" and GetPreferredPlaySettings then
+            local loaded, localeID = GetPreferredPlaySettings()
+            if loaded then locale = onlineLocales[localeID] end
+        end
+        notifications = addon.notificationLocales[locale] or addon.notificationLocales.enUS
+    end
+
+    local flavorName = profile.notificationFlavor
+    local flavor = notifications[flavorName] or notifications.default
+    if flavorName == "random" then
+        local flavors = {}
+        for _, template in pairs(notifications) do
+            if template then tinsert(flavors, template) end
+        end
+        flavor = flavors[math.random(#flavors)]
+    end
 
     local by = petOwner and fmt(flavor.By, sourceName) or ''
-    local message = fmt(flavor.Base, spellLink, rank, by, nextRankLevel)
-    if sourceGUID ~= addon.playerGUID and addon.playerName == self.cluster.lead and self:ShouldWhisper() then
-        message = fmt("%s %s", flavor.Prefix.Whisper, message)
-        if not addon.session.PlayersNotified[sourceUID] and not petOwner then
-            message = fmt("%s %s", message, flavor.Suffix)
-        end
-    else
-        message = fmt("%s %s", flavor.Prefix.Self, message)
+    local messagePrefix = whisper and flavor.Prefix.Whisper or flavor.Prefix.Self
+    local message = messagePrefix .. " " .. fmt(flavor.Base, spellLink, rank, by, nextRankLevel)
+    if whisper and not addon.session.PlayersNotified[sourceUID] and not petOwner then
+        message = message .. " " .. flavor.Suffix
     end
 
     addon.session.PlayersNotified[sourceUID] = true
@@ -226,7 +245,7 @@ function addon.comms:ProcessQueuedNotifications()
     if #queue == 0 or InCombatLockdown() or UnitIsDeadOrGhost("player") then return end
 
     local isLead = addon.playerName == self.cluster.lead
-    local shouldWhisper = isLead and self:ShouldWhisper()
+    local shouldWhisper = self:ShouldWhisper()
     local retry = {}
 
     for _, notification in ipairs(queue) do
